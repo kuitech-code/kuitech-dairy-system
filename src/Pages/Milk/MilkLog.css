@@ -1,0 +1,171 @@
+.milk-production-page-container {
+  padding: 4px;
+  font-family: system-ui, sans-serif;
+}
+
+/* Card Blocks */
+.milk-form-card, .collection-sheet-card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 16px;
+}
+
+.milk-form-card h2, .collection-sheet-card h2 {
+  font-size: 16px;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #f2f4f4;
+  padding-bottom: 6px;
+}
+
+/* Form structure row matrices */
+.milk-form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  flex: 1;
+}
+
+.milk-form-field label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #7f8c8d;
+  margin-bottom: 4px;
+}
+
+.milk-form-field input, .milk-form-field select {
+  padding: 10px;
+  border: 1px solid #ccd1d1;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fafbfc;
+}
+
+.milk-form-row {
+  display: flex;
+  gap: 12px;
+}
+
+.disabled-select {
+  background-color: #f2f4f4 !important;
+  color: #c0392b !important;
+  border-color: #f9d5d5 !important;
+  font-size: 12px !important;
+}
+
+/* Primary Form Buttons */
+.commit-milk-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.commit-milk-btn:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+/* Alert Notification Boxes */
+.milk-alert-banner {
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+.alert-success { background-color: #d4edda; color: #155724; }
+.alert-danger { background-color: #f9d5d5; color: #b71c1c; }
+.sheet-status-text { text-align: center; color: #95a5a6; padding: 15px 0; font-size: 13px; }
+
+/* Empty Table Displays */
+.empty-sheet-box {
+  text-align: center;
+  padding: 30px 10px;
+  color: #95a5a6;
+  font-size: 13px;
+}
+.empty-sheet-box p { margin: 0; display: inline; }
+
+/* Dynamic Collection Table Grid layout sheets */
+.sheet-table-scroll-wrapper {
+  overflow-x: auto;
+}
+
+.collection-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.collection-data-table th {
+  background-color: #f8f9f9;
+  padding: 8px;
+  color: #7f8c8d;
+  font-weight: 600;
+  border-bottom: 2px solid #eaeded;
+}
+
+.collection-data-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #eaeded;
+  color: #2c3e50;
+}
+
+/* Identity stack cells */
+.table-cow-identity-cell {
+  display: flex;
+  flex-direction: column;
+}
+.table-cow-identity-cell strong {
+  color: #34495e;
+  font-size: 13px;
+}
+.table-cow-identity-cell small {
+  color: #95a5a6;
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+.table-aggregated-total-cell {
+  font-weight: bold;
+  color: #27ae60;
+}
+
+.calendar-lock-pill {
+  background-color: #ebf5fb;
+  color: #2980b9;
+  font-size: 11px;
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-weight: 500;
+  border: 1px solid #a9cce3;
+}
+
+/* Gray subtext warning label for partial logs */
+.lock-notice-text {
+  font-size: 10px;
+  color: #e67e22;
+  margin-top: 3px;
+  font-weight: bold;
+}
+
+input:disabled {
+  background-color: #eaeded !important;
+  color: #95a5a6 !important;
+  cursor: not-allowed;
+  border-color: #d5dbdb !important;
+}

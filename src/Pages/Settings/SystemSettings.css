@@ -1,0 +1,26 @@
+.settings-page-container { padding: 4px; font-family: system-ui, sans-serif; }
+.settings-card-box { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); margin-bottom: 16px; }
+
+.settings-icon-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #f2f4f4; }
+.settings-icon-header span { font-size: 20px; }
+.settings-icon-header h2 { font-size: 14px; color: #2c3e50; margin: 0; }
+
+.settings-card-box p { font-size: 12px; color: #7f8c8d; line-height: 1.5; margin: 0 0 14px 0; }
+
+/* Interactive buttons panels styles */
+.settings-action-btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; display: block; text-align: center; }
+.settings-action-btn.export-btn { background-color: #27ae60; color: white; }
+.settings-action-btn.wipe-btn { background-color: #c0392b; color: white; }
+
+/* Hidden upload file styling trigger deck labels */
+.settings-file-picker-label {
+  display: block; width: 100%; padding: 12px; background-color: #3498db; color: white;
+  border-radius: 6px; font-weight: bold; font-size: 13px; text-align: center; cursor: pointer; box-sizing: border-box;
+}
+
+.danger-zone-box { border: 1px dashed #e74c3c; background-color: #fdf2f2; }
+
+/* Alert layout blocks alerts */
+.settings-alert { padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; margin-bottom: 14px; line-height: 1.4; }
+.alert-success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.alert-danger { background-color: #f9d5d5; color: #b71c1c; border: 1px solid #f5c6cb; }

@@ -1,0 +1,56 @@
+
+.breeding-log-page-wrapper { padding: 4px; font-family: system-ui, sans-serif; }
+.breeding-card-box { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); margin-bottom: 16px; }
+.breeding-card-box h2 { font-size: 15px; color: #2c3e50; margin-top: 0; margin-bottom: 12px; padding-bottom: 4px; border-bottom: 1px solid #f2f4f4; }
+
+/* Toggle header tabs */
+.form-toggle-bar { display: flex; gap: 8px; margin-bottom: 14px; background-color: #f4f6f6; padding: 4px; border-radius: 8px; }
+.toggle-tab { flex: 1; border: none; padding: 8px; font-size: 12px; font-weight: bold; border-radius: 6px; color: #7f8c8d; background: none; cursor: pointer; }
+.toggle-tab.active { background-color: #ffffff; color: #27ae60; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+/* Form inputs matrix rows */
+.breeding-row-grid { display: flex; gap: 12px; }
+.breeding-input-field { display: flex; flex-direction: column; margin-bottom: 12px; flex: 1; }
+.breeding-input-field label { font-size: 12px; font-weight: bold; color: #7f8c8d; margin-bottom: 4px; }
+.breeding-input-field input, .breeding-input-field select { padding: 10px; border: 1px solid #ccd1d1; border-radius: 6px; font-size: 13px; background-color: #fafbfc; }
+
+.checkbox-lock-row { background-color: #fcf3f2; padding: 8px; border-radius: 6px; border-left: 4px solid #e74c3c; margin-bottom: 12px; }
+.checkbox-label-wrapper { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: bold; color: #c0392b; cursor: pointer; }
+.bought-pregnant-viewport { background-color: #f4ecf7; padding: 8px; border-radius: 6px; border-left: 4px solid #9b59b6; }
+
+.commit-breeding-btn { width: 100%; padding: 12px; background-color: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 4px; }
+.commit-breeding-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+
+/* Active pregnancy list rows decoration */
+.pregnancy-mobile-deck { display: flex; flex-direction: column; gap: 10px; }
+.pregnancy-card-row { display: flex; justify-content: space-between; align-items: center; padding: 14px; border-radius: 8px; border: 1px solid #eaeded; }
+
+.state-pregnant-box { border-left: 5px solid #9b59b6; background-color: #fdfefe; }
+.state-dry-box { border-left: 5px solid #7f8c8d; background-color: #fbfbfc; }
+
+.pregnancy-card-main-info h4 { margin: 0; font-size: 14px; color: #2c3e50; }
+.pregnancy-card-main-info p { margin: 4px 0 0 0; font-size: 12px; color: #7f8c8d; }
+.due-date-text { color: #2980b9 !important; font-size: 12px; }
+
+.dry-pill-badge { display: inline-block; background-color: #f2f4f4; color: #7f8c8d; font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: bold; margin-top: 6px; }
+.milking-pill-badge { display: inline-block; background-color: #e8f8f5; color: #2ecc71; font-size: 10px; padding: 1px 6px; border-radius: 4px; font-weight: bold; margin-top: 6px; }
+
+/* Action row triggers buttons cluster */
+.pregnancy-card-actions-cluster { display: flex; flex-direction: column; gap: 6px; }
+.action-row-btn { border: none; padding: 6px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; cursor: pointer; text-align: center; }
+.action-row-btn.dry { background-color: #f1c40f; color: #7f4f00; }
+.action-row-btn.miscarriage { background-color: #f9d5d5; color: #b71c1c; }
+
+.breeding-alert { padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; margin-bottom: 12px; }
+.alert-success { background-color: #d4edda; color: #155724; }
+.alert-danger { background-color: #f9d5d5; color: #b71c1c; }
+.empty-sub-notice { text-align: center; color: #95a5a6; padding: 16px 0; font-size: 12px; }
+.disabled-select { background-color: #eaeded !important; color: #7f8c8d !important; font-size: 12px !important; }
+
+.heat-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; margin-top: 6px; }
+.heat-table th { background-color: #f8f9f9; padding: 8px; color: #7f8c8d; border-bottom: 2px solid #eaeded; }
+.heat-table td { padding: 10px 8px; border-bottom: 1px solid #eaeded; color: #2c3e50; }
+.heat-badge-glow { background-color: #fdf2e9; color: #e67e22; padding: 2px 6px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+.state-archived-pregnancy-ghost { border-left: 5px solid #bdc3c7 !important; background-color: #f2f4f4 !important; opacity: 0.6; }
+.ghost-alert-tag { color: #7f8c8d; font-size: 11px; font-weight: bold; }
+.disabled-notice-label { font-size: 11px; color: #bdc3c7; font-weight: bold; text-align: center; }

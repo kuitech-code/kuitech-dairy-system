@@ -1,0 +1,76 @@
+.health-log-page-container { padding: 4px; font-family: system-ui, sans-serif; }
+.health-form-card, .health-ledger-card { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); margin-bottom: 16px; }
+
+.health-form-card h2, .health-ledger-card h2 { font-size: 15px; color: #2c3e50; margin-top: 0; margin-bottom: 12px; padding-bottom: 4px; border-bottom: 1px solid #f2f4f4; }
+
+/* Admin provider toggle button styling headers */
+.admin-toggle-field-row { display: flex; flex-direction: column; margin-bottom: 14px; }
+.field-group-label { font-size: 12px; font-weight: bold; color: #7f8c8d; margin-bottom: 6px; }
+.toggle-button-group { display: flex; gap: 8px; background-color: #f4f6f6; padding: 4px; border-radius: 8px; }
+.toggle-choice { flex: 1; border: none; padding: 10px; font-size: 12px; font-weight: bold; border-radius: 6px; color: #7f8c8d; background: none; cursor: pointer; }
+.toggle-choice.active { background-color: #ffffff; color: #27ae60; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
+
+/* Form layout rows */
+.health-row-grid { display: flex; gap: 12px; }
+.health-input-field { display: flex; flex-direction: column; margin-bottom: 12px; flex: 1; }
+.health-input-field label { font-size: 12px; font-weight: bold; color: #7f8c8d; margin-bottom: 4px; }
+.health-input-field input, .health-input-field select, .health-input-field textarea { padding: 10px; border: 1px solid #ccd1d1; border-radius: 6px; font-size: 13px; background-color: #fafbfc; }
+
+/* Highlighting context card highlights elements */
+.highlighted-vet-entry-box { background-color: #ebf5fb; padding: 8px; border-radius: 6px; border-left: 4px solid #3498db; }
+.highlighted-farmer-entry-box { background-color: #fcfcfc; padding: 8px; border-radius: 6px; border-left: 4px solid #7f8c8d; }
+.active-withdrawal-entry-box { background-color: #fdf2e9; padding: 8px; border-radius: 6px; border-left: 4px solid #e67e22; }
+.disabled-withdrawal-entry-box { background-color: #eaeded; padding: 8px; border-radius: 6px; opacity: 0.6; }
+
+.commit-health-btn { width: 100%; padding: 12px; background-color: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 4px; }
+.commit-health-btn:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+
+/* Table card stack entries layout rows */
+.health-mobile-cards-stack { display: flex; flex-direction: column; gap: 8px; }
+.health-record-item-row { background-color: #fcfcfc; border: 1px solid #eaeded; padding: 12px; border-radius: 8px; }
+.health-card-header-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.health-date-label { color: #95a5a6; font-size: 12px; font-weight: bold; }
+
+.health-action-controls-cluster { display: flex; gap: 6px; }
+.inline-action-link-btn { background: none; border: none; font-size: 11px; font-weight: bold; cursor: pointer; padding: 2px 6px; border-radius: 4px; }
+.inline-action-link-btn.edit { color: #2980b9; background-color: #ebf5fb; }
+.inline-action-link-btn.delete { color: #c0392b; background-color: #f9d5d5; }
+
+.health-title-cost-flex { display: flex; justify-content: space-between; align-items: flex-start; }
+.health-title-cost-flex h4 { margin: 0; font-size: 13px; color: #2c3e50; }
+.diagnosis-highlight { color: #2980b9; font-weight: bold; }
+.health-cost-tag { color: #c0392b; font-size: 13px; font-weight: bold; }
+.med-line-text { margin: 4px 0 0 0; font-size: 12px; color: #7f8c8d; }
+
+/* Colored safety badges structures */
+.care-status-pill { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
+.care-status-pill.work { background-color: #fdf2e9; color: #e67e22; }
+.care-status-pill.done { background-color: #e8f8f5; color: #2ecc71; }
+
+.milk-safety-alert-badge { font-size: 10px; padding: 2px 8px; border-radius: 4px; font-weight: bold; }
+.milk-safety-alert-badge.dump { background-color: #f9ebea; color: #c0392b; border: 1px solid #c0392b; }
+.milk-safety-alert-badge.safe { background-color: #e8f8f5; color: #27ae60; }
+.milk-safety-alert-badge.neutral { background-color: #f2f4f4; color: #7f8c8d; }
+
+.empty-health-ledger-box { text-align: center; color: #95a5a6; padding: 20px 0; font-size: 12px; }
+
+/* Inline drawer adjustments */
+.inline-health-adjustment-drawer { background-color: #f2f4f4; padding: 10px; border-radius: 6px; margin-top: 6px; border: 1px solid #bdc3c7; }
+.inline-edit-field { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.inline-edit-field label { font-size: 11px; font-weight: bold; color: #5d6d7e; }
+.inline-edit-field input, .inline-edit-field select { width: 130px; padding: 4px; border: 1px solid #ccd1d1; border-radius: 4px; font-size: 12px; background: white; }
+
+.inline-edit-buttons-row { display: flex; gap: 6px; margin-top: 8px; }
+.inline-save-adjust-btn { flex: 1; background-color: #27ae60; color: white; border: none; padding: 6px; border-radius: 4px; font-weight: bold; font-size: 11px; cursor: pointer; }
+.inline-cancel-adjust-btn { flex: 1; background-color: #7f8c8d; color: white; border: none; padding: 6px; border-radius: 4px; font-weight: bold; font-size: 11px; cursor: pointer; }
+
+/* Pagination footers layout navigation */
+.health-pagination-deck { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f2f4f4; }
+.health-pagination-deck button { background-color: #f4f6f6; border: 1px solid #d5dbdb; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #34495e; cursor: pointer; }
+.health-pagination-deck button:disabled { color: #bdc3c7; cursor: not-allowed; border-color: #eaeded; }
+.page-indicator-text { font-size: 12px; color: #34495e; }
+
+.health-alert { padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; margin-bottom: 12px; }
+.alert-success { background-color: #d4edda; color: #155724; }
+.alert-danger { background-color: #f9d5d5; color: #b71c1c; }
+input:disabled { background-color: #eaeded !important; color: #95a5a6 !important; cursor: not-allowed; border-color: #d5dbdb !important; }

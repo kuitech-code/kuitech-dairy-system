@@ -1,0 +1,267 @@
+.cows-container {
+  padding: 12px;
+  background-color: #f5f7f6;
+  font-family: system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+/* Card Wrappers */
+.form-card, .directory-card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 18px;
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 6px;
+}
+
+/* Grid layout rules for form elements */
+.input-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.input-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-bottom: 12px;
+}
+
+.input-field label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #7f8c8d;
+  margin-bottom: 4px;
+}
+
+.input-field input, .input-field select, .input-field textarea {
+  padding: 10px;
+  border: 1px solid #ccd1d1;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fcfcfc;
+}
+
+.input-field textarea {
+  resize: vertical;
+  height: 60px;
+}
+
+/* Highlights the expected date box when it pops into view */
+.dynamic-field {
+  background-color: #f9ebea;
+  padding: 8px;
+  border-radius: 6px;
+  border-left: 4px solid #e74c3c;
+}
+
+/* Buttons */
+.submit-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* Status Feedback Alerts */
+.error-banner { background-color: #f9d5d5; color: #b71c1c; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; }
+.success-banner { background-color: #d4edda; color: #155724; padding: 10px; border-radius: 6px; margin-bottom: 12px; font-size: 14px; }
+.status-text { text-align: center; color: #95a5a6; padding: 20px 0; }
+
+/* Mobile Directory List Layout */
+.mobile-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mobile-row-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e8e8;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.mobile-row-card:active {
+  transform: scale(0.98); /* Native press-down bounce feel */
+}
+
+.row-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.row-avatar {
+  font-size: 24px;
+}
+
+.row-main h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #2c3e50;
+}
+
+.row-main p {
+  margin: 2px 0 0 0;
+  font-size: 12px;
+  color: #7f8c8d;
+}
+
+.row-badge-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.gender-sub {
+  font-size: 11px;
+  color: #bdc3c7;
+}
+
+.state-badge {
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* Color Coding Borders & Badges Based on Cow Statuses */
+.status-active { border-left: 5px solid #2ecc71; }
+.status-active .state-badge { background-color: #e8f8f5; color: #2ecc71; }
+
+.status-pregnant { border-left: 5px solid #9b59b6; }
+.status-pregnant .state-badge { background-color: #f4ecf7; color: #9b59b6; }
+
+.status-dry { border-left: 5px solid #f1c40f; }
+.status-dry .state-badge { background-color: #fef9e7; color: #f1c40f; }
+
+.status-sick { border-left: 5px solid #e74c3c; }
+.status-sick .state-badge { background-color: #f9ebea; color: #e74c3c; }
+
+/* Image picker layout for smartphone camera aspect ratios */
+.image-upload-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.image-picker-box {
+  width: 100px;
+  height: 100px;
+  border: 2px dashed #bdc3c7;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+  background-color: #fafbfc;
+}
+
+.picker-placeholder {
+  text-align: center;
+}
+
+.picker-placeholder span {
+  font-size: 24px;
+}
+
+.picker-placeholder p {
+  margin: 4px 0 0 0;
+  font-size: 11px;
+  color: #95a5a6;
+  font-weight: bold;
+}
+
+.preview-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Round circle layout if animal has a real uploaded picture */
+.row-image-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #d5dbdb;
+}
+
+/* Color updates for your strict custom statuses */
+.status-calf { border-left: 5px solid #3498db; }
+.status-calf .state-badge { background-color: #ebf5fb; color: #3498db; }
+
+.status-heifer { border-left: 5px solid #e67e22; }
+.status-heifer .state-badge { background-color: #fdf2e9; color: #e67e22; }
+
+.status-pregnant { border-left: 5px solid #9b59b6; }
+.status-pregnant .state-badge { background-color: #f4ecf7; color: #9b59b6; }
+
+.status-milking { border-left: 5px solid #2ecc71; }
+.status-milking .state-badge { background-color: #e8f8f5; color: #2ecc71; }
+
+/* Styling text labels inside parent brackets */
+.opt-text {
+  font-size: 11px;
+  color: #bdc3c7;
+  font-weight: normal;
+}
+
+/* Pagination Control Deck styles */
+.mobile-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f2f6;
+}
+
+.mobile-pagination button {
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.mobile-pagination button:disabled {
+  background-color: #d5dbdb;
+  color: #7f8c8d;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  font-size: 13px;
+  color: #34495e;
+}
+/* Color updates for archived sold/died cattle */
+.status-archived { border-left: 5px solid #7f8c8d; }
+.status-archived .state-badge { background-color: #f2f4f4; color: #7f8c8d; }

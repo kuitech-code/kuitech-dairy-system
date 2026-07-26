@@ -1,0 +1,396 @@
+.profile-mobile-container {
+  padding: 12px;
+  background-color: #f5f7f6;
+  min-height: 100vh;
+  font-family: system-ui, sans-serif;
+}
+
+.back-link-btn {
+  background: none;
+  border: none;
+  color: #27ae60;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 14px;
+}
+
+/* Banner layout details */
+.profile-header-card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  margin-bottom: 16px;
+}
+
+.avatar-frame {
+  width: 65px;
+  height: 65px;
+  background-color: #f0f3f4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid #e5e8e8;
+}
+
+.profile-real-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-emoji-img {
+  font-size: 28px;
+}
+
+.header-info h2 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tag-sub {
+  margin: 0 0 2px 0;
+  font-size: 13px;
+  color: #7f8c8d;
+}
+
+.meta-sub {
+  margin: 0;
+  font-size: 12px;
+  color: #bdc3c7;
+  font-weight: bold;
+}
+
+/* Dynamic badges matching Cows.css core states */
+.status-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: white;
+}
+.tag-calf { background-color: #3498db; }
+.tag-heifer { background-color: #e67e22; }
+.tag-pregnant { background-color: #9b59b6; }
+.tag-milking { background-color: #2ecc71; }
+
+/* Tab scrolling controls */
+.tabs-navigation {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+
+.tabs-navigation::-webkit-scrollbar {
+  display: none; /* Hides row scrollbars on mobile layout view */
+}
+
+.tab-link {
+  background-color: #eaeded;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 16px;
+  color: #7f8c8d;
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tab-link.active {
+  background-color: #27ae60;
+  color: white;
+}
+
+/* Overview Layout Specs */
+.bio-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 4px;
+  border-bottom: 1px solid #eaeded;
+  font-size: 14px;
+  color: #34495e;
+}
+
+.dim-text {
+  color: #bdc3c7;
+  font-weight: normal;
+}
+
+.special-alert-row {
+  background-color: #f4ecf7;
+  border-bottom: 1px solid #d2b4de;
+  padding: 10px 8px;
+  border-radius: 4px;
+}
+
+.notes-display-box {
+  margin-top: 14px;
+  background-color: #ebf5fb;
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+}
+
+.notes-display-box label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #2980b9;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.notes-display-box p {
+  margin: 0;
+  font-size: 13px;
+  color: #34495e;
+  line-height: 1.4;
+}
+
+/* Local log styles */
+.log-card {
+  background: white;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  border: 1px solid #e5e8e8;
+}
+
+.log-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #95a5a6;
+  margin-bottom: 6px;
+}
+
+.allocation-pill {
+  background-color: #f4f6f6;
+  color: #7f8c8d;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.residue-alert-badge {
+  background-color: #e74c3c;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.milk-metrics-grid {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #5d6d7e;
+}
+
+.bold-total {
+  color: #27ae60;
+}
+
+.empty-module-placeholder {
+  text-align: center;
+  padding: 30px 10px;
+  color: #95a5a6;
+}
+
+.empty-module-placeholder span {
+  font-size: 32px;
+}
+
+.empty-module-placeholder p {
+  font-size: 13px;
+  margin: 6px 0 0 0;
+}
+
+.profile-mobile-container {
+  padding: 12px;
+  background-color: #f5f7f6;
+  min-height: 100vh;
+  font-family: system-ui, sans-serif;
+}
+
+.back-link-btn {
+  background: none;
+  border: none;
+  color: #27ae60;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 12px;
+  padding: 0;
+}
+
+/* Header style with a subtle edit layout trigger button */
+.profile-header-card {
+  background: white;
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  position: relative;
+}
+
+.avatar-frame {
+  width: 55px;
+  height: 55px;
+  background-color: #f2f4f4;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.profile-real-img { width: 100%; height: 100%; object-fit: cover; }
+.profile-emoji-img { font-size: 24px; }
+
+.header-info h2 { margin: 0 0 4px 0; font-size: 16px; color: #2c3e50; }
+.tag-sub { margin: 0; font-size: 12px; color: #7f8c8d; }
+.meta-sub { margin: 2px 0 0 0; font-size: 11px; color: #bdc3c7; font-weight: bold; }
+
+.edit-trigger-btn {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  background: #f4f6f6;
+  border: 1px solid #d5dbdb;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #5d6d7e;
+  cursor: pointer;
+}
+
+/* Edit Mode Box Styling */
+.edit-dropdown-form {
+  background-color: #fefefe;
+  border: 1px solid #27ae60;
+  padding: 14px;
+  border-radius: 8px;
+  margin-top: 10px;
+  margin-bottom: 16px;
+}
+
+.edit-dropdown-form h3 { margin-top: 0; font-size: 14px; color: #27ae60; }
+
+.edit-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.edit-field label { font-size: 12px; font-weight: bold; color: #7f8c8d; margin-bottom: 2px; }
+.edit-field input, .edit-field select, .edit-field textarea {
+  padding: 8px; border: 1px solid #ccd1d1; border-radius: 4px; font-size: 13px;
+}
+
+.save-edit-btn {
+  background-color: #27ae60; color: white; border: none; padding: 10px;
+  width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer;
+}
+
+/* Tabs list */
+.tabs-navigation { display: flex; gap: 6px; overflow-x: auto; margin-bottom: 12px; }
+.tab-link {
+  background-color: #eaeded; border: none; padding: 6px 12px; border-radius: 12px;
+  color: #7f8c8d; font-weight: bold; font-size: 12px; white-space: nowrap; cursor: pointer;
+}
+.tab-link.active { background-color: #27ae60; color: white; }
+
+/* Table specific stylings */
+.milk-history-tab-pane { background: white; padding: 12px; border-radius: 8px; border: 1px solid #e5e8e8; }
+.ledger-header-row h4 { margin: 0; font-size: 14px; color: #2c3e50; }
+.ledger-subtext { margin: 2px 0 10px 0; font-size: 11px; color: #95a5a6; }
+
+.profile-table-container { overflow-x: auto; margin-bottom: 12px; }
+.profile-data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+.profile-data-table th { background-color: #f8f9f9; padding: 8px; color: #7f8c8d; font-weight: 600; border-bottom: 2px solid #eaeded; }
+.profile-data-table td { padding: 10px 8px; border-bottom: 1px solid #eaeded; color: #34495e; }
+
+.date-cell { font-weight: 600; }
+.bold-total-cell { font-weight: bold; color: #27ae60; display: flex; align-items: center; gap: 4px; }
+
+.profile-table-residue-warn-badge {
+  background-color: #e74c3c; color: white; font-size: 9px; padding: 1px 4px; border-radius: 3px; font-weight: bold;
+}
+
+/* Custom Navigation design row */
+.pagination-controls-navigation-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+.pagination-btn { background-color: #f4f6f6; border: 1px solid #d5dbdb; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #34495e; cursor: pointer; }
+.pagination-btn:disabled { color: #bdc3c7; cursor: not-allowed; border-color: #eaeded; }
+.pagination-page-indicator-text { font-size: 12px; color: #2c3e50; }
+.total-records-count { display: block; text-align: center; color: #95a5a6; font-size: 10px; }
+
+/* Empty state blocks */
+.empty-ledger-box { text-align: center; padding: 30px 10px; color: #95a5a6; font-size: 13px; background: white; border-radius: 8px; }
+.empty-ledger-box p { margin: 4px 0 0 0; display: inline; }
+
+/* Placeholder message styles */
+.placeholder-tab-message {
+  background-color: #fcfcfc; border: 1px dashed #bdc3c7; padding: 24px 16px; text-align: center; border-radius: 8px; margin-top: 10px;
+}
+.placeholder-tab-message p { margin: 0; font-size: 14px; color: #34495e; }
+.placeholder-tab-message .subtext { font-size: 12px; color: #95a5a6; margin-top: 4px; }
+
+.bio-row { display: flex; justify-content: space-between; padding: 10px 4px; border-bottom: 1px solid #eaeded; font-size: 13px; }
+.notes-display-box { margin-top: 12px; background-color: #ebf5fb; padding: 10px; border-radius: 6px; }
+.notes-display-box label { font-size: 11px; font-weight: bold; color: #2980b9; display: block; }
+.notes-display-box p { margin: 2px 0 0 0; font-size: 13px; color: #34495e; }
+
+/* Archive action links */
+.archive-pill-btn {
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.archive-pill-btn.sell { background-color: #e8f8f5; color: #2ecc71; border: 1px solid #2ecc71; }
+.archive-pill-btn.die { background-color: #fceeee; color: #e74c3c; border: 1px solid #e74c3c; }
+
+/* Dynamic badge background for archived entries */
+.tag-archivedsold, .tag-archiveddied { background-color: #7f8c8d; }
+
+/* Grey out header layout for ghost assets */
+.ghost-profile-mode {
+  background-color: #eaeded !important;
+  opacity: 0.75;
+  border-left: 5px solid #7f8c8d !important;
+}
+
+.deactivated-warning-text {
+  font-size: 11px;
+  font-weight: bold;
+  color: #c0392b;
+  margin: 4px 0 0 0;
+}
+
+.danger-zone-divider {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 2px dashed #e74c3c;
+}
+.danger-zone-divider h4 { margin: 0 0 4px 0; font-size: 12px; color: #c0392b; }
+.danger-zone-divider p { margin: 0; font-size: 11px; color: #95a5a6; }
+

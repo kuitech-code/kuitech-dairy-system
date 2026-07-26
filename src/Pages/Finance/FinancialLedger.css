@@ -1,0 +1,103 @@
+.finance-ledger-page-container { padding: 4px; font-family: system-ui, sans-serif; }
+.finance-card-box { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 16px; }
+.finance-card-box h2 { font-size: 13px; color: #2c3e50; margin-top: 0; margin-bottom: 12px; padding-bottom: 4px; border-bottom: 1px solid #f2f4f4; }
+
+/* 🌟 Section Header Title Styling */
+.finance-section-title-header h3 { margin: 0 0 6px 4px; font-size: 13px; font-weight: bold; color: #5d6d7e; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* 🌟 New Flexbox Mobile Layout Matrix Grid Rows */
+.financial-brief-flexbox-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.brief-flex-card {
+  flex: 1;
+  background: white;
+  padding: 10px 6px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-width: 0; /* Prevents text overflow breaks */
+}
+
+.card-label { font-size: 10px; font-weight: bold; color: #95a5a6; text-transform: uppercase; margin-bottom: 2px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 100%; }
+.brief-flex-card p { margin: 0; font-size: 13px; font-weight: 800; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; width: 100%; }
+
+.green-gain p { color: #2ecc71; }
+.red-loss p { color: #e74c3c; }
+
+/* Profit flex colors types indicators */
+.net-profit-yield.surplus { background-color: #e8f8f5; border: 1px solid #2ecc71; }
+.net-profit-yield.surplus p { color: #27ae60; }
+.net-profit-yield.deficit { background-color: #f9ebea; border: 1px solid #e74c3c; }
+.net-profit-yield.deficit p { color: #c0392b; }
+
+/* Breakdown row sizes metrics settings */
+.breakdown-row { margin-bottom: 14px; }
+.breakdown-sub { padding: 6px; background-color: #fdfefe; border: 1px dashed #d5dbdb; }
+.breakdown-sub small { font-size: 11px; font-weight: bold; color: #34495e; }
+
+/* Persistent pricing styles widgets */
+.settings-price-card { background-color: #fcfcfc; border: 1px solid #eaeded; }
+.price-display-deck-row { display: flex; justify-content: space-between; align-items: center; }
+.price-label-text { margin: 0; font-size: 11px; color: #7f8c8d; font-weight: bold; }
+.price-display-deck-row h3 { margin: 2px 0 0 0; font-size: 16px; color: #2c3e50; }
+.price-adjust-trigger-btn { background-color: #3498db; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer; }
+
+.price-inline-adjust-form { display: flex; gap: 4px; align-items: center; }
+.price-inline-adjust-form input { width: 55px; padding: 6px; border: 1px solid #bdc3c7; border-radius: 4px; font-size: 12px; font-weight: bold; text-align: center; }
+.price-save-action-btn { background-color: #27ae60; color: white; border: none; padding: 6px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; cursor: pointer; }
+.price-cancel-action-btn { background: none; border: none; color: #95a5a6; font-size: 13px; font-weight: bold; cursor: pointer; }
+
+/* In-app entry forms togglers card lines */
+.form-toggle-bar { display: flex; gap: 8px; margin-bottom: 12px; background-color: #f4f6f6; padding: 4px; border-radius: 8px; }
+.toggle-tab { flex: 1; border: none; padding: 8px; font-size: 12px; font-weight: bold; border-radius: 6px; color: #7f8c8d; background: none; cursor: pointer; }
+.toggle-tab.active { background-color: #ffffff; color: #2c3e50; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+.finance-form-row { display: flex; gap: 10px; }
+.finance-input-element { display: flex; flex-direction: column; margin-bottom: 10px; }
+.finance-input-element label { font-size: 11px; font-weight: bold; color: #7f8c8d; margin-bottom: 2px; }
+.finance-input-element input, .finance-input-element select { padding: 8px; border: 1px solid #ccd1d1; border-radius: 4px; font-size: 13px; background-color: #fafbfc; }
+
+.commit-tx-btn { width: 100%; padding: 12px; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 4px; }
+.commit-tx-btn.expense { background-color: #c0392b; }
+.commit-tx-btn.income { background-color: #27ae60; }
+
+/* Filter Statement Table views elements */
+.table-header-flex-controls-deck { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid #f2f4f4; padding-bottom: 6px; }
+.table-header-flex-controls-deck h2 { border: none; margin: 0; }
+.controls-flex-inputs-row { display: flex; gap: 8px; width: 100%; }
+.month-search-input { flex: 1; padding: 6px; border: 1px solid #ccd1d1; border-radius: 4px; font-size: 12px; background-color: #fafbfc; font-family: sans-serif; }
+.type-select-dropdown { flex: 1; padding: 6px; border: 1px solid #ccd1d1; border-radius: 4px; font-size: 12px; background-color: #fafbfc; }
+
+/* Statement mobile grid output lists rows */
+.statement-cards-mobile-stack { display: flex; flex-direction: column; gap: 8px; }
+.statement-card-row-item { background-color: #fdfefe; border: 1px solid #eaeded; padding: 12px; border-radius: 8px; }
+.statement-card-row-item.income { border-left: 5px solid #2ecc71; }
+.statement-card-row-item.expense { border-left: 5px solid #e74c3c; }
+
+.statement-row-top-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.statement-row-date { font-size: 11px; color: #95a5a6; font-weight: bold; }
+.statement-row-cash-badge { font-size: 12px; font-weight: bold; }
+.statement-row-cash-badge.gain { color: #27ae60; }
+.statement-row-cash-badge.loss { color: #c0392b; }
+
+.statement-row-body-line h4 { margin: 0; font-size: 13px; color: #2c3e50; }
+.statement-category-tag { display: inline-block; background-color: #f2f4f4; color: #7f8c8d; font-size: 9px; padding: 1px 4px; border-radius: 3px; font-weight: bold; margin-top: 2px; }
+.statement-notes-subtext { margin: 4px 0 0 0; font-size: 11px; color: #95a5a6; }
+.manual-tx-delete-trigger { background: none; border: none; color: #e74c3c; font-size: 10px; font-weight: bold; cursor: pointer; padding: 4px 0 0 0; display: block; }
+
+.finance-pagination-deck { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 10px; border-top: 1px solid #f2f4f4; }
+.finance-pagination-deck button { background-color: #f4f6f6; border: 1px solid #d5dbdb; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #34495e; cursor: pointer; }
+.finance-pagination-deck button:disabled { color: #bdc3c7; cursor: not-allowed; }
+.page-indicator-text { font-size: 12px; color: #34495e; }
+
+.empty-ledger-notice-card { text-align: center; color: #95a5a6; padding: 20px 0; font-size: 12px; }
+.finance-flash-banner.success { background-color: #d4edda; color: #155724; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
+/* .finance-flash-banner.error { background-color: #f8d7da; color: #721c24; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 10px; } */

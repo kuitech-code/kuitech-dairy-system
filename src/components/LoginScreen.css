@@ -1,0 +1,46 @@
+.login-full-screen-cover {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #16a085; /* Beautiful, professional deep teal background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 16px;
+  z-index: 99999;
+}
+
+.login-modal-card-box {
+  background: white;
+  padding: 24px 20px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 330px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.login-branding-icon { font-size: 36px; margin-bottom: 6px; }
+.login-modal-card-box h2 { margin: 0 0 4px 0; font-size: 18px; color: #2c3e50; }
+.login-subtext-meta { margin: 0 0 16px 0; font-size: 12px; color: #95a5a6; line-height: 1.4; }
+
+.login-input-wrapper-field { display: flex; flex-direction: column; text-align: left; margin-bottom: 12px; }
+.login-input-wrapper-field label { font-size: 11px; font-weight: bold; color: #7f8c8d; margin-bottom: 3px; }
+.login-input-wrapper-field input { padding: 11px; border: 1px solid #ccd1d1; border-radius: 6px; font-size: 14px; background-color: #fafbfc; }
+
+.login-submit-action-btn { width: 100%; padding: 12px; background-color: #16a085; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 4px; }
+
+/* Biometric Fingerprint Section styles */
+.biometric-divider-line { display: flex; align-items: center; text-align: center; margin: 16px 0; }
+.biometric-divider-line::before, .biometric-divider-line::after { content: ''; flex: 1; border-bottom: 1px solid #eaeded; }
+.biometric-divider-line span { padding: 0 8px; font-size: 9px; color: #bdc3c7; font-weight: bold; letter-spacing: 0.5px; }
+
+.biometric-scan-touch-btn {
+  width: 100%; padding: 12px; background-color: #ffffff; color: #2c3e50;
+  border: 2px solid #bdc3c7; border-radius: 6px; font-weight: bold; font-size: 12px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.biometric-scan-touch-btn:active { background-color: #f2f4f4; transform: scale(0.99); }
+
+.login-error-banner { background-color: #f9d5d5; color: #b71c1c; padding: 8px; border-radius: 4px; font-size: 12px; margin-bottom: 12px; font-weight: bold; text-align: left; }
+.security-footer-notice { display: block; margin-top: 16px; font-size: 9px; color: #bdc3c7; font-weight: 500; }

@@ -1,0 +1,94 @@
+/* Master Mobile Phone Container Structure */
+.app-mobile-shell {
+  min-height: 100vh;
+  background-color: #f5f7f6;
+  font-family: system-ui, sans-serif;
+  padding-top: 56px; /* Offset spacing below floating header bar */
+}
+
+/* Fixed Floating Header Bar Layout */
+.main-app-top-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 56px;
+  background-color: #27ae60;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.farmer-branding-logo { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 16px; }
+.hamburger-menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 4px; }
+
+/* Dim Overlay Backdrop */
+.drawer-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1100;
+}
+
+/* Sliding Side Drawer Menu Navigation Container */
+.slide-out-navigation-drawer {
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  width: 260px;
+  background-color: #ffffff;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 12px rgba(0,0,0,0.15);
+  transform: translateX(-100%); /* Hides menu offscreen by default */
+  transition: transform 0.3s ease-out;
+}
+
+.slide-out-navigation-drawer.open {
+  transform: translateX(0); /* Slides drawer fully into frame */
+}
+
+.drawer-header-branding { background-color: #2c3e50; color: white; padding: 16px; }
+.drawer-header-branding h3 { margin: 0; font-size: 15px; }
+.drawer-header-branding p { margin: 4px 0 0 0; font-size: 11px; color: #bdc3c7; }
+
+/* Menu Action Links list stack */
+.drawer-links-stack { padding: 12px 6px; display: flex; flex-direction: column; gap: 4px; flex: 1; overflow-y: auto; }
+.nav-anchor {
+  text-align: left; background: none; border: none; padding: 12px 14px;
+  border-radius: 6px; font-size: 14px; font-weight: 600; color: #5d6d7e; cursor: pointer;
+}
+.nav-anchor:active { background-color: #f2f4f4; }
+.nav-anchor.active { background-color: #e8f8f5; color: #27ae60; border-left: 4px solid #27ae60; }
+
+.drawer-footer-logout { padding: 12px; border-top: 1px solid #eaeded; }
+.logout-action-btn { width: 100%; text-align: left; background: none; border: none; padding: 10px; color: #c0392b; font-weight: bold; font-size: 13px; cursor: pointer; }
+
+/* Adaptive Workspace layout sizing */
+.master-app-content-viewport { padding: 8px; }
+.placeholder-screen-card { background: white; padding: 20px; border-radius: 12px; margin: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
+.placeholder-screen-card h2 { font-size: 16px; color: #2c3e50; margin-top: 0; }
+.placeholder-screen-card p { font-size: 13px; color: #7f8c8d; line-height: 1.5; }
+
+/* 🔒 FULL-SCREEN SECURITY LOCKDOWN SCREEN STYLING */
+.license-block-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #1a252f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 9999;
+}
+.license-modal-card {
+  background: white; padding: 24px; border-radius: 16px; max-width: 320px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+.license-modal-card h2 { margin-top: 0; font-size: 18px; color: #c0392b; }
+.license-modal-card p { font-size: 13px; color: #7f8c8d; line-height: 1.5; margin-bottom: 16px; }
+.license-modal-card input { width: 100%; padding: 12px; border: 2px solid #bdc3c7; border-radius: 8px; text-align: center; font-size: 16px; font-weight: bold; letter-spacing: 1px; box-sizing: border-box; margin-bottom: 12px; }
+.license-modal-card button { width: 100%; padding: 12px; background-color: #c0392b; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; }
+.license-modal-card button:hover { background-color: #a93226; }
+.license-modal-card small { display: block; margin-top: 14px; font-size: 10px; color: #bdc3c7; }

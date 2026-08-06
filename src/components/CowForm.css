@@ -1,16 +1,150 @@
-.cow-form-component { width: 100%; font-family: sans-serif; }
-.input-row { display: flex; gap: 10px; margin-bottom: 8px; }
-.input-field { display: flex; flex-direction: column; flex: 1; margin-bottom: 8px; }
-.input-field label { font-size: 12px; font-weight: bold; color: #7f8c8d; margin-bottom: 2px; }
-.input-field input, .input-field select, .input-field textarea { padding: 8px; border: 1px solid #ccd1d1; border-radius: 6px; font-size: 13px; }
-.input-field textarea { height: 50px; resize: vertical; }
-.dynamic-field { background-color: #fcf3f2; padding: 6px; border-radius: 4px; border-left: 3px solid #e74c3c; }
-.form-error-banner { background-color: #f9d5d5; color: #b71c1c; padding: 8px; border-radius: 4px; font-size: 13px; margin-bottom: 10px; font-weight: bold; }
-.image-upload-section { display: flex; justify-content: center; margin-bottom: 10px; }
-.image-picker-box { width: 80px; height: 80px; border: 2px dashed #bdc3c7; border-radius: 50%; display: flex; justify-content: center; align-items: center; overflow: hidden; cursor: pointer; }
-.picker-placeholder { text-align: center; color: #95a5a6; font-size: 11px; }
-.preview-thumbnail { width: 100%; height: 100%; object-fit: cover; }
-.form-action-buttons { display: flex; gap: 8px; margin-top: 10px; }
-.form-save-btn { flex: 2; padding: 10px; background-color: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-.form-cancel-btn { flex: 1; padding: 10px; background-color: #95a5a6; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-input:disabled { background-color: #eaeded; color: #7f8c8d; cursor: not-allowed; }
+.cow-form-component {
+  width: 100%;
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.input-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 220px;
+  margin-bottom: 8px;
+  min-width: 0;
+}
+
+.input-field label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #7f8c8d;
+  margin-bottom: 2px;
+}
+
+.input-field input,
+.input-field select,
+.input-field textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ccd1d1;
+  border-radius: 6px;
+  font-size: 13px;
+  background-color: #fafbfc;
+}
+
+.input-field textarea {
+  height: 50px;
+  resize: vertical;
+}
+
+.dynamic-field {
+  background-color: #fcf3f2;
+  padding: 6px;
+  border-radius: 4px;
+  border-left: 3px solid #e74c3c;
+}
+
+.form-error-banner {
+  background-color: #f9d5d5;
+  color: #b71c1c;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.image-upload-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.image-picker-box {
+  width: 80px;
+  height: 80px;
+  border: 2px dashed #bdc3c7;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.picker-placeholder {
+  text-align: center;
+  color: #95a5a6;
+  font-size: 11px;
+}
+
+.preview-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.form-action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.form-save-btn {
+  flex: 1 1;
+  padding: 8px 10px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  /* min-height: 18px; */
+}
+
+.form-cancel-btn {
+  flex: 0 1;
+  padding: 9px 10px;
+  background-color: #95a5a6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+input:disabled {
+  background-color: #eaeded;
+  color: #7f8c8d;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .input-row {
+    gap: 8px;
+    flex-direction: column;
+  }
+
+  .input-field {
+    flex: 1 1 100%;
+  }
+
+  .form-action-buttons {
+    flex-direction: column;
+  }
+
+  .form-save-btn,
+  .form-cancel-btn {
+    width: 100%;
+  }
+}

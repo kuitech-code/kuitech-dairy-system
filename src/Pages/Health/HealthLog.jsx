@@ -186,7 +186,7 @@ function HealthLog() {
       
       {/* SECTION 1: LOGGING INPUT PANEL DESK */}
       <div className="health-form-card">
-        <h2>💉 Record Treatment & Health Logs</h2>
+        <h2>Treatment & Health Logs</h2>
         
         {successMessage && <div className="health-alert alert-success">{successMessage}</div>}
         {errorMessage && <div className="health-alert alert-danger">{errorMessage}</div>}
@@ -197,17 +197,17 @@ function HealthLog() {
           <div className="admin-toggle-field-row">
             <label className="field-group-label">Who Administered Treatment? *</label>
             <div className="toggle-button-group">
-              <button type="button" className={administeredBy === 'Farmer' ? 'toggle-choice active' : 'toggle-choice'} onClick={() => setAdministeredBy('Farmer')}>Farmer / Farm Staff</button>
-              <button type="button" className={administeredBy === 'Vet' ? 'toggle-choice active' : 'toggle-choice'} onClick={() => setAdministeredBy('Vet')}>Private Vet / Technician</button>
+              <button type="button" className={administeredBy === 'Farmer' ? 'toggle-choice active' : 'toggle-choice'} onClick={() => setAdministeredBy('Farmer')}>Farmer / Farm's Staff</button>
+              <button type="button" className={administeredBy === 'Vet' ? 'toggle-choice active' : 'toggle-choice'} onClick={() => setAdministeredBy('Vet')}>Vet</button>
             </div>
           </div>
 
           <div className="health-row-grid">
             <div className="health-input-field">
-              <label>Select Animal Target *</label>
+              <label>Select Cow *</label>
               {activeHerd.length === 0 ? (
                 <select disabled className="disabled-select">
-                  <option>⚠️ No active cattle registered in registry pools.</option>
+                  <option>No active cow registered.</option>
                 </select>
               ) : (
                 <select value={selectedCowId} onChange={(e) => setSelectedCowId(e.target.value)} required>
@@ -229,12 +229,12 @@ function HealthLog() {
             <div className="health-input-field">
               <label>Medication Administered *</label>
               {/* 🔒 UNLOCKED STANDARD TEXT INPUT FIELD */}
-              <input type="text" placeholder="e.g. Levafas Diamond, Penistrep" value={medication} onChange={(e) => setMedication(e.target.value)} required />
+              <input type="text" placeholder="e.g. Amoxyline Diamond..." value={medication} onChange={(e) => setMedication(e.target.value)} required />
             </div>
           </div>
 
           <div className="health-row-grid">
-            {/* 🔒 CONSTRAINT: Hide Vet Name input box entirely if treatment was self-administered by Farmer */}
+            {/* CONSTRAINT: Hide Vet Name input box entirely if treatment was self-administered by Farmer */}
             {administeredBy === 'Vet' ? (
               <div className="health-input-field highlighted-vet-entry-box">
                 <label>Veterinarian Name *</label>
@@ -272,25 +272,24 @@ function HealthLog() {
               {/* 🔒 UPDATED STATUS VALUES TYPE RULES: One-time vs Chronic */}
               <label>Nature of Condition *</label>
               <select value={treatmentStatus} onChange={(e) => setTreatmentStatus(e.target.value)} required>
-                <option value="One-time">One-time / Acute Condition</option>
-                <option value="Chronic">Chronic / Follow-up Required</option>
+                <option value="One-time">First time</option>
+                <option value="Chronic">Reccuring / Follow-up Required</option>
               </select>
             </div>
           </div>
 
-          <button type="submit" className="commit-health-btn" disabled={activeHerd.length === 0}>
-            💾 Commit Medical Sheet Record
+          <button type="submit" className="commit-health-btn" disabled={activeHerd.length === 0}>Submit Medical  Record
           </button>
         </form>
       </div>
 
       {/* SECTION 2: THE HISTORICAL LEDGER OUTPUT DATA GRID VIEWPORT */}
       <div className="health-ledger-card">
-        <h2>📋 Farm Medical History Ledger Sheet ({healthLedger.length})</h2>
+        <h2>Medical History ({healthLedger.length})</h2>
         
         {healthLedger.length === 0 ? (
           <div className="empty-health-ledger-box">
-            <p>🩺 No historical clinical treatments or vaccination entries registered yet.</p>
+            <p>No historical clinical treatments or vaccination entries registered yet.</p>
           </div>
         ) : (
           <>
@@ -302,11 +301,11 @@ function HealthLog() {
                 return (
                   <div key={log.id} className="health-record-item-row">
                     <div className="health-card-header-line">
-                      <span className="health-date-label">📅 {new Date(log.treatmentDate).toLocaleDateString()}</span>
+                      <span className="health-date-label"> {new Date(log.treatmentDate).toLocaleDateString()}</span>
                       
                       <div className="health-action-controls-cluster">
-                        <button type="button" className="inline-action-link-btn edit" onClick={() => handleStartInlineEdit(log)}>✏️ Edit</button>
-                        <button type="button" className="inline-action-link-btn delete" onClick={() => handleDeleteRecord(log.id)}>✕ Purge</button>
+                        <button type="button" className="inline-action-link-btn edit" onClick={() => handleStartInlineEdit(log)}>Edit</button>
+                        <button type="button" className="inline-action-link-btn delete" onClick={() => handleDeleteRecord(log.id)}>Delete</button>
                       </div>
                     </div>
 
@@ -314,11 +313,11 @@ function HealthLog() {
                       /* IN-LINE HUMAN PROOFING ADJUSTMENT PANEL VIEW DRAWER */
                       <div className="inline-health-adjustment-drawer animate-fade">
                         <div className="inline-edit-field">
-                          <label>Diagnosis Adjust:</label>
+                          <label>Diagnosis:</label>
                           <input type="text" value={editDiagnosis} onChange={(e) => setEditDiagnosis(e.target.value)} />
                         </div>
                         <div className="inline-edit-field">
-                          <label>Cost (KSh Adjustment):</label>
+                          <label>Cost (KSh):</label>
                           <input type="number" value={editCost} onChange={(e) => setEditCost(e.target.value)} />
                         </div>
                         {log.withdrawalDays !== undefined && (
@@ -328,7 +327,7 @@ function HealthLog() {
                           </div>
                         )}
                         <div className="inline-edit-field">
-                          <label>Condition Nature:</label>
+                          <label>Condition's Nature:</label>
                           <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)}>
                             <option value="One-time">One-time</option>
                             <option value="Chronic">Chronic</option>
@@ -347,22 +346,22 @@ function HealthLog() {
                             <strong>{log.cowName}</strong> <small>({log.cowTag})</small> • <span className="diagnosis-highlight">{log.diagnosis}</span>
                           </h4>
                           {/* 🔒 LOCALIZED CURRENCY LABEL FLAG */}
-                          <span className="health-cost-tag">KSh {log.cost.toLocaleString()}</span>
+                          <span className="health-cost-tag">Ksh {log.cost.toLocaleString()}</span>
                         </div>
                         <p className="med-line-text">Drug: <strong>{log.medication}</strong> • Administered By: {log.vetName}</p>
                         
                         <div className="health-status-badge-line" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
                           <span className={`care-status-pill ${log.treatmentStatus === 'Chronic' ? 'work' : 'done'}`}>
-                            {log.treatmentStatus === 'Chronic' ? '⏳ Chronic (Follow-up)' : '✅ One-time Event'}
+                            {log.treatmentStatus === 'Chronic' ? 'Chronic (Follow-up)' : 'One-time Event'}
                           </span>
                           
                           {/* 🔒 Dynamic Milk safety indicators checks logic */}
                           {!canThisRowWithdrawMilk ? (
-                            <span className="milk-safety-alert-badge neutral">🟢 Non-Milking Asset</span>
+                            <span className="milk-safety-alert-badge neutral">Non-Milking Cow</span>
                           ) : isWithdrawalActive ? (
-                            <span className="milk-safety-alert-badge dump">❌ DUMP MILK ({log.withdrawalDays} Days)</span>
+                            <span className="milk-safety-alert-badge dump">DUMP MILK ({log.withdrawalDays} Days)</span>
                           ) : (
-                            <span className="milk-safety-alert-badge safe">✅ Safe / Clean Line</span>
+                            <span className="milk-safety-alert-badge safe">Safe / Clean Milk</span>
                           )}
                         </div>
                       </div>

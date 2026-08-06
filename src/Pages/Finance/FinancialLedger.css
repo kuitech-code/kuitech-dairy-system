@@ -56,29 +56,123 @@
 .price-cancel-action-btn { background: none; border: none; color: #95a5a6; font-size: 13px; font-weight: bold; cursor: pointer; }
 
 /* In-app entry forms togglers card lines */
-.form-toggle-bar { display: flex; gap: 8px; margin-bottom: 12px; background-color: #f4f6f6; padding: 4px; border-radius: 8px; }
-.toggle-tab { flex: 1; border: none; padding: 8px; font-size: 12px; font-weight: bold; border-radius: 6px; color: #7f8c8d; background: none; cursor: pointer; }
-.toggle-tab.active { background-color: #ffffff; color: #2c3e50; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.form-toggle-bar {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  margin-bottom: 12px;
+  background-color: #f4f6f6;
+  padding: 4px;
+  border-radius: 8px;
+}
 
-.finance-form-row { display: flex; gap: 10px; }
-.finance-input-element { display: flex; flex-direction: column; margin-bottom: 10px; }
-.finance-input-element label { font-size: 11px; font-weight: bold; color: #7f8c8d; margin-bottom: 2px; }
-.finance-input-element input, .finance-input-element select { padding: 8px; border: 1px solid #ccd1d1; border-radius: 4px; font-size: 13px; background-color: #fafbfc; }
+.toggle-tab {
+  flex: 1;
+  border: none;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 6px;
+  color: #7f8c8d;
+  background: none;
+  cursor: pointer;
+}
+
+.toggle-tab.active {
+  background-color: #ffffff;
+  color: #2c3e50;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.finance-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.finance-input-element {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.finance-input-element label {
+  font-size: 11px;
+  font-weight: bold;
+  color: #7f8c8d;
+  margin-bottom: 2px;
+}
+
+.finance-input-element input,
+.finance-input-element select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid #ccd1d1;
+  border-radius: 4px;
+  font-size: 13px;
+  background-color: #fafbfc;
+}
 
 .commit-tx-btn { width: 100%; padding: 12px; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 4px; }
 .commit-tx-btn.expense { background-color: #c0392b; }
 .commit-tx-btn.income { background-color: #27ae60; }
 
 /* Filter Statement Table views elements */
-.table-header-flex-controls-deck { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; border-bottom: 1px solid #f2f4f4; padding-bottom: 6px; }
+.table-header-flex-controls-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #f2f4f4;
+  padding-bottom: 6px;
+}
+
 .table-header-flex-controls-deck h2 { border: none; margin: 0; }
-.controls-flex-inputs-row { display: flex; gap: 8px; width: 100%; }
-.month-search-input { flex: 1; padding: 6px; border: 1px solid #ccd1d1; border-radius: 4px; font-size: 12px; background-color: #fafbfc; font-family: sans-serif; }
-.type-select-dropdown { flex: 1; padding: 6px; border: 1px solid #ccd1d1; border-radius: 4px; font-size: 12px; background-color: #fafbfc; }
+
+.controls-flex-inputs-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  /* flex-wrap: wrap; */
+}
+
+.month-search-input {
+  flex: 1 1 180px;
+  padding: 6px;
+  border: 1px solid #ccd1d1;
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: #fafbfc;
+  font-family: sans-serif;
+}
+
+.type-select-dropdown {
+  flex: 1 1 180px;
+  padding: 6px;
+  border: 1px solid #ccd1d1;
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: #fafbfc;
+}
 
 /* Statement mobile grid output lists rows */
-.statement-cards-mobile-stack { display: flex; flex-direction: column; gap: 8px; }
-.statement-card-row-item { background-color: #fdfefe; border: 1px solid #eaeded; padding: 12px; border-radius: 8px; }
+.statement-cards-mobile-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.statement-card-row-item {
+  background-color: #fdfefe;
+  border: 1px solid #eaeded;
+  padding: 12px;
+  border-radius: 8px;
+}
+
 .statement-card-row-item.income { border-left: 5px solid #2ecc71; }
 .statement-card-row-item.expense { border-left: 5px solid #e74c3c; }
 
@@ -100,4 +194,40 @@
 
 .empty-ledger-notice-card { text-align: center; color: #95a5a6; padding: 20px 0; font-size: 12px; }
 .finance-flash-banner.success { background-color: #d4edda; color: #155724; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
+
+@media (max-width: 560px) {
+  .finance-card-box {
+    padding: 12px;
+  }
+/* 
+  .form-toggle-bar {
+    flex-direction: column;
+  } */
+
+  .toggle-tab {
+    width: 100%;
+  }
+
+  .price-display-deck-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .price-inline-adjust-form {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .commit-tx-btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .statement-row-top-line {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
 /* .finance-flash-banner.error { background-color: #f8d7da; color: #721c24; padding: 8px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 10px; } */

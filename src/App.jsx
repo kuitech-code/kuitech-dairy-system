@@ -137,20 +137,20 @@ function App() {
       {/* 2. SLIDING DRAWER MENU CONTAINER */}
       <nav className={`slide-out-navigation-drawer ${isMenuOpen ? 'open' : ''}`}>
         <div className="drawer-header-branding" style={{ backgroundColor: '#11816b' }}>
-          <h3>Dairy Farm V1</h3>
+          <h3>Dairy Farm System V1</h3>
           {/* DYNAMIC ACCOUNT USERNAME STRING DISCLOSURE CARD LINKED FROM LOGIN SCREEN */}
           <p>Active Operator: <strong>{currentUserProfile}</strong></p>
         </div>
         
         <div className="drawer-links-stack">
-          <button type="button" className={currentScreen === 'Dashboard' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Dashboard'); setIsMenuOpen(false); }}>📊 Dashboard Overview</button>
-          <button type="button" className={currentScreen === 'Milk Production' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Milk Production'); setIsMenuOpen(false); }}>🥛 Milk Production Log</button>
-          <button type="button" className={currentScreen === 'Cow Registry' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Cow Registry'); setSelectedCowId(null); setIsMenuOpen(false); }}>🐄 Cow Herd Registry</button>
-          <button type="button" className={currentScreen === 'Breeding Log' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Breeding Log'); setIsMenuOpen(false); }}>🧬 Breeding & AI Log</button>
-          <button type="button" className={currentScreen === 'Feed Log' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Feed Log'); setIsMenuOpen(false); }}>🌾 Feed Allocation Log</button>
-          <button type="button" className={currentScreen === 'Health Log' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Health Log'); setIsMenuOpen(false); }}>🩺 Medical & Health Log</button>
-          <button type="button" className={currentScreen === 'Financial Ledger' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Financial Ledger'); setIsMenuOpen(false); }}>💰 Financial Ledger</button>
-          <button type="button" className={currentScreen === 'System Settings' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('System Settings'); setIsMenuOpen(false); }}>⚙️ System Data Settings</button>
+          <button type="button" className={currentScreen === 'Dashboard' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Dashboard'); setIsMenuOpen(false); }}>Dashboard Overview</button>
+          <button type="button" className={currentScreen === 'Milk Production' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Milk Production'); setIsMenuOpen(false); }}>Milk Production</button>
+          <button type="button" className={currentScreen === 'Cow Registry' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Cow Registry'); setSelectedCowId(null); setIsMenuOpen(false); }}>Herd Registry</button>
+          <button type="button" className={currentScreen === 'Breeding Log' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Breeding Log'); setIsMenuOpen(false); }}>Breeding & AI</button>
+          <button type="button" className={currentScreen === 'Feed Log' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Feed Log'); setIsMenuOpen(false); }}>Feed Allocation</button>
+          <button type="button" className={currentScreen === 'Health Log' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Health Log'); setIsMenuOpen(false); }}>Medical & Health</button>
+          <button type="button" className={currentScreen === 'Financial Ledger' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('Financial Ledger'); setIsMenuOpen(false); }}>Financial Ledger</button>
+          <button type="button" className={currentScreen === 'System Settings' ? 'nav-anchor active' : 'nav-anchor'} onClick={() => { setCurrentScreen('System Settings'); setIsMenuOpen(false); }}>Settings</button>
         </div>
 
         <div className="drawer-footer-logout">

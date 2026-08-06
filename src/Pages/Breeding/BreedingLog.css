@@ -9,10 +9,38 @@
 .toggle-tab.active { background-color: #ffffff; color: #27ae60; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
 /* Form inputs matrix rows */
-.breeding-row-grid { display: flex; gap: 12px; }
-.breeding-input-field { display: flex; flex-direction: column; margin-bottom: 12px; flex: 1; }
-.breeding-input-field label { font-size: 12px; font-weight: bold; color: #7f8c8d; margin-bottom: 4px; }
-.breeding-input-field input, .breeding-input-field select { padding: 10px; border: 1px solid #ccd1d1; border-radius: 6px; font-size: 13px; background-color: #fafbfc; }
+.breeding-row-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.breeding-input-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.breeding-input-field label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #7f8c8d;
+  margin-bottom: 4px;
+}
+
+.breeding-input-field input,
+.breeding-input-field select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #ccd1d1;
+  border-radius: 6px;
+  font-size: 13px;
+  background-color: #fafbfc;
+}
 
 .checkbox-lock-row { background-color: #fcf3f2; padding: 8px; border-radius: 6px; border-left: 4px solid #e74c3c; margin-bottom: 12px; }
 .checkbox-label-wrapper { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: bold; color: #c0392b; cursor: pointer; }

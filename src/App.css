@@ -21,8 +21,27 @@
   z-index: 1000;
 }
 
-.farmer-branding-logo { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 16px; }
-.hamburger-menu-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 4px; }
+.farmer-branding-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  color: #fffdf7;
+  text-transform: uppercase;
+  font-family: "Trebuchet MS", "Segoe UI", "Arial", sans-serif;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.hamburger-menu-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 4px;
+}
 
 /* Dim Overlay Backdrop */
 .drawer-overlay {
@@ -63,8 +82,32 @@
 .nav-anchor:active { background-color: #f2f4f4; }
 .nav-anchor.active { background-color: #e8f8f5; color: #27ae60; border-left: 4px solid #27ae60; }
 
-.drawer-footer-logout { padding: 12px; border-top: 1px solid #eaeded; }
-.logout-action-btn { width: 100%; text-align: left; background: none; border: none; padding: 10px; color: #c0392b; font-weight: bold; font-size: 13px; cursor: pointer; }
+.drawer-footer-logout {
+  padding: 12px;
+  border-top: 1px solid #eaeded;
+  margin-top: auto;
+}
+
+.logout-action-btn {
+  width: 100%;
+  text-align: left;
+  background: linear-gradient(135deg, #fff5f5, #fceaea);
+  border: 1px solid #f1c7c7;
+  padding: 10px 12px;
+  color: #c0392b;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.logout-action-btn:hover {
+  background: linear-gradient(135deg, #fceaea, #f8dede);
+}
 
 /* Adaptive Workspace layout sizing */
 .master-app-content-viewport { padding: 8px; }

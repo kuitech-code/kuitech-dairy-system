@@ -11,10 +11,39 @@
 .toggle-choice.active { background-color: #ffffff; color: #27ae60; box-shadow: 0 2px 4px rgba(0,0,0,0.06); }
 
 /* Form layout rows */
-.health-row-grid { display: flex; gap: 12px; }
-.health-input-field { display: flex; flex-direction: column; margin-bottom: 12px; flex: 1; }
-.health-input-field label { font-size: 12px; font-weight: bold; color: #7f8c8d; margin-bottom: 4px; }
-.health-input-field input, .health-input-field select, .health-input-field textarea { padding: 10px; border: 1px solid #ccd1d1; border-radius: 6px; font-size: 13px; background-color: #fafbfc; }
+.health-row-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.health-input-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.health-input-field label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #7f8c8d;
+  margin-bottom: 4px;
+}
+
+.health-input-field input,
+.health-input-field select,
+.health-input-field textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #ccd1d1;
+  border-radius: 6px;
+  font-size: 13px;
+  background-color: #fafbfc;
+}
 
 /* Highlighting context card highlights elements */
 .highlighted-vet-entry-box { background-color: #ebf5fb; padding: 8px; border-radius: 6px; border-left: 4px solid #3498db; }
@@ -74,3 +103,38 @@
 .alert-success { background-color: #d4edda; color: #155724; }
 .alert-danger { background-color: #f9d5d5; color: #b71c1c; }
 input:disabled { background-color: #eaeded !important; color: #95a5a6 !important; cursor: not-allowed; border-color: #d5dbdb !important; }
+
+@media (max-width: 560px) {
+  .health-form-card,
+  .health-ledger-card {
+    padding: 12px;
+  }
+
+  .toggle-button-group {
+    flex-direction: column;
+  }
+
+  .toggle-choice {
+    width: 100%;
+  }
+
+  .health-row-grid {
+    gap: 8px;
+  }
+
+  .commit-health-btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .health-card-header-line {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .health-action-controls-cluster {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

@@ -156,7 +156,7 @@ function CowProfile({ cowId, onBackToList }) {
     let salePrice = 0;
     
     if (actionType === 'Sold') {
-      const inputPrice = window.prompt(`💰 Enter the total sale price for ${cow.name} ($):`, "1500");
+      const inputPrice = window.prompt(`Enter the total sale price for ${cow.name} ($):`, "1500");
       if (inputPrice === null) return; // Cancelled
       salePrice = parseFloat(inputPrice) || 0;
       if (salePrice < 0) return alert('❌ Financial Error: Sale price cannot be negative.');
@@ -219,7 +219,7 @@ function CowProfile({ cowId, onBackToList }) {
 
   return (
     <div className="profile-mobile-container">
-      <button className="back-link-btn" onClick={onBackToList}>◀ Back to Herd List</button>
+      <button className="back-link-btn" onClick={onBackToList}>◀ Back to Herd's List</button>
 
           {/* Dynamic Profile Summary Banner */}
       <div className={`profile-header-card ${cow.status.startsWith('Archived') ? 'ghost-profile-mode' : ''}`}>
@@ -239,7 +239,7 @@ function CowProfile({ cowId, onBackToList }) {
         {/* 🔒 CONSTRAINT: Hide the Edit Button entirely if the animal is archived */}
         {!cow.status.startsWith('Archived') && (
           <button className="edit-trigger-btn" onClick={() => setIsEditing(!isEditing)}>
-            {isEditing ? 'Cancel' : '📝 Edit'}
+            {isEditing ? 'Cancel' : 'Edit'}
           </button>
         )}
       </div>
@@ -247,7 +247,7 @@ function CowProfile({ cowId, onBackToList }) {
       {/* HUMAN PROOFING EDIT DROPDOWN (Now hides De-registration buttons here) */}
       {isEditing && (
         <div className="edit-dropdown-form">
-          <h3>✍️ Correct Animal Details</h3>
+          <h3>Correct Cow's Details</h3>
           <CowForm 
             initialData={cow}
             onCancel={() => setIsEditing(false)}
@@ -261,18 +261,18 @@ function CowProfile({ cowId, onBackToList }) {
                 localStorage.setItem('dairy_herd', JSON.stringify(updatedHerd));
                 setCow({ ...cow, ...updatedData });
                 setIsEditing(false);
-                alert('✏️ Changes saved successfully!');
+                alert('Changes saved successfully!');
               }
             }}
           />
           
           {/* 🔒 HIDDEN ARCHIVE DECK: Tucked safely inside Edit Panel away from accidental taps */}
           <div className="danger-zone-divider">
-            <h4>⚠️ Permanent Farm Exit Options</h4>
+            <h4>Permanent Farm Exit Options</h4>
             <p>Archiving an animal locks her profile permanently. Milk and feed parameters will freeze immediately.</p>
             <div className="archive-actions-deck" style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-              <button type="button" className="archive-pill-btn sell" onClick={() => handleArchiveAnimal('Sold')}>💵 Sell Cow</button>
-              <button type="button" className="archive-pill-btn die" onClick={() => handleArchiveAnimal('Died')}>🪦 Log Death</button>
+              <button type="button" className="archive-pill-btn sell" onClick={() => handleArchiveAnimal('Sold')}>Sell Cow</button>
+              <button type="button" className="archive-pill-btn die" onClick={() => handleArchiveAnimal('Died')}>Log Death</button>
             </div>
           </div>
         </div>
@@ -300,7 +300,7 @@ function CowProfile({ cowId, onBackToList }) {
             <div className="bio-row"><span>Sire (Father):</span> <strong className={cow.sireTag === 'Unknown' ? 'dim-text' : ''}>{cow.sireTag}</strong></div>
             <div className="bio-row"><span>Dam (Mother):</span> <strong className={cow.damTag === 'Unknown' ? 'dim-text' : ''}>{cow.damTag}</strong></div>
             {cow.status === 'Pregnant' && cow.calvingDate && (
-              <div className="bio-row special-alert-row"><span>Expected Calving:</span> <strong>📅 {new Date(cow.calvingDate).toLocaleDateString()}</strong></div>
+              <div className="bio-row special-alert-row"><span>Expected Calving:</span> <strong>{new Date(cow.calvingDate).toLocaleDateString()}</strong></div>
             )}
             <div className="notes-display-box">
               <label>Special Marks & Notes:</label>
@@ -316,7 +316,7 @@ function CowProfile({ cowId, onBackToList }) {
               <div className="ledger-loading">Querying database rows...</div>
             ) : milkHistory.length === 0 ? (
               <div className="empty-ledger-box">
-                🥣 <p>No milk production sheets logged for <strong>{cow.name}</strong> yet.</p>
+                <p>No milk production logged for <strong>{cow.name}</strong> yet.</p>
               </div>
             ) : (
               <>
@@ -324,10 +324,10 @@ function CowProfile({ cowId, onBackToList }) {
                   <table className="profile-data-table">
                     <thead>
                       <tr>
-                        <th>Record Date</th>
-                        <th>Morning Yield</th>
-                        <th>Evening Yield</th>
-                        <th>Total Yield</th>
+                        <th>Date</th>
+                        <th>Morning</th>
+                        <th>Evening</th>
+                        <th>Total</th>
                       </tr>
                     </thead>
                     <tbody>                                  
@@ -349,7 +349,7 @@ function CowProfile({ cowId, onBackToList }) {
                             {record.total_daily_milk} Liters
                             {record.is_contaminated > 0 && (
                               <span className="profile-table-residue-warn-badge" title="Residue risk detected! This milk was dumped.">
-                                🚨 RESIDUE DUMP
+                                DUMP MILK
                               </span>
                             )}
                           </td>
@@ -391,10 +391,6 @@ function CowProfile({ cowId, onBackToList }) {
             
             {/* LEDGER HEADER WITH COMPACT MOBILE FILTER PILLS */}
             <div className="ledger-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-              <div>
-                <h4>Dietary Ration & Allocation History Log</h4>
-                <p className="ledger-subtext" style={{ margin: 0 }}>Rations calculated automatically from farm storage purchases.</p>
-              </div>
               <div className="filter-button-deck-wrapper" style={{ display: 'flex', gap: '4px' }}>
                 <button type="button" className={feedDateFilter === 'All' ? 'filter-pill active' : 'filter-pill'} onClick={() => { setFeedDateFilter('All'); setFeedCurrentPage(1); }}>All</button>
                 <button type="button" className={feedDateFilter === 'Week' ? 'filter-pill active' : 'filter-pill'} onClick={() => { setFeedDateFilter('Week'); setFeedCurrentPage(1); }}>Week</button>
@@ -425,7 +421,7 @@ function CowProfile({ cowId, onBackToList }) {
               if (processedFeedSlice.length === 0) {
                 return (
                   <div className="empty-ledger-box">
-                    🌾 <p>No dietary allocations registered for <strong>{cow.name}</strong> inside this time window.</p>
+                    <p>No dietary allocations registered for <strong>{cow.name}</strong> inside this time window.</p>
                   </div>
                 );
               }
@@ -437,9 +433,9 @@ function CowProfile({ cowId, onBackToList }) {
                       <thead>
                         <tr>
                           <th>Allocation Date</th>
-                          <th>Ration Feed Type</th>
-                          <th> Rations Mode</th>
-                          <th>Purchased Quantities</th>
+                          <th>Feed Type</th>
+                          <th> Ration</th>
+                          <th>Purchased Quantity</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -449,12 +445,12 @@ function CowProfile({ cowId, onBackToList }) {
                             <td style={{ fontWeight: 'bold', color: '#34495e' }}>{record.feedType}</td>
                             <td>
                               {record.allocationType === 'Group' ? (
-                                <span className="allocation-indicator group" style={{ fontSize: '10px' }}>🌍 Group: {record.targetGroup}</span>
+                                <span className="allocation-indicator group" style={{ fontSize: '10px' }}>Group: {record.targetGroup}</span>
                               ) : (
-                                <span className="allocation-indicator individual" style={{ fontSize: '10px' }}>🐄 Individual Multi-Cow</span>
+                                <span className="allocation-indicator individual" style={{ fontSize: '10px' }}>Individual Multi-Cow</span>
                               )}
                             </td>
-                            <td style={{ fontWeight: 'bold' }}>{record.qty} kg/L</td>
+                            <td style={{ fontWeight: 'bold' }}>{record.qty} kg</td>
                           </tr>
                         ))}
                       </tbody>
@@ -499,7 +495,7 @@ function CowProfile({ cowId, onBackToList }) {
           <div className="health-history-tab-pane">
             {healthHistory.length === 0 ? (
               <div className="empty-ledger-box">
-                💉 <p>No health or vaccination cards logged for <strong>{cow.name}</strong> yet.</p>
+                <p>No health or vaccination cards logged for <strong>{cow.name}</strong> yet.</p>
               </div>
             ) : (
               <div className="history-panel">

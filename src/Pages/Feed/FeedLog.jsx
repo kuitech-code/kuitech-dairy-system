@@ -207,8 +207,8 @@ function FeedLog() {
       {/* SECTION 1: INVENTORY MANAGEMENT CATALOG TOGGLE */}
       <div className="feed-card-box">
         <div className="catalog-header-row" onClick={() => setIsCatalogOpen(!isCatalogOpen)}>
-          <h2>📦 Manage Feed & Minerals Catalog List</h2>
-          <button type="button" className="toggle-drawer-arrow">{isCatalogOpen ? '▲ Close' : '▼ Open List'}</button>
+          <h2>Feed & Minerals Catalog</h2>
+          <button type="button" className="toggle-drawer-arrow">{isCatalogOpen ? '▲ Close' : '▼ Open'}</button>
         </div>
 
         {isCatalogOpen && (
@@ -216,19 +216,19 @@ function FeedLog() {
             <form onSubmit={handleAddCatalogItem} className="catalog-add-inline-form">
               <input 
                 type="text" 
-                placeholder="e.g. Dairy Meal 16% Max" 
+                placeholder="e.g. Dairy Meal" 
                 value={newCatalogItem} 
                 onChange={(e) => setNewCatalogItem(e.target.value)} 
                 required 
               />
-              <button type="submit">➕ Add Item</button>
+              <button className="btn-padding" type="submit">Add Item</button>
             </form>
 
             <ul className="catalog-items-unordered-list">
               {catalogItems.map((item, index) => (
                 <li key={index} className="catalog-list-row-item">
-                  <span>🌾 {item}</span>
-                  <button type="button" onClick={() => handleDeleteCatalogItem(item)} className="catalog-row-delete-btn">Delete ✕</button>
+                  <span>{item}</span>
+                  <button type="button" onClick={() => handleDeleteCatalogItem(item)} className="catalog-row-delete-btn">✕</button>
                 </li>
               ))}
             </ul>
@@ -238,7 +238,7 @@ function FeedLog() {
 
       {/* SECTION 2: THE EXPENSE PURCHASE LOGGING FORM */}
       <div className="feed-card-box">
-        <h2>💰 Log Feed Allocation Expense Receipt</h2>
+        <h2>Feed Allocation Expense</h2>
         
         {successMessage && <div className="feed-alert alert-success">{successMessage}</div>}
         {errorMessage && <div className="feed-alert alert-danger">{errorMessage}</div>}
@@ -246,27 +246,27 @@ function FeedLog() {
         <form onSubmit={handleLogFeedAllocation}>
           <div className="feed-row-grid">
             <div className="feed-input-field">
-              <label>Select Catalog Feed Item *</label>
+              <label>Select Feed *</label>
               <select value={selectedFeedType} onChange={(e) => setSelectedFeedType(e.target.value)} required>
                 {catalogItems.map((item, i) => <option key={i} value={item}>{item}</option>)}
               </select>
             </div>
             <div className="feed-input-field">
-              <label>Total Quantity (kg/liters) *</label>
+              <label>Quantity (Kg/l) *</label>
               <input type="number" step="0.1" placeholder="e.g. 50" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
             </div>
           </div>
 
           <div className="feed-row-grid">
             <div className="feed-input-field">
-              <label>Total Financial Cost ($) *</label>
+              <label>Cost (Ksh) *</label>
               <input type="number" step="0.01" placeholder="e.g. 240.00" value={totalCost} onChange={(e) => setTotalCost(e.target.value)} required />
             </div>
             <div className="feed-input-field">
-              <label>Allocation Distribution Target *</label>
+              <label>Allocation Target *</label>
               <select value={allocationType} onChange={(e) => setAllocationType(e.target.value)} required>
-                <option value="Group">Assign to Status Production Group</option>
-                <option value="Multi-Cow">Assign to Specific Multi-Cows Checkbox List</option>
+                <option value="Group">Group</option>
+                <option value="Multi-Cow">Specific / Multi-Cows</option>
               </select>
             </div>
           </div>
@@ -274,20 +274,20 @@ function FeedLog() {
           {/* DYNAMIC FIELD CONDITIONAL VIEWPORTS */}
           {allocationType === 'Group' ? (
             <div className="feed-input-field highlighted-group-viewport">
-              <label>Select Production Target Group *</label>
+              <label>Select Target Group *</label>
               <select value={targetGroup} onChange={(e) => setTargetGroup(e.target.value)}>
-                <option value="All Herd">🌍 Whole Herd Group (All Animals)</option>
-                <option value="Milking">🐄 Milking Cows Group</option>
-                <option value="Pregnant">🤰 Pregnant Heifers Group</option>
-                <option value="Calf">🍼 Calves Group</option>
-                <option value="Heifer">🌾 Standard Heifers Group</option>
+                <option value="All Herd">Whole Herd</option>
+                <option value="Milking"> Milking Group</option>
+                <option value="Pregnant">Pregnant Group</option>
+                <option value="Calf"> Calves</option>
+                <option value="Heifer">Heifers</option>
               </select>
             </div>
           ) : (
             <div className="feed-input-field highlighted-cows-checkbox-viewport">
-              <label>Check All Targets Receiving This Feed Ration *</label>
+              <label>Check All Targets to Receive this Feed Ration *</label>
               {herd.length === 0 ? (
-                <p className="no-cows-alert">⚠️ Please register animals inside your Cow Registry first.</p>
+                <p className="no-cows-alert">Please register animals inside your Cow Registry first.</p>
               ) : (
                 <div className="checkbox-scrollable-grid-frame">
                   {herd.map((cow) => (
@@ -305,14 +305,14 @@ function FeedLog() {
             </div>
           )}
 
-          <button type="submit" className="commit-allocation-btn">💾 Log Allocation & Expense</button>
+          <button type="submit" className="commit-allocation-btn">Log Allocation & Expense</button>
         </form>
       </div>
 
       {/* SECTION 3: FILTERABLE RECEIPTS MANAGEMENT LEDGER */}
       <div className="feed-card-box">
         <div className="ledger-header-row-flex">
-          <h2>📋 Financial Feed Ledger</h2>
+          <h2>Feed Ledger</h2>
           <div className="filter-button-deck-wrapper">
             <button type="button" className={dateFilter === 'All' ? 'filter-pill active' : 'filter-pill'} onClick={() => { setDateFilter('All'); setCurrentPage(1); }}>All</button>
             <button type="button" className={dateFilter === 'Week' ? 'filter-pill active' : 'filter-pill'} onClick={() => { setDateFilter('Week'); setCurrentPage(1); }}>Week</button>
@@ -321,18 +321,18 @@ function FeedLog() {
         </div>
 
         {filteredReceipts.length === 0 ? (
-          <div className="empty-ledger-notice">🌾 No feed transactions registered within this selected time window.</div>
+          <div className="empty-ledger-notice">No feed registered within this selected time window.</div>
         ) : (
           <>
             <div className="receipt-mobile-cards-stack">
               {currentSlice.map((receipt) => (
                 <div key={receipt.id} className="receipt-card-item-row">
                   <div className="receipt-card-header-line">
-                    <span className="receipt-date-label">📅 {new Date(receipt.purchaseDate).toLocaleDateString()}</span>
+                    <span className="receipt-date-label">{new Date(receipt.purchaseDate).toLocaleDateString()}</span>
                     
                     <div className="receipt-action-controls-cluster">
-                      <button type="button" className="inline-action-link-btn edit" onClick={() => handleStartEditReceipt(receipt)}>✏️ Edit</button>
-                      <button type="button" className="inline-action-link-btn delete" onClick={() => handleDeleteReceipt(receipt.id)}>✕ Purge</button>
+                      <button type="button" className="inline-action-link-btn edit" onClick={() => handleStartEditReceipt(receipt)}>Edit</button>
+                      <button type="button" className="inline-action-link-btn delete" onClick={() => handleDeleteReceipt(receipt.id)}>Delete</button>
                     </div>
                   </div>
 
@@ -344,7 +344,7 @@ function FeedLog() {
                         <input type="number" step="0.1" value={editQty} onChange={(e) => setEditQty(e.target.value)} />
                       </div>
                       <div className="inline-edit-field">
-                        <label>Adjust Cost ($):</label>
+                        <label>Adjust Cost (Ksh):</label>
                         <input type="number" step="0.01" value={editCost} onChange={(e) => setEditCost(e.target.value)} />
                       </div>
                       <div className="inline-edit-buttons-row">
@@ -357,13 +357,13 @@ function FeedLog() {
                     <div className="receipt-card-body-details">
                       <div className="feed-title-cost-flex">
                         <h4>Feed: <strong>{receipt.feedType}</strong> ({receipt.qty} kg/L)</h4>
-                        <span className="receipt-cost-tag">-${receipt.cost.toFixed(2)}</span>
+                        <span className="receipt-cost-tag">-Ksh {receipt.cost.toFixed(2)}</span>
                       </div>
                       <p>
                         Distribution: {receipt.allocationType === 'Group' ? (
-                          <span className="allocation-indicator group">🌍 Group: {receipt.targetGroup}</span>
+                          <span className="allocation-indicator group">Group: {receipt.targetGroup}</span>
                         ) : (
-                          <span className="allocation-indicator individual">🐄 Multi-Cow ({receipt.targetCowIds.length} checked)</span>
+                          <span className="allocation-indicator individual">Multi-Cow ({receipt.targetCowIds.length} checked)</span>
                         )}
                       </p>
                     </div>

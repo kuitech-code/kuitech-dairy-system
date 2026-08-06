@@ -126,11 +126,10 @@ function SystemSettings() {
       {/* CARD 1: BACKUP ENGINE */}
       <div className="settings-card-box">
         <div className="settings-icon-header">
-          <span>📤</span>
           <h2>Manual Data Backup</h2>
         </div>
         <p>
-          Download a secure snapshot file containing your entire herd directory, milk logs, breeding histories, and financial statements. 
+          Download a secure snapshot file containing your entire herd directory, milk logs, breeding histories and financial statements. 
           We recommend saving this file to your Google Drive, email, or a separate device once a week.
         </p>
         <button type="button" className="settings-action-btn export-btn" onClick={handleExportBackup}>
@@ -141,7 +140,6 @@ function SystemSettings() {
       {/* CARD 2: RESTORE ENGINE */}
       <div className="settings-card-box">
         <div className="settings-icon-header">
-          <span>📥</span>
           <h2>Manual Data Restore</h2>
         </div>
         <p>
@@ -162,12 +160,11 @@ function SystemSettings() {
       {/* CARD 3: DANGER DESTRUCTIVE MANAGEMENT WIPE ZONE */}
       <div className="settings-card-box danger-zone-box">
         <div className="settings-icon-header">
-          <span style={{ color: '#e74c3c' }}>🚨</span>
-          <h2 style={{ color: '#c0392b' }}>Emergency Reset Zone</h2>
+          <h2 style={{ color: '#c0392b' }}>Emergency Reset</h2>
         </div>
         <p>
           Completely clear the phone database memory and reset the terminal back to a fresh, blank slate. 
-          This will delete all cows, production grids, and logs permanently.
+          This will delete all cows, production grids and logs permanently.
         </p>
         <button type="button" className="settings-action-btn wipe-btn" onClick={handleEmergencySystemWipe}>
           Permanently Wipe All Device Data

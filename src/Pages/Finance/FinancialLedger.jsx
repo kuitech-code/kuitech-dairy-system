@@ -90,13 +90,13 @@ function FinancialLedger() {
     setTxDescription('');
     setTxAmount('');
     setTxNotes('');
-    setSuccessMessage(`🎉 Saved straight to ${formMode} ledger ledger lines!`);
+    setSuccessMessage(`Saved to ${formMode} ledger ledger lines!`);
     hydrateLedgerTerminal();
     setTimeout(() => setSuccessMessage(''), 2500);
   };
 
   const handleDeleteManualItem = (recordId, typeKey) => {
-    if (window.confirm('⚠️ Reset item statement?')) {
+    if (window.confirm('Reset item statement?')) {
       if (typeKey === 'Income') {
         const filtered = manualIncomes.filter(item => item.id !== recordId);
         setManualIncomes(filtered);
@@ -139,14 +139,14 @@ function FinancialLedger() {
       category: 'Milk Yields',
       description: `Milk Log - ${log.cowName} (${log.cowTag})`,
       amount: computedRevenue,
-      notes: `${log.total_daily_milk}L calculated at KES ${activeRate}/L.`
+      notes: `${log.total_daily_milk}L calculated at KSH ${activeRate}/L.`
     });
   });
 
   // B. Process Livestock Sales
   livestockSales.forEach(cow => {
     const notesText = cow.notes || '';
-    const matchPrice = notesText.match(/KSh\s*(\d+)/) || notesText.match(/\$(\d+)/) || [0, 45000];
+    const matchPrice = notesText.match(/Ksh\s*(\d+)/) || notesText.match(/\$(\d+)/) || [0, 45000];
     const parsedPrice = parseFloat(matchPrice[1]) || 45000;
 
     monthlyIncomeTotal += parsedPrice;
@@ -244,47 +244,47 @@ function FinancialLedger() {
       
       {/* 📊 SECTION 1: FLEXBOX MOBILE SUMMARY MATRIX GRID */}
       <div className="finance-section-title-header">
-        <h3>📅 Summary Metrics: This Month</h3>
+        <h3>Summary: This Month</h3>
       </div>
       <div className="financial-brief-flexbox-row">
         <div className="brief-flex-card green-gain">
-          <span className="card-label">Total Income</span>
-          <p>KES {monthlyIncomeTotal.toLocaleString()}</p>
+          <span className="card-label">Income</span>
+          <p>KSH {monthlyIncomeTotal.toLocaleString()}</p>
         </div>
         <div className="brief-flex-card red-loss">
-          <span className="card-label">Total Expenses</span>
+          <span className="card-label">Expenses</span>
           <p>KES {monthlyExpenseTotal.toLocaleString()}</p>
         </div>
         <div className={`brief-flex-card net-profit-yield ${monthlyIncomeTotal - monthlyExpenseTotal >= 0 ? 'surplus' : 'deficit'}`}>
-          <span className="card-label">Net Profit</span>
+          <span className="card-label">Profit</span>
           <p>KES {(monthlyIncomeTotal - monthlyExpenseTotal).toLocaleString()}</p>
         </div>
       </div>
 
       <div className="financial-brief-flexbox-row breakdown-row">
         <div className="brief-flex-card breakdown-sub">
-          <span className="card-label">🥛 Milk Production</span>
-          <small>KES {monthlyMilkTotal.toLocaleString()}</small>
+          <span className="card-label">Milk</span>
+          <small>KSH {monthlyMilkTotal.toLocaleString()}</small>
         </div>
         <div className="brief-flex-card breakdown-sub">
-          <span className="card-label">🐄 Cattle Sales</span>
-          <small>KES {monthlySaleTotal.toLocaleString()}</small>
+          <span className="card-label">Cattle Sales</span>
+          <small>KSH {monthlySaleTotal.toLocaleString()}</small>
         </div>
       </div>
 
       {/* ⚙️ SECTION 2: THE PERSISTENT MILK PRICE SETTING WIDGET */}
       <div className="finance-card-box settings-price-card">
-        <h2>🛠️ Milk Factory Contract Settings</h2>
+        <h2>Milk Price Settings</h2>
         <div className="price-display-deck-row">
           <div>
-            <p className="price-label-text">Current Master Rate Pool:</p>
-            <h3>KES <strong>{milkPrice}</strong> per litre</h3>
+            <p className="price-label-text">Current Rate:</p>
+            <h3>KSH <strong>{milkPrice}</strong> per litre</h3>
           </div>
           {!isChangingPrice ? (
             <button type="button" className="price-adjust-trigger-btn" onClick={() => setIsChangingPrice(true)}>Change Price</button>
           ) : (
             <form onSubmit={handleSaveMilkPriceSetting} className="price-inline-adjust-form animate-fade">
-              <input type="number" step="0.5" placeholder="KES" value={tempPriceInput} onChange={(e) => setEditTempPriceInput(e.target.value)} required />
+              <input type="number" step="0.5" placeholder="KSH" value={tempPriceInput} onChange={(e) => setEditTempPriceInput(e.target.value)} required />
               <button type="submit" className="price-save-action-btn">Lock</button>
               <button type="button" className="price-cancel-action-btn" onClick={() => setIsChangingPrice(false)}>✕</button>
             </form>
@@ -294,34 +294,34 @@ function FinancialLedger() {
 
       {/* ✍️ SECTION 3 & 4: OPEN FLEX RECORDER SHUTTLE DRAWER */}
       <div className="finance-card-box">
-        <h2>✍️ Record Custom Entry Sheet</h2>
+        <h2>Record Custom Entry</h2>
         {successMessage && <div className="finance-flash-banner success">{successMessage}</div>}
         
         <form onSubmit={handleSaveManualTransaction}>
           <div className="form-toggle-bar">
             {/* 🔒 FIX: Re-mapped onClick target anchors to communicate seamlessly with setFormTypeMode */}
-            <button type="button" className={formMode === 'Expense' ? 'toggle-tab active' : 'toggle-tab'} onClick={() => setFormTypeMode('Expense')}>Log New Expense</button>
-            <button type="button" className={formMode === 'Income' ? 'toggle-tab active' : 'toggle-tab'} onClick={() => setFormTypeMode('Income')}>Log New Income</button>
+            <button type="button" className={formMode === 'Expense' ? 'toggle-tab active' : 'toggle-tab'} onClick={() => setFormTypeMode('Expense')}>New Expense</button>
+            <button type="button" className={formMode === 'Income' ? 'toggle-tab active' : 'toggle-tab'} onClick={() => setFormTypeMode('Income')}>New Income</button>
           </div>
 
           <div className="finance-form-row">
             <div className="finance-input-element" style={{ flex: 2 }}>
-              <label>Description (Ration details / items name) *</label>
-              <input type="text" placeholder={formMode === 'Expense' ? "e.g. Worker wages, Electricity bill, Wheelbarrow" : "e.g. Sold Manure load, Government Subsidy"} value={txDescription} onChange={(e) => setTxDescription(e.target.value)} required />
+              <label>Description (items name) *</label>
+              <input type="text" placeholder={formMode === 'Expense' ? "e.g. Worker wages, Wheelbarrow" : "e.g. Sold Manure..."} value={txDescription} onChange={(e) => setTxDescription(e.target.value)} required />
             </div>
             <div className="finance-input-element" style={{ flex: 1 }}>
-              <label>Amount (KES) *</label>
-              <input type="number" placeholder="KES" value={txAmount} onChange={(e) => setTxAmount(e.target.value)} required />
+              <label>Amount (KSH) *</label>
+              <input type="number" placeholder="KSH" value={txAmount} onChange={(e) => setTxAmount(e.target.value)} required />
             </div>
           </div>
 
           <div className="finance-input-element">
-            <label>Optional Transaction Notes</label>
+            <label>Optional Notes</label>
             <input type="text" placeholder="Add specific voucher descriptions..." value={txNotes} onChange={(e) => setTxNotes(e.target.value)} />
           </div>
 
           <button type="submit" className={`commit-tx-btn ${formMode.toLowerCase()}`}>
-            💾 Save {formMode} Entry Line Item
+            Save {formMode} Entry
           </button>
         </form>
       </div>
@@ -329,28 +329,28 @@ function FinancialLedger() {
       {/* 🔍 SECTION 5 & 6: STATEMENT LEDGER TIMELINE GRID SEARCH TABLE */}
       <div className="finance-card-box table-ledger-sheet-box">
         <div className="table-header-flex-controls-deck">
-          <h2>📋 Financial Statements History Grid ({filteredStatements.length})</h2>
+          <h2>Financial Statements ({filteredStatements.length})</h2>
           <div className="controls-flex-inputs-row">
             <input type="month" className="month-search-input" value={monthFilter} onChange={(e) => { setMonthFilter(e.target.value); setCurrentPage(1); }} />
             <select className="type-select-dropdown" value={filterType} onChange={(e) => { setFilterType(e.target.value); setCurrentPage(1); }}>
-              <option value="All">All Cash Flows</option>
-              <option value="Income">Income Flow (+)</option>
-              <option value="Expenses">Expenses Flow (-)</option>
+              <option value="All">All</option>
+              <option value="Income">Income (+)</option>
+              <option value="Expenses">Expenses (-)</option>
             </select>
           </div>
         </div>
 
         {filteredStatements.length === 0 ? (
-          <div className="empty-ledger-notice-card">🪙 No entries found within this scope.</div>
+          <div className="empty-ledger-notice-card">No entries found.</div>
         ) : (
           <>
             <div className="statement-cards-mobile-stack">
               {currentViewSlice.map((entry) => (
                 <div key={entry.id} className={`statement-card-row-item ${entry.type.toLowerCase()}`}>
                   <div className="statement-row-top-line">
-                    <span className="statement-row-date">📅 {new Date(entry.date).toLocaleDateString()}</span>
+                    <span className="statement-row-date">{new Date(entry.date).toLocaleDateString()}</span>
                     <span className={`statement-row-cash-badge ${entry.type === 'Income' ? 'gain' : 'loss'}`}>
-                      {entry.type === 'Income' ? '+' : '-'} KES {entry.amount.toLocaleString()}
+                      {entry.type === 'Income' ? '+' : '-'} KSH {entry.amount.toLocaleString()}
                     </span>
                   </div>
                   <div className="statement-row-body-line">

@@ -11,6 +11,10 @@
   margin-bottom: 16px;
 }
 
+.btn-padding {
+  padding: 8px 12px;
+}
+
 .feed-card-box h2 {
   font-size: 15px;
   color: #2c3e50;
@@ -39,14 +43,53 @@
 .catalog-row-delete-btn { background: none; border: none; color: #e74c3c; font-size: 11px; font-weight: bold; cursor: pointer; }
 
 /* Grid inputs matrix layout */
-.feed-row-grid { display: flex; gap: 12px; }
-.feed-input-field { display: flex; flex-direction: column; margin-bottom: 12px; flex: 1; }
-.feed-input-field label { font-size: 12px; font-weight: bold; color: #7f8c8d; margin-bottom: 4px; }
-.feed-input-field input, .feed-input-field select { padding: 10px; border: 1px solid #ccd1d1; border-radius: 6px; font-size: 14px; background-color: #fafbfc; }
+.feed-row-grid {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.feed-input-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.feed-input-field label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #7f8c8d;
+  margin-bottom: 4px;
+}
+
+.feed-input-field input,
+.feed-input-field select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #ccd1d1;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fafbfc;
+}
 
 /* Conditional Viewport containers highlighting styles */
-.highlighted-group-viewport { background-color: #ebf5fb; padding: 10px; border-radius: 6px; border-left: 4px solid #3498db; }
-.highlighted-cows-checkbox-viewport { background-color: #f9fbf9; padding: 10px; border-radius: 6px; border-left: 4px solid #2ecc71; }
+.highlighted-group-viewport {
+  background-color: #ebf5fb;
+  padding: 10px;
+  border-radius: 6px;
+  border-left: 4px solid #3498db;
+}
+
+.highlighted-cows-checkbox-viewport {
+  background-color: #f9fbf9;
+  padding: 10px;
+  border-radius: 6px;
+  border-left: 4px solid #2ecc71;
+}
 
 /* Scrollable frame checklist for multi-cow choice grids */
 .checkbox-scrollable-grid-frame {
@@ -64,7 +107,66 @@
 .checkbox-grid-row-card input { transform: scale(1.1); margin: 0; }
 .no-cows-alert { font-size: 11px; color: #e67e22; margin: 4px 0; font-weight: bold; }
 
-.commit-allocation-btn { width: 100%; padding: 12px; background-color: #27ae60; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 4px; }
+.commit-allocation-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+@media (max-width: 560px) {
+  .feed-card-box {
+    padding: 12px;
+  }
+
+  .feed-card-box h2 {
+    font-size: 14px;
+  }
+
+  .catalog-add-inline-form {
+    flex-direction: column;
+  }
+
+  .catalog-add-inline-form button {
+    width: 100%;
+  }
+
+  .feed-row-grid {
+    gap: 8px;
+  }
+
+  .commit-allocation-btn {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .ledger-header-row-flex {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .filter-button-deck-wrapper {
+    flex-wrap: wrap;
+  }
+
+  .receipt-card-header-line {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .receipt-action-controls-cluster {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
 
 /* Ledger Flex Header Header pills deck */
 .ledger-header-row-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid #f2f4f4; padding-bottom: 4px; }

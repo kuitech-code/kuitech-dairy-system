@@ -269,8 +269,8 @@
 
 .edit-trigger-btn {
   position: absolute;
-  right: 14px;
-  top: 14px;
+  right: 0;
+  top: -30px;
   background: #f4f6f6;
   border: 1px solid #d5dbdb;
   padding: 4px 10px;
@@ -318,14 +318,76 @@
 .tab-link.active { background-color: #27ae60; color: white; }
 
 /* Table specific stylings */
-.milk-history-tab-pane { background: white; padding: 12px; border-radius: 8px; border: 1px solid #e5e8e8; }
-.ledger-header-row h4 { margin: 0; font-size: 14px; color: #2c3e50; }
-.ledger-subtext { margin: 2px 0 10px 0; font-size: 11px; color: #95a5a6; }
+.milk-history-tab-pane {
+  background: linear-gradient(145deg, #ffffff, #f9fcff);
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #e8eff3;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.04);
+}
 
-.profile-table-container { overflow-x: auto; margin-bottom: 12px; }
-.profile-data-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
-.profile-data-table th { background-color: #f8f9f9; padding: 8px; color: #7f8c8d; font-weight: 600; border-bottom: 2px solid #eaeded; }
-.profile-data-table td { padding: 10px 8px; border-bottom: 1px solid #eaeded; color: #34495e; }
+.ledger-header-row h4 {
+  margin: 0;
+  font-size: 14px;
+  color: #2c3e50;
+}
+
+.ledger-subtext {
+  margin: 2px 0 10px 0;
+  font-size: 11px;
+  color: #95a5a6;
+}
+
+.profile-table-container {
+  overflow-x: auto;
+  margin-bottom: 12px;
+  border: 1px solid #eef2f4;
+  border-radius: 10px;
+}
+
+.profile-data-table {
+  width: 100%;
+  min-width: 420px;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.profile-data-table th {
+  background-color: #f8f9f9;
+  padding: 8px;
+  color: #7f8c8d;
+  font-weight: 600;
+  border-bottom: 2px solid #eaeded;
+  white-space: nowrap;
+}
+
+.profile-data-table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #eaeded;
+  color: #34495e;
+  vertical-align: top;
+}
+
+.profile-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+@media (max-width: 640px) {
+  .milk-history-tab-pane {
+    padding: 12px;
+  }
+
+  .profile-data-table {
+    min-width: 360px;
+    font-size: 12px;
+  }
+
+  .profile-data-table th,
+  .profile-data-table td {
+    padding: 8px 6px;
+  }
+}
 
 .date-cell { font-weight: 600; }
 .bold-total-cell { font-weight: bold; color: #27ae60; display: flex; align-items: center; gap: 4px; }

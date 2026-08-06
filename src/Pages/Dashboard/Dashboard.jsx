@@ -205,32 +205,34 @@ function Dashboard() {
       {/* 🚀 TOP BANNER: HERO STATS MARQUEE BOARDS */}
       <div className="dashboard-marquee-banner-container">
         <div className="marquee-badge badge-gold">
-          🥇 <strong>Top Producer:</strong> {topProducerName} ({topProducerQty}L)
+          <strong>Top Producer:</strong> {topProducerName} ({topProducerQty}L)
         </div>
         <div className="marquee-badge badge-blue">
-          📉 <strong>Lowest Producer:</strong> {lowProducerName} ({lowProducerQty}L)
+          <strong>Lowest Producer:</strong> {lowProducerName} ({lowProducerQty}L)
         </div>
         <div className="marquee-badge badge-purple">
-          🍼 <strong>New Additions:</strong> +{calvesBornThisMonth} Calves Born • +{cowsAcquiredThisMonth} Cows Acquired
+          <strong>New Additions:</strong> +{calvesBornThisMonth} Calves Born • +{cowsAcquiredThisMonth} Cows Acquired
         </div>
         <div className="marquee-badge badge-green">
-          📈 <strong>Financial Pulse:</strong> Income {incVar >= 0 ? '↑' : '↓'} {Math.abs(incVar)}% • Expenses {expVar >= 0 ? '↑' : '↓'} {Math.abs(expVar)}% • Profit {prfVar >= 0 ? '↑' : '↓'} {Math.abs(prfVar)}%
+          <strong>Finance:</strong> Income {incVar >= 0 ? '↑' : '↓'} {Math.abs(incVar)}% • Expenses {expVar >= 0 ? '↑' : '↓'} {Math.abs(expVar)}% • Profit {prfVar >= 0 ? '↑' : '↓'} {Math.abs(prfVar)}%
         </div>
       </div>
       {/* 📅 CARD 1: DENSE MONTHLY SUMMARY MATRICES CHANNELS */}
       <div className="dashboard-card-box">
-        <div className="dashboard-section-header">📅 Summary Metrics: This Month</div>
+        <div className="dashboard-section-header">Summary: This Month</div>
         <div className="dense-summary-flexbox-row">
           <div className="dense-node">
-            <span>Milk Produced</span>
+            <span>Milk</span>
             <p>{thisMonthMilkLiters} L</p>
           </div>
           <div className="dense-node">
-            <span>Profit Margin</span>
+            <span>Profit</span>
             <p>{profitMarginPct}%</p>
           </div>
+        </div> 
+        <div className="dense-summary-flexbox-row"> 
           <div className="dense-node">
-            <span>Avg Daily Yield</span>
+            <span>Avg Daily Milk</span>
             <p>{avgMilkPerDay} L/Day</p>
           </div>
           <div className="dense-node highlighted-node">
@@ -242,12 +244,11 @@ function Dashboard() {
 
       {/* 📊 CARD 2: RE-ENGINEERED SMOOTH BEZIER SPLINE CARDS */}
       <div className="dashboard-card-box">
-        <h2>📈 30-Day Milk Yield Trend (Liters)</h2>
+        <h2>Milk Yield Trend</h2>
         <div className="chart-wrapper-frame">
           <div className="svg-chart-container-with-y-axis">
             
-            {/* Native CSS Y-Axis Layout Metrics Scale labels column on the left */}
-            <div className="y-axis-labels-gutter-column">
+            <div className="y-axis-labels-gutter-column milk-only-axis">
               <span>220L</span>
               <span>165L</span>
               <span>110L</span>
@@ -258,6 +259,16 @@ function Dashboard() {
             {/* Core Vector Chart Grid Frame Viewport window */}
             <div className="svg-canvas-viewport-window">
               <svg viewBox="0 0 500 150" className="svg-chart-canvas" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="milkAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#2ecc71" stopOpacity="0.28" />
+                    <stop offset="100%" stopColor="#2ecc71" stopOpacity="0.03" />
+                  </linearGradient>
+                  <linearGradient id="milkLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#34d399" />
+                    <stop offset="100%" stopColor="#2ecc71" />
+                  </linearGradient>
+                </defs>
                 {/* Horizontal reference grid sheets */}
                 <line x1="0" y1="10" x2="500" y2="10" className="grid-line" />
                 <line x1="0" y1="42.5" x2="500" y2="42.5" className="grid-line" />
@@ -266,49 +277,41 @@ function Dashboard() {
                 <line x1="0" y1="140" x2="500" y2="140" className="grid-line baseline" />
                 
                 {(() => {
-                  const dataSlice = Object.keys(daily30DayMilk).slice(-8); // Slice 8 days to keep phone width pristine
+                  const dataSlice = Object.keys(daily30DayMilk).slice(-6);
                   const pointsCoordinatesList = dataSlice.map((dateKey, index) => {
                     const liters = daily30DayMilk[dateKey];
                     const x = (index * (500 / (dataSlice.length - 1 || 1)));
-                    // Dynamic inversion scaling formula maps numbers between 10px and 140px on canvas height safely
                     const y = 140 - Math.min((liters * (130 / 220)), 130);
                     return { x, y, liters, dateKey };
                   });
 
-                  // 🔒 THE MATHEMATICAL BEZIER SPLINE ENGINE: Calculates smooth vectors instead of straight line drops
                   let bezierCurvePathString = "";
                   if (pointsCoordinatesList.length > 0) {
                     bezierCurvePathString = `M ${pointsCoordinatesList[0].x} ${pointsCoordinatesList[0].y}`;
-                    
                     for (let i = 0; i < pointsCoordinatesList.length - 1; i++) {
                       const currentPoint = pointsCoordinatesList[i];
                       const nextPoint = pointsCoordinatesList[i + 1];
-                      
-                      // Calculate smooth midpoint control tension pins
                       const controlPointX1 = currentPoint.x + (nextPoint.x - currentPoint.x) / 2;
                       const controlPointY1 = currentPoint.y;
                       const controlPointX2 = currentPoint.x + (nextPoint.x - currentPoint.x) / 2;
                       const controlPointY2 = nextPoint.y;
-                      
                       bezierCurvePathString += ` C ${controlPointX1} ${controlPointY1}, ${controlPointX2} ${controlPointY2}, ${nextPoint.x} ${nextPoint.y}`;
                     }
                   }
 
+                  const milkAreaPath = bezierCurvePathString && pointsCoordinatesList.length > 0
+                    ? `${bezierCurvePathString} L ${pointsCoordinatesList[pointsCoordinatesList.length - 1].x} 140 L ${pointsCoordinatesList[0].x} 140 Z`
+                    : "";
+
                   return (
                     <>
-                      {/* Smooth Wave Path Line */}
+                      {milkAreaPath && <path d={milkAreaPath} className="svg-area-fill" fill="url(#milkAreaGradient)" />}
                       {bezierCurvePathString && (
-                        <path d={bezierCurvePathString} className="svg-smooth-curve-line milk-line" />
+                        <path d={bezierCurvePathString} className="svg-smooth-curve-line milk-line" stroke="url(#milkLineGradient)" />
                       )}
-
-                      {/* Cleaned Interspersed Data Node Labels Markup */}
                       {pointsCoordinatesList.map((pt) => (
                         <g key={pt.dateKey} className="chart-marker-group">
-                          {/* Only show numeric volume text bubbles if cow yields have been logged to prevent clutter overlays */}
-                          {pt.liters > 0 && (
-                            <text x={pt.x} y={pt.y - 10} className="marker-label-text active-data-bubble">{pt.liters}L</text>
-                          )}
-                          <circle cx={pt.x} cy={pt.y} r="5" className="marker-dot milk-dot" />
+                          <circle cx={pt.x} cy={pt.y} r="4.5" className="marker-dot milk-dot" />
                         </g>
                       ))}
                     </>
@@ -318,9 +321,8 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* Clean Independent Bottom Row for dates axis scales */}
-          <div className="x-axis-dates-row-scale-deck">
-            {Object.keys(daily30DayMilk).slice(-8).map(dateKey => (
+          <div className="x-axis-dates-row-scale-deck milk-simple-axis">
+            {Object.keys(daily30DayMilk).slice(-6).map(dateKey => (
               <span key={dateKey}>{dateKey.slice(5)}</span>
             ))}
           </div>
@@ -328,7 +330,7 @@ function Dashboard() {
       </div>
 
       <div className="dashboard-card-box">
-        <h2>💰 3-Month Net Farm Profit Trend Chart</h2>
+        <h2>3-Month Net Profit</h2>
         <div className="chart-wrapper-frame">
           <div className="svg-chart-container-with-y-axis">
             
@@ -342,6 +344,16 @@ function Dashboard() {
 
             <div className="svg-canvas-viewport-window">
               <svg viewBox="0 0 500 150" className="svg-chart-canvas" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="profitAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#3498db" stopOpacity="0.24" />
+                    <stop offset="100%" stopColor="#3498db" stopOpacity="0.03" />
+                  </linearGradient>
+                  <linearGradient id="profitLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#5dade2" />
+                    <stop offset="100%" stopColor="#3498db" />
+                  </linearGradient>
+                </defs>
                 <line x1="0" y1="10" x2="500" y2="10" className="grid-line" />
                 <line x1="0" y1="42.5" x2="500" y2="42.5" className="grid-line" />
                 <line x1="0" y1="75" x2="500" y2="75" className="grid-line" />
@@ -368,10 +380,15 @@ function Dashboard() {
                     }
                   }
 
+                  const profitAreaPath = profitBezierPath && points.length > 0
+                    ? `${profitBezierPath} L ${points[points.length - 1].x} 140 L ${points[0].x} 140 Z`
+                    : "";
+
                   return (
                     <>
+                      {profitAreaPath && <path d={profitAreaPath} className="svg-area-fill" fill="url(#profitAreaGradient)" />}
                       {profitBezierPath && (
-                        <path d={profitBezierPath} className="svg-smooth-curve-line profit-line" />
+                        <path d={profitBezierPath} className="svg-smooth-curve-line profit-line" stroke="url(#profitLineGradient)" />
                       )}
                       {points.map((pt, i) => (
                         <g key={i} className="chart-marker-group">
@@ -399,28 +416,28 @@ function Dashboard() {
       {/* 📋 CARD 3: TOTAL HERD INVENTORY & MONTHLY FINANCIAL STATEMENT MATRIX */}
       <div className="dashboard-card-box split-grid-card">
         <div className="split-panel">
-          <h2>🐄 Total Herd Inventory ({totalHeadCount} Head)</h2>
+          <h2>Total Herd Inventory ({totalHeadCount} Cows)</h2>
           <ul className="inventory-list-stack">
-            <li>Active Milking Lines: <strong>{activeMilkingCount}</strong></li>
-            <li>Dry / Resting Rations: <strong>{dryRestingCount}</strong></li>
-            <li>Standard Heifers Pool: <strong>{heifersCount}</strong></li>
-            <li>Newborn Calves Guard: <strong>{calvesCount}</strong></li>
+            <li>Active Milking: <strong>{activeMilkingCount}</strong></li>
+            <li>Dry Cows: <strong>{dryRestingCount}</strong></li>
+            <li>Heifers: <strong>{heifersCount}</strong></li>
+            <li>Calves: <strong>{calvesCount}</strong></li>
           </ul>
         </div>
         <div className="split-panel layout-border-left">
-          <h2>💰 Monthly Statement Book Totals</h2>
+          <h2>Monthly Financial Totals</h2>
           <ul className="inventory-list-stack">
             <li className="text-red">Total Expenses Cost: <strong>-KES {thisMonthExpense.toLocaleString()}</strong></li>
-            <li className="text-green">Milk Delivery Sales: <strong>+KES {monthlyMilkTotal.toLocaleString()}</strong></li>
-            <li className="text-green">Livestock Capital Sales: <strong>+KES {monthlySaleTotal.toLocaleString()}</strong></li>
-            <li className="text-green">All Other Incomes manual: <strong>+KES {monthlyOtherIncome.toLocaleString()}</strong></li>
+            <li className="text-green">Milk Sales: <strong>+KES {monthlyMilkTotal.toLocaleString()}</strong></li>
+            <li className="text-green">Livestock Sales: <strong>+KES {monthlySaleTotal.toLocaleString()}</strong></li>
+            <li className="text-green">Other Income: <strong>+KES {monthlyOtherIncome.toLocaleString()}</strong></li>
           </ul>
         </div>
       </div>
 
       {/* 🤰 CARD 4: UPCOMING CALVING MILESTONES ALERT DESK */}
       <div className="dashboard-card-box calving-desk-card">
-        <h2>🤰 Upcoming Calving Milestones Watch List</h2>
+        <h2>Upcoming Calving Watch List</h2>
         {upcomingCalvingsList.length === 0 ? (
           <p className="clean-empty-label-notice">✅ No active pregnancies due inside the current upcoming timeline windows.</p>
         ) : (
@@ -428,7 +445,7 @@ function Dashboard() {
             {upcomingCalvingsList.slice(0, 3).map((p) => (
               <div key={p.id} className="calving-alert-item-row-card">
                 <span>🔔</span>
-                <p>Cow <strong>{p.cowName}</strong> (Tag: {p.cowTag}) is due to calve on <strong>{new Date(p.expectedDueDate).toLocaleDateString()}</strong> (Sire: {p.semenTag})</p>
+                <p><strong>{p.cowName}</strong> (Tag: {p.cowTag}) is due to calve on <strong>{new Date(p.expectedDueDate).toLocaleDateString()}</strong> (Sire: {p.semenTag})</p>
               </div>
             ))}
           </div>
@@ -437,12 +454,12 @@ function Dashboard() {
 
       {/* 🩺 CARD 5: WEEKLY MEDICAL & WITHDRAWAL SAFETY DESK */}
       <div className="dashboard-card-box health-desk-card">
-        <h2>🩺 Weekly Medical & Withdrawal Safety Desk</h2>
+        <h2>Weekly Medical Records</h2>
         {activeSickLogs.length === 0 ? (
-          <p className="clean-empty-label-notice-green">🟢 Excellent: No cows under medical treatment or active milk withdrawal restrictions this week.</p>
+          <p className="clean-empty-label-notice-green">Excellent: No cows under medical treatment or active milk withdrawal restrictions this week.</p>
         ) : (
           <div className="health-alerts-stack-deck">
-            <div className="critical-headline-warn">⚠️ {activeSickLogs.length} active animal records under monitoring this week:</div>
+            <div className="critical-headline-warn">{activeSickLogs.length} Cow/s records to monitor this week:</div>
             {activeSickLogs.slice(0, 4).map((log) => {
               const treatDate = new Date(log.treatmentDate);
               const todayNoHours = new Date(); todayNoHours.setHours(0,0,0,0);
@@ -456,9 +473,9 @@ function Dashboard() {
                     <h5>{log.cowName} <small>(Tag: {log.cowTag})</small></h5>
                     <p>Condition: <strong>{log.diagnosis}</strong> • Status: <em>{log.treatmentStatus}</em></p>
                     {log.withdrawalDays > 0 && remainingDays > 0 ? (
-                      <span className="critical-dump-badge-pill">🚨 DUMP MILK: {remainingDays} Days Left</span>
+                      <span className="critical-dump-badge-pill">DUMP MILK: {remainingDays} Days Left</span>
                     ) : log.withdrawalDays > 0 ? (
-                      <span className="safe-release-badge-pill">✅ Released to Tank Lines</span>
+                      <span className="safe-release-badge-pill">Released to Tank Lines</span>
                     ) : null}
                   </div>
                 </div>

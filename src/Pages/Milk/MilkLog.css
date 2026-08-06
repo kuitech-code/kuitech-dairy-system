@@ -1,6 +1,7 @@
 .milk-production-page-container {
   padding: 4px;
   font-family: system-ui, sans-serif;
+  overflow-x: hidden;
 }
 
 /* Card Blocks */
@@ -27,6 +28,7 @@
   flex-direction: column;
   margin-bottom: 12px;
   flex: 1;
+  min-width: 0;
 }
 
 .milk-form-field label {
@@ -36,7 +38,11 @@
   margin-bottom: 4px;
 }
 
-.milk-form-field input, .milk-form-field select {
+.milk-form-field input,
+.milk-form-field select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 10px;
   border: 1px solid #ccd1d1;
   border-radius: 6px;
@@ -47,6 +53,12 @@
 .milk-form-row {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
+}
+
+.milk-form-row .milk-form-field {
+  min-width: 0;
+  flex: 1 1 220px;
 }
 
 .disabled-select {
@@ -99,10 +111,14 @@
 /* Dynamic Collection Table Grid layout sheets */
 .sheet-table-scroll-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid #eef2f4;
+  border-radius: 10px;
 }
 
 .collection-data-table {
   width: 100%;
+  min-width: 420px;
   border-collapse: collapse;
   text-align: left;
   font-size: 13px;
@@ -114,12 +130,55 @@
   color: #7f8c8d;
   font-weight: 600;
   border-bottom: 2px solid #eaeded;
+  white-space: nowrap;
 }
 
 .collection-data-table td {
   padding: 10px 8px;
   border-bottom: 1px solid #eaeded;
   color: #2c3e50;
+  vertical-align: top;
+}
+
+.collection-data-table td:nth-child(2),
+.collection-data-table td:nth-child(3),
+.collection-data-table td:nth-child(4) {
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.collection-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.collection-data-table strong,
+.collection-data-table small {
+  display: block;
+}
+
+.collection-data-table small {
+  margin-top: 2px;
+  color: #95a5a6;
+}
+
+@media (max-width: 640px) {
+  .milk-form-card, .collection-sheet-card {
+    padding: 12px;
+  }
+
+  .milk-form-card h2, .collection-sheet-card h2 {
+    font-size: 14px;
+  }
+
+  .collection-data-table {
+    font-size: 12px;
+    min-width: 360px;
+  }
+
+  .collection-data-table th,
+  .collection-data-table td {
+    padding: 8px 6px;
+  }
 }
 
 /* Identity stack cells */

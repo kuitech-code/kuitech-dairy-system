@@ -150,7 +150,7 @@ function BreedingLog() {
     setIsBoughtPregnant(false);
     setManualDueDate('');
     
-    setSuccessMessage(`🎉 Breeding event successfully committed to record!`);
+    setSuccessMessage(`Breeding event successfully committed to record!`);
     refreshBreedingTerminal();
     setTimeout(() => setSuccessMessage(''), 3000);
   };
@@ -203,7 +203,7 @@ function BreedingLog() {
       
       {/* SECTION 1: LOGGER DRAWER */}
       <div className="breeding-card-box">
-        <h2>🧬 Log AI Insemination or Heat Cycle</h2>
+        <h2>Log AI Insemination or Heat Cycle</h2>
         <div className="form-toggle-bar">
           <button type="button" className={formType === 'Insemination' ? 'toggle-tab active' : 'toggle-tab'} onClick={() => setFormType('Insemination')}>Artificial Insemination</button>
           <button type="button" className={formType === 'Heat' ? 'toggle-tab active' : 'toggle-tab'} onClick={() => setFormType('Heat')}>Heat Cycle Trace</button>
@@ -215,10 +215,10 @@ function BreedingLog() {
         <form onSubmit={handleLogBreedingEvent}>
           <div className="breeding-row-grid">
             <div className="breeding-input-field">
-              <label>Select Open Female Cow *</label>
+              <label>Select Cow *</label>
               {eligibleCows.length === 0 ? (
                 <select disabled className="disabled-select">
-                  <option>⚠️ No open eligible milking lines available today.</option>
+                  <option>No open eligible milking cows available today.</option>
                 </select>
               ) : (
                 <select value={selectedCowId} onChange={(e) => setSelectedCowId(e.target.value)} required>
@@ -227,7 +227,7 @@ function BreedingLog() {
               )}
             </div>
             <div className="breeding-input-field">
-              <label>Event Date *</label>
+              <label>Date *</label>
               <input type="date" value={serviceDate} max={new Date().toISOString().split('T')[0]} onChange={(e) => setServiceDate(e.target.value)} required />
             </div>
           </div>
@@ -236,7 +236,7 @@ function BreedingLog() {
               <div className="checkbox-lock-row">
                 <label className="checkbox-label-wrapper">
                   <input type="checkbox" checked={isBoughtPregnant} onChange={(e) => setIsBoughtPregnant(e.target.checked)} />
-                  <span>🤰 This animal was bought already pregnant</span>
+                  <span>This cow was bought already pregnant</span>
                 </label>
               </div>
 
@@ -260,28 +260,28 @@ function BreedingLog() {
 
               <div className="breeding-row-grid">
                 <div className="breeding-input-field">
-                  <label>AI Service Cost ($)</label>
+                  <label>AI Service Cost (Ksh)</label>
                   <input type="number" placeholder="e.g. 45" value={serviceCost} onChange={(e) => setServiceCost(e.target.value)} />
                 </div>
                 <div className="breeding-input-field">
                   <label>Bull Quality Notes</label>
-                  <input type="text" placeholder="Genetics rating notes" value={bullNotes} onChange={(e) => setBullNotes(e.target.value)} />
+                  <input type="text" placeholder="Genetic notes" value={bullNotes} onChange={(e) => setBullNotes(e.target.value)} />
                 </div>
               </div>
             </div>
           )}
 
           <button type="submit" className="commit-breeding-btn" disabled={eligibleCows.length === 0}>
-            💾 Commit Event to History
+            Save Event to History
           </button>
         </form>
       </div>
 
       {/* SECTION 2: LIVE PREGNANCY TRACKERS */}
       <div className="breeding-card-box">
-        <h2>🤰 Active Pregnancy & Dry Cow Trackers ({activePregnancies.length})</h2>
+        <h2>Pregnancy & Dry Cow Tracker ({activePregnancies.length})</h2>
         {activePregnancies.length === 0 ? (
-          <p className="empty-sub-notice">🥣 No cows recorded as currently pregnant inside the herd registry.</p>
+          <p className="empty-sub-notice">No cows recorded as currently pregnant inside the herd registry.</p>
         ) : (
           <div className="pregnancy-mobile-deck">
             {activePregnancies.map((p) => {
@@ -327,17 +327,17 @@ function BreedingLog() {
 
       {/* 📊 SECTION 3: LIVE HEAT TRACKING REGISTRY TABLE */}
       <div className="breeding-card-box">
-        <h2>📋 Registered Heat Cycle Registry Ledger ({heatEvents.length})</h2>
+        <h2>Heat Cycle Ledger ({heatEvents.length})</h2>
         {heatEvents.length === 0 ? (
-          <p className="empty-sub-notice">🔥 No independent heat track signatures logged in history yet.</p>
+          <p className="empty-sub-notice">No heat track signatures logged in history yet.</p>
         ) : (
           <div className="table-scroll-frame" style={{ overflowX: 'auto' }}>
             <table className="heat-table">
               <thead>
                 <tr>
-                  <th>Cow Name</th>
-                  <th>Tag ID</th>
-                  <th>Observation Date</th>
+                  <th>Name</th>
+                  <th>Tag</th>
+                  <th>Date</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -347,7 +347,7 @@ function BreedingLog() {
                     <td><strong>{e.cowName}</strong></td>
                     <td>{e.cowTag}</td>
                     <td>{new Date(e.eventDate).toLocaleDateString()}</td>
-                    <td><span className="heat-badge-glow">🔥 Active Heat</span></td>
+                    <td><span className="heat-badge-glow">On Heat</span></td>
                   </tr>
                 ))}
               </tbody>

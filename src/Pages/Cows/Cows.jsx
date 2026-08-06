@@ -38,14 +38,14 @@ function Cows({ onSelectCow }) {
   return (
     <div className="cows-container">
       <div className="form-card">
-        <h2>🐄 Register New Animal</h2>
+        <h2>Register New Animal</h2>
         {successMessage && <div className="success-banner">{successMessage}</div>}
         {/* Call the reusable form module */}
         <CowForm onSave={handleAddNewCow} />
       </div>
 
       <div className="directory-card">
-        <h2>📋 Live Herd Directory ({herd.length})</h2>
+        <h2>Herd Directory ({herd.length})</h2>
         {loading ? <p className="status-text">Loading records...</p> : (
           <>
             <div className="mobile-list">

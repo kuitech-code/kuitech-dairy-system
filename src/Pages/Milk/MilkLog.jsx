@@ -162,7 +162,7 @@ function MilkLog() {
     }
 
     localStorage.setItem('dairy_milk_logs', JSON.stringify(masterLogsArray));
-    setSuccessMessage(`🎉 Milk production records updated for ${targetCow?.name || 'Animal'}!`);
+    setSuccessMessage(`Milk production records updated for ${targetCow?.name || 'Animal'}!`);
     
     setMorningMilk('');
     setEveningMilk('');
@@ -176,8 +176,8 @@ function MilkLog() {
       
       {/* SECTION 1: DAILY PARLOR LOGGER SHEET */}
       <div className="milk-form-card">
-        <h2>🥛 Daily Parlor Collection Entry Sheet</h2>
-        <p className="calendar-lock-pill">📅 Locked Working Session: <strong>{new Date().toDateString()}</strong></p>
+        <h2>Daily Milk Collection Entry Sheet</h2>
+        <p className="calendar-lock-pill">Working Session: <strong>{new Date().toDateString()}</strong></p>
         
         {successMessage && <div className="milk-alert-banner alert-success">{successMessage}</div>}
         {errorMessage && <div className="milk-alert-banner alert-danger">{errorMessage}</div>}
@@ -187,7 +187,7 @@ function MilkLog() {
             <label>Select Cow for Entry *</label>
             {dropdownCows.length === 0 ? (
               <select disabled className="disabled-select">
-                <option>All eligible milking cattle records completed for today!</option>
+                <option>All eligible milking cow records completed for today!</option>
               </select>
             ) : (
               <select value={selectedCowId} onChange={(e) => setSelectedCowId(e.target.value)} required>
@@ -211,7 +211,7 @@ function MilkLog() {
                 disabled={isMorningDisabled}
                 onChange={(e) => setMorningMilk(e.target.value)} 
               />
-              {isMorningDisabled && <small className="lock-notice-text">🔒 Morning locked for this cow</small>}
+              {isMorningDisabled && <small className="lock-notice-text">Morning entry locked for this cow</small>}
             </div>
             
             <div className="milk-form-field">
@@ -224,7 +224,7 @@ function MilkLog() {
                 disabled={isEveningDisabled}
                 onChange={(e) => setEveningMilk(e.target.value)} 
               />
-              {isEveningDisabled && <small className="lock-notice-text">🔒 Evening locked for this cow</small>}
+              {isEveningDisabled && <small className="lock-notice-text">Evening entry locked for this cow</small>}
             </div>
           </div>
 
@@ -233,30 +233,30 @@ function MilkLog() {
             className="commit-milk-btn"
             disabled={dropdownCows.length === 0}
           >
-            💾 Commit Session Entry
+            Submit Yield Entry
           </button>
         </form>
       </div>
 
       {/* SECTION 2: TODAY'S PARLOR YIELD REGISTRY SHEET */}
       <div className="collection-sheet-card">
-        <h2>📋 Today's Parlor Yield Registry Sheet ({todayRecords.length})</h2>
+        <h2>Today's Yield Record Sheet ({todayRecords.length})</h2>
         
         {loading ? (
           <p className="sheet-status-text">Syncing internal device memory indices...</p>
         ) : todayRecords.length === 0 ? (
           <div className="empty-sheet-box">
-            🥣 <p>No milk weights logged in the parlor lines for today yet.</p>
+            🥣 <p>No milk logged for today yet.</p>
           </div>
         ) : (
           <div className="sheet-table-scroll-wrapper">
             <table className="collection-data-table">
               <thead>
                 <tr>
-                  <th>Cow Profile</th>
-                  <th>AM Yield</th>
-                  <th>PM Yield</th>
-                  <th>Daily Total</th>
+                  <th>Cow</th>
+                  <th>Morning</th>
+                  <th>Evening</th>
+                  <th>Total</th>
                 </tr>
               </thead>
               <tbody>

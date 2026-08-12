@@ -10,6 +10,7 @@
 /* Interactive buttons panels styles */
 .settings-action-btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; display: block; text-align: center; }
 .settings-action-btn.export-btn { background-color: #27ae60; color: white; }
+.settings-action-btn.restore-btn { background-color: #3498db; color: white; }
 .settings-action-btn.wipe-btn { background-color: #c0392b; color: white; }
 
 /* Hidden upload file styling trigger deck labels */

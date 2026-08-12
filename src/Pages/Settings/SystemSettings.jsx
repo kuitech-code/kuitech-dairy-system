@@ -4,6 +4,7 @@ import './SystemSettings.css';
 function SystemSettings() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const fileInputRef = React.useRef(null);
 
   // --- KEY KEYS KEYS LIST WE WANT TO BACK UP ---
   const dairyKeys = [
@@ -96,6 +97,47 @@ function SystemSettings() {
     fileReader.readAsText(uploadedFile);
   };
 
+  // --- 📥 ENGINE 2B: RESTORE FROM PRE-MADE BACKUP FILE ---
+  const handleRestoreFromPublicBackup = async () => {
+    setSuccessMessage('');
+    setErrorMessage('');
+
+    try {
+      const response = await fetch('/kuitech-dairy-system/GreenField_Dairy_Backup_2026-07-25.json');
+      
+      if (!response.ok) {
+        setErrorMessage('❌ Backup file not found on server.');
+        return;
+      }
+
+      const parsedData = await response.json();
+      
+      // Safety Verification Check
+      const hasHerdKey = 'dairy_herd' in parsedData;
+      if (!hasHerdKey) {
+        setErrorMessage('❌ Backup file is not valid.');
+        return;
+      }
+
+      if (window.confirm('⚠️ WARNING: Restoring this backup will completely overwrite all current records on this phone. Do you want to proceed?')) {
+        // Restore the data
+        Object.keys(parsedData).forEach(key => {
+          if (dairyKeys.includes(key) && parsedData[key] !== null) {
+            localStorage.setItem(key, JSON.stringify(parsedData[key]));
+          }
+        });
+
+        setSuccessMessage('🎉 System Restored Successfully from backup! All historical records are active.');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
+    } catch (err) {
+      setErrorMessage('❌ Error: Failed to load backup file from server.');
+      console.error(err);
+    }
+  };
+
   // --- 🗑️ ENGINE 3: SYSTEM RESET EMERGENCY WIPE ---
   const handleEmergencySystemWipe = () => {
     if (window.confirm('🚨 EMERGENCY RESET: Are you absolutely sure you want to completely erase ALL records on this device? This cannot be undone!')) {
@@ -146,15 +188,33 @@ function SystemSettings() {
           Load your historical records onto a new smartphone device or roll back mistakes by selecting a previously exported <code>.json</code> backup file.
         </p>
         
-        <label className="settings-file-picker-label">
-          Select Backup File
-          <input 
-            type="file" 
-            accept=".json" 
-            onChange={handleImportRestore} 
-            style={{ display: 'none' }} 
-          />
-        </label>
+        <button 
+          type="button" 
+          className="settings-action-btn restore-btn"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          Upload & Restore Backup File
+        </button>
+        
+        <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#ecf0f1', borderRadius: '6px', fontSize: '12px', color: '#555' }}>
+          <strong>Or restore from pre-made backup:</strong>
+          <button 
+            type="button" 
+            className="settings-action-btn restore-btn"
+            onClick={handleRestoreFromPublicBackup}
+            style={{ marginTop: '8px' }}
+          >
+            Restore from GreenField_Dairy_Backup_2026-07-25.json
+          </button>
+        </div>
+        
+        <input 
+          ref={fileInputRef}
+          type="file" 
+          accept=".json" 
+          onChange={handleImportRestore} 
+          style={{ display: 'none' }} 
+        />
       </div>
 
       {/* CARD 3: DANGER DESTRUCTIVE MANAGEMENT WIPE ZONE */}

@@ -17,33 +17,20 @@ function App() {
   const [selectedCowId, setSelectedCowId] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // 🔒 SECURITY GATEWAYS VALIDATION STATES
-  const [isLicensed, setIsLicensed] = useState(false);
+  // 🔒 SECURITY GATEWAYS VALIDATION STATES - INITIALIZE FROM LOCALSTORAGE TO PREVENT FLICKER
+  const [isLicensed, setIsLicensed] = useState(localStorage.getItem('dairy_app_license_verified') === 'true');
   const [licenseKeyInput, setLicenseKeyInput] = useState('');
-  const [farmNameInput, setFarmNameInput] = useState(''); // Dynamic farm branding name tracker
-  const [farmBrandingLogo, setFarmBrandingLogo] = useState('GreenField Dairy');
+  const [farmNameInput, setFarmNameInput] = useState('');
+  const [farmBrandingLogo, setFarmBrandingLogo] = useState(localStorage.getItem('dairy_farm_branding_logo_text') || 'GreenField Dairy');
 
-  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(localStorage.getItem('dairy_terms_accepted') === 'true');
   
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentUserProfile, setCurrentUserProfile] = useState('Admin Operator');
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('dairy_current_user_session') ? true : false);
+  const [currentUserProfile, setCurrentUserProfile] = useState(localStorage.getItem('dairy_current_user_session') || 'Admin Operator');
 
-  // Initial local check loop to load persistence statuses from device memory disk
+  // Empty effect - states now load immediately from localStorage
   useEffect(() => {
-    if (localStorage.getItem('dairy_app_license_verified') === 'true') {
-      setIsLicensed(true);
-      setFarmBrandingLogo(localStorage.getItem('dairy_farm_branding_logo_text') || 'GreenField Dairy');
-    }
-    if (localStorage.getItem('dairy_terms_accepted') === 'true') {
-      setHasAcceptedTerms(true);
-    }
-    
-    // Check if a login session is actively alive from a recent tab visit
-    const activeSession = localStorage.getItem('dairy_current_user_session');
-    if (activeSession) {
-      setCurrentUserProfile(activeSession);
-      setIsLoggedIn(true);
-    }
+    // Pre-hydration complete - no flicker needed
   }, []);
 
   const handleVerifyLicenseAndBrand = (e) => {

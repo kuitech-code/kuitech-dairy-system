@@ -135,3 +135,48 @@
 .license-modal-card button { width: 100%; padding: 12px; background-color: #c0392b; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; }
 .license-modal-card button:hover { background-color: #a93226; }
 .license-modal-card small { display: block; margin-top: 14px; font-size: 10px; color: #bdc3c7; }
+
+/* 🔐 SESSION TIMEOUT WARNING MODAL */
+.session-warning-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9998;
+}
+
+.session-warning-modal {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  max-width: 300px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+.session-warning-modal h2 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: #e67e22;
+}
+
+.session-warning-modal p {
+  font-size: 13px;
+  color: #7f8c8d;
+  line-height: 1.5;
+  margin: 0 0 16px 0;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

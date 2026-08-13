@@ -27,11 +27,67 @@ function App() {
   
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('dairy_current_user_session') ? true : false);
   const [currentUserProfile, setCurrentUserProfile] = useState(localStorage.getItem('dairy_current_user_session') || 'Admin Operator');
+  const [sessionWarningVisible, setSessionWarningVisible] = useState(false);
 
   // Empty effect - states now load immediately from localStorage
   useEffect(() => {
     // Pre-hydration complete - no flicker needed
   }, []);
+
+  // ===== SESSION TIMEOUT EFFECT =====
+  // This effect monitors user inactivity and auto-logs them out after 30 minutes
+  useEffect(() => {
+    if (!isLoggedIn) return; // Only monitor when logged in
+
+    const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes in milliseconds
+    const WARNING_TIME = 28 * 60 * 1000; // Show warning at 28 minutes (2 min before timeout)
+    let timeoutTimer = null;
+    let warningTimer = null;
+
+    const resetTimers = () => {
+      // Clear existing timers
+      if (timeoutTimer) clearTimeout(timeoutTimer);
+      if (warningTimer) clearTimeout(warningTimer);
+      setSessionWarningVisible(false);
+
+      // Set new warning timer (at 28 minutes)
+      warningTimer = setTimeout(() => {
+        setSessionWarningVisible(true);
+      }, WARNING_TIME);
+
+      // Set new timeout timer (at 30 minutes)
+      timeoutTimer = setTimeout(() => {
+        // Auto-logout the user
+        localStorage.removeItem('dairy_current_user_session');
+        localStorage.removeItem('dairy_session_start_time');
+        setIsLoggedIn(false);
+        setSessionWarningVisible(false);
+        alert('⏱️ Your session has expired due to inactivity. Please log in again.');
+      }, SESSION_TIMEOUT);
+
+      // Update session start time
+      localStorage.setItem('dairy_session_start_time', Date.now().toString());
+    };
+
+    // Reset timers on user activity (mouse click, keyboard press, touch)
+    const activityEvents = ['mousedown', 'keydown', 'touchstart', 'click'];
+    
+    activityEvents.forEach(event => {
+      document.addEventListener(event, resetTimers);
+    });
+
+    // Initial timer setup
+    resetTimers();
+
+    // Cleanup: remove event listeners when component unmounts
+    return () => {
+      activityEvents.forEach(event => {
+        document.removeEventListener(event, resetTimers);
+      });
+      if (timeoutTimer) clearTimeout(timeoutTimer);
+      if (warningTimer) clearTimeout(warningTimer);
+    };
+  }, [isLoggedIn]);
 
   const handleVerifyLicenseAndBrand = (e) => {
     e.preventDefault();
@@ -110,6 +166,31 @@ function App() {
 
   return (
     <div className="app-mobile-shell">
+      
+      {/* SESSION TIMEOUT WARNING MODAL */}
+      {sessionWarningVisible && (
+        <div className="session-warning-overlay">
+          <div className="session-warning-modal">
+            <h2>⏱️ Session Expiring Soon</h2>
+            <p>Your session will expire in 2 minutes due to inactivity. Click anywhere to continue working.</p>
+            <button 
+              onClick={() => setSessionWarningVisible(false)}
+              style={{ 
+                width: '100%', 
+                padding: '12px', 
+                backgroundColor: '#27ae60', 
+                color: 'white', 
+                border: 'none', 
+                borderRadius: '6px', 
+                fontWeight: 'bold',
+                cursor: 'pointer'
+              }}
+            >
+              Stay Logged In
+            </button>
+          </div>
+        </div>
+      )}
       
       {/* 1. MASTER HEADFLOATING HEADER BAR CONTAINER */}
       <header className="main-app-top-header" style={{ backgroundColor: '#16a085' }}>

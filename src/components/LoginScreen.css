@@ -30,6 +30,19 @@
 
 .login-submit-action-btn { width: 100%; padding: 12px; background-color: #16a085; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 4px; }
 
+/* NEW SECURE LOGIN STYLES */
+.login-submit-btn { width: 100%; padding: 12px; background-color: #16a085; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 8px; }
+.login-submit-btn:hover { background-color: #0f7a62; }
+.login-submit-btn:active { transform: scale(0.98); }
+
+.login-footer-links { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+
+.link-btn { background: none; border: none; color: #3498db; font-size: 12px; font-weight: bold; cursor: pointer; padding: 8px; text-decoration: underline; }
+.link-btn:hover { color: #2980b9; }
+
+.animate-fade { animation: fadeIn 0.3s ease-in; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
 /* Biometric Fingerprint Section styles */
 .biometric-divider-line { display: flex; align-items: center; text-align: center; margin: 16px 0; }
 .biometric-divider-line::before, .biometric-divider-line::after { content: ''; flex: 1; border-bottom: 1px solid #eaeded; }

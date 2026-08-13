@@ -299,21 +299,20 @@ function BreedingLog() {
                       <strong>{p.cowName}</strong> <small>(Tag: {p.cowTag})</small>
                       {isAssetArchived && <span className="ghost-alert-tag"> [Archived Asset]</span>}
                     </h4>
-                    <p>Sire Straw Ref: <strong>{p.semenTag}</strong></p>
-                    <p className="due-date-text">📅 Expected Due Date: <strong>{new Date(p.expectedDueDate).toLocaleDateString()}</strong></p>
+                    <p>Sire: <strong>{p.semenTag}</strong></p>
+                    <p className="due-date-text">Due Date(Aprox): <strong>{new Date(p.expectedDueDate).toLocaleDateString()}</strong></p>
                     <span className={p.isDry ? "dry-pill-badge" : "milking-pill-badge"}>
-                      {isAssetArchived ? "🔒 Locked Archive" : p.isDry ? "🍂 Rest Ration: Dry Cow" : "🍼 Active Milk Line"}
+                      {isAssetArchived ? "Locked Archive" : p.isDry ? "Rest Ration: Dry Cow" : "Milk Producer"}
                     </span>
                   </div>
                   
                   <div className="pregnancy-card-actions-cluster">
-                    {/* 🔒 CONSTRAINT: Completely hide action toggles if the animal is dead or sold */}
                     {isAssetArchived ? (
                       <small className="disabled-notice-label">Locked</small>
                     ) : (
                       <>
                         {!p.isDry && <button type="button" className="action-row-btn dry" onClick={() => handleMarkAsDry(p.cowId)}>Mark Dry</button>}
-                        <button type="button" className="action-row-btn miscarriage" onClick={() => handleLogMiscarriage(p.cowId)}>💔 Miscarriage</button>
+                        <button type="button" className="action-row-btn miscarriage" onClick={() => handleLogMiscarriage(p.cowId)}>Miscarriage</button>
                       </>
                     )}
                   </div>

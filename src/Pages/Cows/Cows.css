@@ -155,8 +155,6 @@ h2 {
 .status-pregnant { border-left: 5px solid #9b59b6; }
 .status-pregnant .state-badge { background-color: #f4ecf7; color: #9b59b6; }
 
-.status-dry { border-left: 5px solid #f1c40f; }
-.status-dry .state-badge { background-color: #fef9e7; color: #f1c40f; }
 
 .status-sick { border-left: 5px solid #e74c3c; }
 .status-sick .state-badge { background-color: #f9ebea; color: #e74c3c; }

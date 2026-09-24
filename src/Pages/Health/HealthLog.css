@@ -138,3 +138,585 @@ input:disabled { background-color: #eaeded !important; color: #95a5a6 !important
     justify-content: flex-start;
   }
 }
+
+.health-reminders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  background-color: #f8fafb;
+  border: 1px solid #e5e9eb;
+  border-radius: 8px;
+}
+
+.health-reminders-header h2 {
+  margin: 0;
+  padding: 0;
+  border: none;
+  color: #263238;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.health-reminders-header p {
+  margin: 4px 0 0;
+  color: #8a969b;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.health-reminder-counts {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.reminder-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 8px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.reminder-count.overdue {
+  background-color: #f9d5d5;
+  color: #c0392b;
+}
+
+.reminder-count.today {
+  background-color: #fdebd0;
+  color: #d35400;
+}
+
+.reminder-count.upcoming {
+  background-color: #ebf5fb;
+  color: #2980b9;
+}
+
+@media (max-width: 560px) {
+  .health-reminders-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .health-reminder-counts {
+    justify-content: flex-start;
+  }
+}
+
+/* =========================================
+   HEALTH & TREATMENT REMINDERS
+   ========================================= */
+
+.health-reminders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.health-reminder-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  padding: 11px 12px;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid #e1e6e8;
+  border-left: 4px solid #b8c3c7;
+  border-radius: 7px;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.health-reminder-item:hover {
+  background: #fafcfc;
+}
+
+
+/* -----------------------------------------
+   STATUS VARIANTS
+   ----------------------------------------- */
+
+.health-reminder-item.overdue {
+  border-left-color: #c0392b;
+  background: #fffafa;
+}
+
+.health-reminder-item.today {
+  border-left-color: #e67e22;
+  background: #fffdf8;
+}
+
+.health-reminder-item.upcoming {
+  border-left-color: #3498db;
+}
+
+
+/* -----------------------------------------
+   MAIN CONTENT
+   ----------------------------------------- */
+
+.health-reminder-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.health-reminder-status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: #edf1f2;
+  color: #7b898e;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.health-reminder-item.overdue .health-reminder-status-icon {
+  background: #f9d6d3;
+  color: #c0392b;
+}
+
+.health-reminder-item.today .health-reminder-status-icon {
+  background: #fde6cf;
+  color: #d35400;
+}
+
+.health-reminder-item.upcoming .health-reminder-status-icon {
+  background: #dceef9;
+  /* color: #2980b9; */
+}
+
+
+/* -----------------------------------------
+   DETAILS
+   ----------------------------------------- */
+
+.health-reminder-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.health-reminder-details > strong {
+  color: #263238;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.health-reminder-tag {
+  color: #8a969b;
+  font-size: 10px;
+}
+
+.health-reminder-treatment {
+  margin-top: 4px;
+  color: #455a64;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.health-reminder-medication {
+  color: #68777d;
+  font-size: 11px;
+}
+
+.health-reminder-due-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 5px;
+  font-size: 10px;
+}
+
+.health-reminder-due-line strong {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.health-reminder-due-line span {
+  color: #929da1;
+}
+
+.health-reminder-item.overdue .health-reminder-due-line strong {
+  color: #c0392b;
+}
+
+.health-reminder-item.today .health-reminder-due-line strong {
+  color: #d35400;
+}
+
+.health-reminder-item.upcoming .health-reminder-due-line strong {
+  color: #2980b9;
+}
+
+
+/* -----------------------------------------
+   RECORD BUTTON
+   ----------------------------------------- */
+
+.record-reminder-btn {
+  flex: 0 0 auto;
+  padding: 7px 11px;
+  color: #ffffff;
+  border: 1px solid #cfd8dc;
+  border-radius: 5px;
+  background: #058d60d5;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.record-reminder-btn:hover {
+  background: #f3f6f7;
+  border-color: #aebbc0;
+  color: #178b65;
+}
+
+.record-reminder-btn:active {
+  transform: translateY(1px);
+}
+
+.health-reminder-item.overdue .record-reminder-btn {
+  border-color: #d9aaa6;
+  color: #b53227;
+}
+
+.health-reminder-item.overdue .record-reminder-btn:hover {
+  background: #fff1ef;
+}
+
+.health-reminder-item.today .record-reminder-btn {
+  border-color: #e4c19d;
+  color: #c45b00;
+}
+
+.health-reminder-item.today .record-reminder-btn:hover {
+  background: #fff6eb;
+}
+
+.health-reminder-item.upcoming .record-reminder-btn {
+  border-color: #b8d5e5;
+  color: #2476a8;
+}
+
+.health-reminder-item.upcoming .record-reminder-btn:hover {
+  background: #f0f8fc;
+}
+
+
+/* -----------------------------------------
+   MOBILE
+   ----------------------------------------- */
+
+@media (max-width: 600px) {
+  .health-reminder-item {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .health-reminder-main {
+    width: 100%;
+  }
+
+  .record-reminder-btn {
+    width: 100%;
+    padding: 8px 10px;
+  }
+
+  .health-reminder-due-line {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+}
+
+/* =========================================
+   HEALTH REMINDERS — HORIZONTAL SCROLL
+   ========================================= */
+
+.health-reminders-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 10px;
+
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  padding: 4px 3px 12px;
+  box-sizing: border-box;
+
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+}
+
+
+/* Each reminder becomes a fixed-width card */
+.health-reminder-item {
+  flex: 0 0 310px;
+  width: 310px;
+  min-height: 135px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+
+  box-sizing: border-box;
+  padding: 12px;
+
+  background: #ffffff;
+  border: 1px solid #e1e6e8;
+  border-left: 4px solid #b8c3c7;
+  border-radius: 7px;
+
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.health-reminder-item:hover {
+  background: #fafcfc;
+  transform: translateY(-1px);
+}
+
+
+/* Status colours */
+
+.health-reminder-item.overdue {
+  border-left-color: #c0392b;
+  background: #fffafa;
+}
+
+.health-reminder-item.today {
+  border-left-color: #e67e22;
+  background: #fffdf8;
+}
+
+.health-reminder-item.upcoming {
+  border-left-color: #3498db;
+}
+
+
+/* Main reminder content */
+
+.health-reminder-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  min-width: 0;
+}
+
+.health-reminder-status-icon {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: #edf1f2;
+  color: #7b898e;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.health-reminder-item.overdue .health-reminder-status-icon {
+  background: #f9d6d3;
+  color: #c0392b;
+}
+
+.health-reminder-item.today .health-reminder-status-icon {
+  background: #fde6cf;
+  color: #d35400;
+}
+
+.health-reminder-item.upcoming .health-reminder-status-icon {
+  background: #dceef9;
+  color: #2980b9;
+}
+
+
+/* Details */
+
+.health-reminder-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 2px;
+}
+
+.health-reminder-details > strong {
+  color: #263238;
+  font-size: 13px;
+  font-weight: 700;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.health-reminder-tag {
+  color: #8a969b;
+  font-size: 10px;
+}
+
+.health-reminder-treatment {
+  margin-top: 4px;
+  color: #455a64;
+  font-size: 12px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.health-reminder-medication {
+  color: #68777d;
+  font-size: 11px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.health-reminder-due-line {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 5px;
+
+  font-size: 10px;
+}
+
+.health-reminder-due-line strong {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.health-reminder-due-line span {
+  color: #929da1;
+}
+
+.health-reminder-item.overdue .health-reminder-due-line strong {
+  color: #c0392b;
+}
+
+.health-reminder-item.today .health-reminder-due-line strong {
+  color: #d35400;
+}
+
+.health-reminder-item.upcoming .health-reminder-due-line strong {
+  color: #2980b9;
+}
+
+
+/* Record button */
+
+.record-reminder-btn {
+  width: 100%;
+  margin-top: 10px;
+
+  padding: 7px 10px;
+
+  border: 1px solid #cfd8dc;
+  border-radius: 5px;
+
+  background: #aaebda;
+  color: #eef9ff;
+
+  font-size: 10px;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.record-reminder-btn:hover {
+  background: #f3f6f7;
+}
+
+.health-reminder-item.overdue .record-reminder-btn {
+  border-color: #d9aaa6;
+  color: #b53227;
+}
+
+.health-reminder-item.today .record-reminder-btn {
+  border-color: #e4c19d;
+  color: #c45b00;
+}
+
+.health-reminder-item.upcoming .record-reminder-btn {
+  border-color: #b8d5e5;
+  color: #2476a8;
+}
+
+
+/* =========================================
+   SCROLLBAR
+   ========================================= */
+
+.health-reminders-list::-webkit-scrollbar {
+  height: 7px;
+}
+
+.health-reminders-list::-webkit-scrollbar-track {
+  background: #f1f3f4;
+  border-radius: 10px;
+}
+
+.health-reminders-list::-webkit-scrollbar-thumb {
+  background: #c5cdd0;
+  border-radius: 10px;
+}
+
+.health-reminders-list::-webkit-scrollbar-thumb:hover {
+  background: #aeb8bc;
+}
+
+
+/* =========================================
+   SMALL SCREENS
+   ========================================= */
+
+@media (max-width: 600px) {
+  .health-reminder-item {
+    flex-basis: 280px;
+    width: 280px;
+  }
+}

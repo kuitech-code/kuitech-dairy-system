@@ -10,8 +10,18 @@ function MilkLog() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
-  // --- 🔒 CALENDAR BARRIER: Permanently locked to today's local string ---
-  const todayString = new Date().toISOString().split('T')[0]; // Format: YYYY-MM-DD
+  // --- CALENDAR BARRIER: Permanently locked to today's local string ---
+  const getLocalDateString = () => {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+  };
+  const todayString = getLocalDateString();  
+  // Format: YYYY-MM-DD
 
   // --- STATE 2: YIELD INPUT FIELDS ---
   const [selectedCowId, setSelectedCowId] = useState('');
@@ -109,7 +119,7 @@ function MilkLog() {
     setErrorMessage('');
 
     if (!selectedCowId) {
-      setErrorMessage('❌ Selection Error: No remaining eligible animals left to milk today.');
+      setErrorMessage('Selection Error: No remaining eligible animals left to milk today.');
       return;
     }
 
@@ -117,7 +127,12 @@ function MilkLog() {
     const pmYieldInput = parseFloat(eveningMilk) || 0;
 
     if (amYieldInput < 0 || pmYieldInput < 0) {
-      setErrorMessage('❌ Calculation Error: Milk volumes cannot be negative.');
+      setErrorMessage('Calculation Error: Milk volumes cannot be negative.');
+      return;
+    }
+
+    if (amYieldInput > 40 || pmYieldInput > 40) {
+      setErrorMessage('Milk volume error: A single milking session cannot exceed 40 liters.');
       return;
     }
 
@@ -177,7 +192,7 @@ function MilkLog() {
       {/* SECTION 1: DAILY PARLOR LOGGER SHEET */}
       <div className="milk-form-card">
         <h2>Daily Milk Collection Entry Sheet</h2>
-        <p className="calendar-lock-pill">Working Session: <strong>{new Date().toDateString()}</strong></p>
+        <p className="calendar-lock-pill">Working Session: <strong>{todayString}</strong></p>
         
         {successMessage && <div className="milk-alert-banner alert-success">{successMessage}</div>}
         {errorMessage && <div className="milk-alert-banner alert-danger">{errorMessage}</div>}
@@ -205,7 +220,9 @@ function MilkLog() {
               <label>Morning Yield (Liters)</label>
               <input 
                 type="number" 
-                step="0.1" 
+                step="0.1"
+                min="0"
+                max="40"
                 placeholder={isMorningDisabled ? "Logged" : "e.g. 14.5"}
                 value={morningMilk} 
                 disabled={isMorningDisabled}
@@ -219,6 +236,8 @@ function MilkLog() {
               <input 
                 type="number" 
                 step="0.1" 
+                min="0"
+                max="40"
                 placeholder={isEveningDisabled ? "Logged" : "e.g. 10.2"} 
                 value={eveningMilk} 
                 disabled={isEveningDisabled}
@@ -246,7 +265,7 @@ function MilkLog() {
           <p className="sheet-status-text">Syncing internal device memory indices...</p>
         ) : todayRecords.length === 0 ? (
           <div className="empty-sheet-box">
-            🥣 <p>No milk logged for today yet.</p>
+            <p>No milk logged for today yet.</p>
           </div>
         ) : (
           <div className="sheet-table-scroll-wrapper">

@@ -19,7 +19,7 @@ function FinancialLedger() {
   const [tempPriceInput, setEditTempPriceInput] = useState('');
 
   // --- STATE 3: MANUAL TRANSACTION ENTRY FORMS ---
-  const [formMode, setFormTypeMode] = useState('Expense'); // 🔒 Fixed variable linkage
+  const [formMode, setFormTypeMode] = useState('Expense'); // Fixed variable linkage
   const [txDescription, setTxDescription] = useState('');
   const [txAmount, setTxAmount] = useState('');
   const [txNotes, setTxNotes] = useState('');
@@ -53,7 +53,7 @@ function FinancialLedger() {
   const handleSaveMilkPriceSetting = (e) => {
     e.preventDefault();
     const parsedRate = parseFloat(tempPriceInput) || 0;
-    if (parsedRate <= 0) return alert('❌ Error: Price must be greater than 0.');
+    if (parsedRate <= 0) return alert('Error: Price must be greater than 0.');
     
     localStorage.setItem('dairy_global_milk_price', parsedRate.toString());
     setMilkPrice(parsedRate);
@@ -65,7 +65,7 @@ function FinancialLedger() {
     e.preventDefault();
     const parsedAmount = parseFloat(txAmount) || 0;
     if (parsedAmount <= 0 || !txDescription.trim()) {
-      alert('❌ Validation Error: Complete required fields.');
+      alert('Validation Error: Complete required fields.');
       return;
     }
 
@@ -122,7 +122,7 @@ function FinancialLedger() {
   // A. Process Milk Records
   milkLogs.forEach(log => {
     const logMonth = log.record_date.slice(0, 7);
-    // 🔒 PRICE REVERSION PROTECTION: Fall back to historic baked values if found, otherwise use settings rate
+    // PRICE REVERSION PROTECTION: Fall back to historic baked values if found, otherwise use settings rate
     const activeRate = log.milkPriceAtLogging || milkPrice;
     const computedRevenue = log.total_daily_milk * activeRate;
 
@@ -221,7 +221,7 @@ function FinancialLedger() {
     compiledStatementsList.push({ ...exp, type: 'Expense', category: 'Operational Expense', timestamp: exp.id });
   });
 
-  // 🔒 CRITICAL CHRONO-SORT ENGINE: Pulls absolute recent entries straight to the top of list
+  // CRITICAL CHRONO-SORT ENGINE: Pulls absolute recent entries straight to the top of list
   compiledStatementsList.sort((a, b) => {
     const compareDates = new Date(b.date) - new Date(a.date);
     if (compareDates !== 0) return compareDates; // Primary sort: Calendar Day
@@ -242,8 +242,9 @@ function FinancialLedger() {
   return (
     <div className="finance-ledger-page-container">
       
-      {/* 📊 SECTION 1: FLEXBOX MOBILE SUMMARY MATRIX GRID */}
+      {/* SECTION 1: FLEXBOX MOBILE SUMMARY MATRIX GRID */}
       <div className="finance-section-title-header">
+        <h2 className="section-title">Financial Ledger Overview</h2>
         <h3>Summary: This Month</h3>
       </div>
       <div className="financial-brief-flexbox-row">
@@ -253,11 +254,11 @@ function FinancialLedger() {
         </div>
         <div className="brief-flex-card red-loss">
           <span className="card-label">Expenses</span>
-          <p>KES {monthlyExpenseTotal.toLocaleString()}</p>
+          <p>KSH {monthlyExpenseTotal.toLocaleString()}</p>
         </div>
         <div className={`brief-flex-card net-profit-yield ${monthlyIncomeTotal - monthlyExpenseTotal >= 0 ? 'surplus' : 'deficit'}`}>
           <span className="card-label">Profit</span>
-          <p>KES {(monthlyIncomeTotal - monthlyExpenseTotal).toLocaleString()}</p>
+          <p>KSH {(monthlyIncomeTotal - monthlyExpenseTotal).toLocaleString()}</p>
         </div>
       </div>
 
@@ -272,7 +273,7 @@ function FinancialLedger() {
         </div>
       </div>
 
-      {/* ⚙️ SECTION 2: THE PERSISTENT MILK PRICE SETTING WIDGET */}
+      {/* SECTION 2: THE PERSISTENT MILK PRICE SETTING WIDGET */}
       <div className="finance-card-box settings-price-card">
         <h2>Milk Price Settings</h2>
         <div className="price-display-deck-row">
@@ -292,14 +293,14 @@ function FinancialLedger() {
         </div>
       </div>
 
-      {/* ✍️ SECTION 3 & 4: OPEN FLEX RECORDER SHUTTLE DRAWER */}
+      {/* SECTION 3 & 4: OPEN FLEX RECORDER SHUTTLE DRAWER */}
       <div className="finance-card-box">
         <h2>Record Custom Entry</h2>
         {successMessage && <div className="finance-flash-banner success">{successMessage}</div>}
         
         <form onSubmit={handleSaveManualTransaction}>
           <div className="form-toggle-bar">
-            {/* 🔒 FIX: Re-mapped onClick target anchors to communicate seamlessly with setFormTypeMode */}
+            {/* FIX: Re-mapped onClick target anchors to communicate seamlessly with setFormTypeMode */}
             <button type="button" className={formMode === 'Expense' ? 'toggle-tab active' : 'toggle-tab'} onClick={() => setFormTypeMode('Expense')}>New Expense</button>
             <button type="button" className={formMode === 'Income' ? 'toggle-tab active' : 'toggle-tab'} onClick={() => setFormTypeMode('Income')}>New Income</button>
           </div>
@@ -326,7 +327,7 @@ function FinancialLedger() {
         </form>
       </div>
 
-      {/* 🔍 SECTION 5 & 6: STATEMENT LEDGER TIMELINE GRID SEARCH TABLE */}
+      {/* SECTION 5 & 6: STATEMENT LEDGER TIMELINE GRID SEARCH TABLE */}
       <div className="finance-card-box table-ledger-sheet-box">
         <div className="table-header-flex-controls-deck">
           <h2>Financial Statements ({filteredStatements.length})</h2>

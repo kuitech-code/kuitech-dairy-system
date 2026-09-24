@@ -49,7 +49,7 @@ function FeedLog() {
     const savedHerd = localStorage.getItem('dairy_herd') || '[]';
     const parsedHerd = JSON.parse(savedHerd);
     
-    // 🔏 THE LOCKDOWN FIX: Filter out any archived animals so they don't appear in the feed assignment list!
+    // THE LOCKDOWN FIX: Filter out any archived animals so they don't appear in the feed assignment list!
     const activeHerdOnly = parsedHerd.filter(animal => !animal.status.startsWith('Archived'));
     setHerd(activeHerdOnly);
 
@@ -71,7 +71,7 @@ function FeedLog() {
     if (!newCatalogItem.trim()) return;
 
     if (catalogItems.includes(newCatalogItem.trim())) {
-      alert('❌ This feed type already exists in your inventory selection dropdown list!');
+      alert('This feed type already exists in your inventory selection dropdown list!');
       return;
     }
 
@@ -103,12 +103,12 @@ function FeedLog() {
     setSuccessMessage('');
     setErrorMessage('');
 
-    if (!selectedFeedType) return setErrorMessage('❌ Please create or select a Feed/Mineral item type.');
-    if (!quantity || parseFloat(quantity) <= 0) return setErrorMessage('❌ Please enter a valid quantity.');
-    if (!totalCost || parseFloat(totalCost) <= 0) return setErrorMessage('❌ Please enter a valid total money expense cost.');
+    if (!selectedFeedType) return setErrorMessage('Please create or select a Feed/Mineral item type.');
+    if (!quantity || parseFloat(quantity) <= 0) return setErrorMessage('Please enter a valid quantity.');
+    if (!totalCost || parseFloat(totalCost) <= 0) return setErrorMessage('Please enter a valid total money expense cost.');
     
     if (allocationType === 'Multi-Cow' && selectedCowIds.length === 0) {
-      return setErrorMessage('❌ Multi-Cow Selection Error: Please check at least one cow box!');
+      return setErrorMessage('Multi-Cow Selection Error: Please check at least one cow box!');
     }
 
     // Build unique data receipt invoice payload
@@ -133,7 +133,7 @@ function FeedLog() {
     setSelectedCowIds([]);
     setCurrentPage(1); // Back to page 1
 
-    setSuccessMessage('🎉 Feed transaction purchase logged successfully to offline ledger!');
+    setSuccessMessage('Feed transaction purchase logged successfully to offline ledger!');
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
@@ -171,7 +171,7 @@ function FeedLog() {
 
   const handleSaveInlineReceiptEdit = (receiptId) => {
     if (!editQty || parseFloat(editQty) <= 0 || !editCost || parseFloat(editCost) <= 0) {
-      alert('❌ Please enter valid quantity and financial expense adjustments!');
+      alert('Please enter valid quantity and financial expense adjustments!');
       return;
     }
 
@@ -189,15 +189,15 @@ function FeedLog() {
     setFeedReceipts(updatedMasterList);
     localStorage.setItem('dairy_feed_receipts', JSON.stringify(updatedMasterList));
     setEditingReceiptId(null); // Close the adjustment panel
-    alert('✏️ Feed purchase receipt modified successfully!');
+    alert('Feed purchase receipt modified successfully!');
   };
 
   const handleDeleteReceipt = (receiptId) => {
-    if (window.confirm('⚠️ Are you sure you want to completely erase this feed expense receipt from history?')) {
+    if (window.confirm('Are you sure you want to completely erase this feed expense receipt from history?')) {
       const updatedMasterList = feedReceipts.filter(receipt => receipt.id !== receiptId);
       setFeedReceipts(updatedMasterList);
       localStorage.setItem('dairy_feed_receipts', JSON.stringify(updatedMasterList));
-      alert('🗑️ Receipt item purged safely.');
+      alert('Receipt item purged safely.');
     }
   };
 

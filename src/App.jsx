@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import MilkLog from './Pages/Milk/MilkLog';
 import Cows from './Pages/Cows/Cows';
@@ -8,7 +8,7 @@ import FeedLog from './Pages/Feed/FeedLog';
 import HealthLog from './Pages/Health/HealthLog';
 import FinancialLedger from './Pages/Finance/FinancialLedger';
 import SystemSettings from './Pages/Settings/SystemSettings';
-import LoginScreen from './components/LoginScreen';
+import LoginScreen from './Pages/LoginScreen/LoginScreen';
 import './App.css';
 
 function App() {
@@ -17,11 +17,16 @@ function App() {
   const [selectedCowId, setSelectedCowId] = useState(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // 🔒 SECURITY GATEWAYS VALIDATION STATES - INITIALIZE FROM LOCALSTORAGE TO PREVENT FLICKER
+  // SECURITY GATEWAYS VALIDATION STATES - INITIALIZE FROM LOCALSTORAGE TO PREVENT FLICKER
   const [isLicensed, setIsLicensed] = useState(localStorage.getItem('dairy_app_license_verified') === 'true');
   const [licenseKeyInput, setLicenseKeyInput] = useState('');
   const [farmNameInput, setFarmNameInput] = useState('');
-  const [farmBrandingLogo, setFarmBrandingLogo] = useState(localStorage.getItem('dairy_farm_branding_logo_text') || 'GreenField Dairy');
+  // const [farmBrandingLogo, setFarmBrandingLogo] = useState(localStorage.getItem('dairy_farm_branding_logo_text') || 'GreenField Dairy');
+  const [farmBrandingLogo, setFarmBrandingLogo] = useState(
+    localStorage.getItem('dairy_farm_branding_logo_text') ||
+    localStorage.getItem('dairy_farm_name') ||
+    'GreenField Dairy'
+  );
 
   const [hasAcceptedTerms, setHasAcceptedTerms] = useState(localStorage.getItem('dairy_terms_accepted') === 'true');
   
@@ -34,6 +39,15 @@ function App() {
     // Pre-hydration complete - no flicker needed
   }, []);
 
+  useEffect(() => {
+    const existingFarmName = localStorage.getItem('dairy_farm_name');
+    const existingBranding = localStorage.getItem('dairy_farm_branding_logo_text');
+
+    if (!existingFarmName && existingBranding) {
+      localStorage.setItem('dairy_farm_name', existingBranding);
+    }
+  }, []);
+  
   // ===== SESSION TIMEOUT EFFECT =====
   // This effect monitors user inactivity and auto-logs them out after 30 minutes
   useEffect(() => {
@@ -62,7 +76,7 @@ function App() {
         localStorage.removeItem('dairy_session_start_time');
         setIsLoggedIn(false);
         setSessionWarningVisible(false);
-        alert('⏱️ Your session has expired due to inactivity. Please log in again.');
+        alert('Your session has expired due to inactivity. Please log in again.');
       }, SESSION_TIMEOUT);
 
       // Update session start time
@@ -94,12 +108,15 @@ function App() {
     if (licenseKeyInput.trim() === 'KUI-Q2W3E-2026') {
       const definedBrandingText = farmNameInput.trim() || 'My Dairy Farm';
       localStorage.setItem('dairy_app_license_verified', 'true');
+       // Permanent farm identity
+      localStorage.setItem('dairy_farm_name', definedBrandingText);
+      // Existing branding/display value
       localStorage.setItem('dairy_farm_branding_logo_text', definedBrandingText);
       
       setFarmBrandingLogo(definedBrandingText);
       setIsLicensed(true);
     } else {
-      alert('❌ Invalid Activation Key! Please contact Kuitech.');
+      alert('Invalid Activation Key! Please contact Kuitech.');
     }
   };
 
@@ -113,7 +130,7 @@ function App() {
     setIsLoggedIn(false);
     setIsMenuOpen(false);
     setCurrentScreen('Dashboard');
-    alert('🚪 Terminal session locked safely. Operator signed out.');
+    alert('Terminal session locked safely. Operator signed out.');
   };
 
   // --- INTERRUPT LAYER 1: DEVICE HARDWARE ACCREDITATION ---
@@ -121,7 +138,7 @@ function App() {
     return (
       <div className="license-block-screen">
         <div className="license-modal-card">
-          <h2>🔒 Register Device License</h2>
+          <h2>Register Device License</h2>
           <p>This management terminal is unregistered. Input your license key and define your farm name to activate the device database.</p>
           <form onSubmit={handleVerifyLicenseAndBrand}>
             <input type="text" placeholder="LICENSE KEY" value={licenseKeyInput} onChange={(e) => setLicenseKeyInput(e.target.value.toUpperCase())} required />
@@ -171,7 +188,7 @@ function App() {
       {sessionWarningVisible && (
         <div className="session-warning-overlay">
           <div className="session-warning-modal">
-            <h2>⏱️ Session Expiring Soon</h2>
+            <h2>Session Expiring Soon</h2>
             <p>Your session will expire in 2 minutes due to inactivity. Click anywhere to continue working.</p>
             <button 
               onClick={() => setSessionWarningVisible(false)}
@@ -222,7 +239,7 @@ function App() {
         </div>
 
         <div className="drawer-footer-logout">
-          {/* 🔒 CLOSES PASSCODE SESSIONS AND FORCES TERMINAL LOCK ON ACCIDENTAL TAPS */}
+          {/* CLOSES PASSCODE SESSIONS AND FORCES TERMINAL LOCK ON ACCIDENTAL TAPS */}
           <button type="button" className="logout-action-btn" onClick={handleLogOutSessionAction}>Log Out</button>
         </div>
       </nav>

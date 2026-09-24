@@ -1,4 +1,17 @@
 .finance-ledger-page-container { padding: 4px; font-family: system-ui, sans-serif; }
+
+.section-title { 
+  font-size: 16px; 
+  background-color: #70e9989f;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-transform: uppercase;
+  border: 1px solid #2ecc71;
+  /* font-weight: bold;  */
+  color: rgb(1, 49, 31); 
+  margin-bottom: 12px; 
+}
+
 .finance-card-box { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 16px; }
 .finance-card-box h2 { font-size: 13px; color: #2c3e50; margin-top: 0; margin-bottom: 12px; padding-bottom: 4px; border-bottom: 1px solid #f2f4f4; }
 

@@ -1,9 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import './CowForm.css';
 
+const getAgeInMonths = (dob) => {
+  if (!dob) return 0;
+
+  const birthDate = new Date(dob);
+  if (Number.isNaN(birthDate.getTime())) return 0;
+
+  const today = new Date();
+  return (today.getFullYear() - birthDate.getFullYear()) * 12 + (today.getMonth() - birthDate.getMonth());
+};
+
+const getAutoStatus = (gender, dob, currentStatus = 'Calf') => {
+  if (!dob) return currentStatus || 'Calf';
+
+  const ageInMonths = getAgeInMonths(dob);
+
+  if (gender === 'Male') {
+    return ageInMonths < 6 ? 'Calf' : 'Bull';
+  }
+
+  if (ageInMonths < 6) return 'Calf';
+
+  if (['Dry', 'AI_PENDING', 'Eligible'].includes(currentStatus)) return 'Milking';
+  if (['Pregnant', 'Milking'].includes(currentStatus)) return currentStatus;
+
+  return 'Heifer';
+};
+
+const getAllowedStatusOptions = (gender, dob) => {
+  if (gender === 'Male') return ['Calf', 'Bull'];
+
+  const ageInMonths = getAgeInMonths(dob);
+  if (ageInMonths < 6) return ['Calf'];
+  if (ageInMonths < 13) return ['Calf', 'Heifer'];
+  return ['Calf', 'Heifer', 'Pregnant', 'Milking'];
+};
+
 function CowForm({ initialData = null, onSave, onCancel = null }) {
-  // Core Selection Dropdowns
-  const statusOptions = ['Calf', 'Heifer', 'Pregnant', 'Milking', 'Dry'];
   const breedOptions = ['Friesian', 'Ayrshire', 'Jersey', 'Guernsey', 'Crossbreed'];
 
   // Form States - Pre-filled instantly if initialData exists (Edit Mode)
@@ -12,13 +46,17 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
   const [breed, setBreed] = useState(initialData?.breed || 'Friesian');
   const [dob, setDob] = useState(initialData?.dob || '');
   const [gender, setGender] = useState(initialData?.gender || 'Female');
-  const [status, setStatus] = useState(initialData?.status || 'Calf');
+  const [status, setStatus] = useState(() => getAutoStatus(initialData?.gender || 'Female', initialData?.dob || '', initialData?.status || 'Calf'));
   const [calvingDate, setCalvingDate] = useState(initialData?.calvingDate || '');
   const [sireTag, setSireTag] = useState(initialData?.sireTag === 'Unknown' ? '' : initialData?.sireTag || '');
   const [damTag, setDamTag] = useState(initialData?.damTag === 'Unknown' ? '' : initialData?.damTag || '');
   const [notes, setNotes] = useState(initialData?.notes || '');
+  const [heartGirth, setHeartGirth] = useState(initialData?.heartGirth || '');
+  const [bodyWidth, setBodyWidth] = useState(initialData?.bodyWidth || '');
+  const [castrationDate, setCastrationDate] = useState(initialData?.castrationDate || '');
   const [imagePreview, setImagePreview] = useState(initialData?.image || null);
   const [errorMessage, setErrorMessage] = useState('');
+  const parentageLocked = Boolean(initialData?.parentageLocked || (initialData?.damTag && initialData.damTag !== 'Unknown'));
 
   // Handle local picture uploads
   const handleImageChange = (e) => {
@@ -29,6 +67,15 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
       reader.readAsDataURL(file);
     }
   };
+
+  useEffect(() => {
+    const nextStatus = getAutoStatus(gender, dob, status);
+    if (nextStatus !== status) {
+      setStatus(nextStatus);
+    }
+  }, [dob, gender]);
+
+  const allowedStatusOptions = getAllowedStatusOptions(gender, dob);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -41,22 +88,31 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
     if (!initialData) {
       const tagExists = currentHerd.some(animal => animal.tagNumber.trim().toUpperCase() === tagNumber.trim().toUpperCase());
       if (tagExists) {
-        setErrorMessage(`❌ Identity Conflict: An animal with Tag ID "${tagNumber.toUpperCase()}" is already registered!`);
+        setErrorMessage(`Identity Conflict: An animal with Tag ID "${tagNumber.toUpperCase()}" is already registered!`);
         return;
       }
     }
 
     // Strict Validations
-    if (!name.trim()) return setErrorMessage('❌ Cow Name is required!');
-    if (!dob) return setErrorMessage('❌ Date of Birth is required!');
+    if (!name.trim()) return setErrorMessage('Cow Name is required!');
+    if (!dob) return setErrorMessage('Date of Birth is required!');
     
     // 🔒 GUARD 2: Prevent Future Dates of Birth
     if (new Date(dob) > new Date()) {
-      setErrorMessage('❌ Date Error: Date of Birth cannot be in the future!');
+      setErrorMessage('Date Error: Date of Birth cannot be in the future!');
       return;
     }
 
-    if (status === 'Pregnant' && !calvingDate) return setErrorMessage('❌ Please select an expected calving date.');
+    if (gender === 'Male' && castrationDate && new Date(castrationDate) < new Date(dob)) {
+      return setErrorMessage('Castration date cannot be earlier than the animal\'s date of birth.');
+    }
+
+    const computedStatus = getAutoStatus(gender, dob, status);
+    if (!allowedStatusOptions.includes(computedStatus)) {
+      return setErrorMessage('This animal age group cannot be assigned a pregnant or milking status.');
+    }
+
+    if (computedStatus === 'Pregnant' && !calvingDate) return setErrorMessage('Please select an expected calving date.');
 
     const finalAnimalData = {
       tagNumber: tagNumber.trim().toUpperCase(),
@@ -64,8 +120,11 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
       breed,
       dob,
       gender,
-      status,
-      calvingDate: status === 'Pregnant' ? calvingDate : '',
+      status: computedStatus,
+      calvingDate: computedStatus === 'Pregnant' ? calvingDate : '',
+      castrationDate: gender === 'Male' ? castrationDate : '',
+      heartGirth: heartGirth ? parseFloat(heartGirth) : '',
+      bodyWidth: bodyWidth ? parseFloat(bodyWidth) : '',
       sireTag: sireTag.trim() === '' ? 'Unknown' : sireTag,
       damTag: damTag.trim() === '' ? 'Unknown' : damTag,
       notes,
@@ -83,6 +142,9 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
       setGender('Female');
       setStatus('Calf');
       setCalvingDate('');
+      setCastrationDate('');
+      setHeartGirth('');
+      setBodyWidth('');
       setSireTag('');
       setDamTag('');
       setImagePreview(null);
@@ -102,7 +164,7 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
             {imagePreview ? (
               <img src={imagePreview} alt="Preview" className="preview-thumbnail" />
             ) : (
-              <div className="picker-placeholder"><span>📸</span><p>Add photo</p></div>
+              <div className="picker-placeholder"><span className='e'>📸</span><p>Add photo</p></div>
             )}
           </label>
         </div>
@@ -136,8 +198,9 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
           <div className="input-field">
             <label>Gender *</label>
             <select value={gender} disabled={!!initialData} onChange={(e) => {
-              setGender(e.target.value);
-              if (e.target.value === 'Male') setStatus('Calf');
+              const nextGender = e.target.value;
+              setGender(nextGender);
+              setStatus(getAutoStatus(nextGender, dob, status));
             }} required>
               <option value="Female">Female (Cow/Heifer)</option>
               <option value="Male">Male (Bull/Steer)</option>
@@ -146,12 +209,8 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
           
           <div className="input-field">
             <label>Status *</label>
-            <select value={status} onChange={(e) => setStatus(e.target.value)} disabled={gender === 'Male'} required>
-              {gender === 'Male' ? (
-                <option value="Calf">Calf</option>
-              ) : (
-                statusOptions.map((s) => <option key={s} value={s}>{s}</option>)
-              )}
+            <select value={status} onChange={(e) => setStatus(e.target.value)} required>
+              {allowedStatusOptions.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
         </div>
@@ -163,14 +222,38 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
           </div>
         )}
 
+        {gender === 'Male' && (
+          <div className="input-field dynamic-field">
+            <label>Castration Date (Optional)</label>
+            <input
+              type="date"
+              value={castrationDate}
+              onChange={(e) => setCastrationDate(e.target.value)}
+              min={dob || undefined}
+              placeholder="Leave blank if not castrated"
+            />
+          </div>
+        )}
+
+        <div className="input-row">
+          <div className="input-field">
+            <label>Heart Girth (cm - Optional)</label>
+            <input type="number" value={heartGirth} onChange={(e) => setHeartGirth(e.target.value)} placeholder="e.g. 165" step="0.1" />
+          </div>
+          <div className="input-field">
+            <label>Body Width (cm - Optional)</label>
+            <input type="number" value={bodyWidth} onChange={(e) => setBodyWidth(e.target.value)} placeholder="e.g. 45" step="0.1" />
+          </div>
+        </div>
+
         <div className="input-row">
           <div className="input-field">
             <label>Sire (Father) Tag</label>
-            <input type="text" value={sireTag} onChange={(e) => setSireTag(e.target.value)} placeholder="Optional" />
+            <input type="text" value={sireTag} onChange={(e) => setSireTag(e.target.value)} placeholder="Optional" disabled={parentageLocked} />
           </div>
           <div className="input-field">
             <label>Dam (Mother) Tag</label>
-            <input type="text" value={damTag} onChange={(e) => setDamTag(e.target.value)} placeholder="Optional" />
+            <input type="text" value={damTag} onChange={(e) => setDamTag(e.target.value)} placeholder="Optional" disabled={parentageLocked} />
           </div>
         </div>
 

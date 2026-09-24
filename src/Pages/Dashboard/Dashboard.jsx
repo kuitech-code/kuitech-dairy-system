@@ -1,8 +1,55 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './Dashboard.css';
 
+const DATA_KEYS = {
+  herd: 'dairy_herd',
+  milk: 'dairy_milk_logs',
+  feed: 'dairy_feed_receipts',
+  health: 'dairy_health_logs',
+  breeding: 'dairy_breeding_events',
+  pregnancies: 'dairy_pregnancies',
+  incomes: 'dairy_manual_incomes',
+  expenses: 'dairy_manual_expenses',
+};
+
+function readStorage(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || '[]');
+  } catch {
+    return [];
+  }
+}
+
+/* UTC conversion. */
+function localDateString(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function monthKey(date = new Date()) {
+  return localDateString(date).slice(0, 7);
+}
+
+function formatDate(dateString) {
+  if (!dateString) return '—';
+
+  const parts = dateString.split('-');
+
+  if (parts.length !== 3) {
+    return new Date(dateString).toLocaleDateString();
+  }
+
+  return new Date(
+    Number(parts[0]),
+    Number(parts[1]) - 1,
+    Number(parts[2])
+  ).toLocaleDateString();
+}
+
 function Dashboard() {
-  // --- STATE 1: CORE DATA TABLES STATES ---
   const [herd, setHerd] = useState([]);
   const [milkLogs, setMilkLogs] = useState([]);
   const [feedLogs, setFeedLogs] = useState([]);
@@ -12,477 +59,1918 @@ function Dashboard() {
   const [manualIncomes, setManualIncomes] = useState([]);
   const [manualExpenses, setManualExpenses] = useState([]);
 
-  const milkPriceSetting = parseFloat(localStorage.getItem('dairy_global_milk_price')) || 40;
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  const milkPriceSetting =
+    parseFloat(localStorage.getItem('dairy_global_milk_price')) || 40;
 
   useEffect(() => {
-    setHerd(JSON.parse(localStorage.getItem('dairy_herd') || '[]'));
-    setMilkLogs(JSON.parse(localStorage.getItem('dairy_milk_logs') || '[]'));
-    setFeedLogs(JSON.parse(localStorage.getItem('dairy_feed_receipts') || '[]'));
-    setHealthLogs(JSON.parse(localStorage.getItem('dairy_health_logs') || '[]'));
-    setBreedingEvents(JSON.parse(localStorage.getItem('dairy_breeding_events') || '[]'));
-    setPregnancies(JSON.parse(localStorage.getItem('dairy_pregnancies') || '[]'));
-    setManualIncomes(JSON.parse(localStorage.getItem('dairy_manual_incomes') || '[]'));
-    setManualExpenses(JSON.parse(localStorage.getItem('dairy_manual_expenses') || '[]'));
+    setHerd(readStorage(DATA_KEYS.herd));
+    setMilkLogs(readStorage(DATA_KEYS.milk));
+    setFeedLogs(readStorage(DATA_KEYS.feed));
+    setHealthLogs(readStorage(DATA_KEYS.health));
+    setBreedingEvents(readStorage(DATA_KEYS.breeding));
+    setPregnancies(readStorage(DATA_KEYS.pregnancies));
+    setManualIncomes(readStorage(DATA_KEYS.incomes));
+    setManualExpenses(readStorage(DATA_KEYS.expenses));
+
+    /*
+     * Keeps the dashboard's "today" information fresh if the
+     * application stays open across midnight.
+     */
+    const clock = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+
+    return () => clearInterval(clock);
   }, []);
 
-  // --- ENGINE 1: DATE WINDOW INDICATORS ---
-  const today = new Date();
-  const todayStr = today.toISOString().split('T')[0];
-  const currentMonthKey = today.toISOString().slice(0, 7); // e.g. "2026-07"
-  
-  const lastMonthDate = new Date(); lastMonthDate.setMonth(today.getMonth() - 1);
-  const lastMonthKey = lastMonthDate.toISOString().slice(0, 7);
+  const dashboardData = useMemo(() => {
+    const today = currentTime;
+    const todayStr = localDateString(today);
+    const currentMonthKey = monthKey(today);
 
-  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const lastMonthDate = new Date(today);
+    lastMonthDate.setMonth(today.getMonth() - 1);
+    const lastMonthKey = monthKey(lastMonthDate);
 
-  // --- ENGINE 2: REVENUE ACCUMULATION CIRCUITS ---
-  let thisMonthIncome = 0; let thisMonthExpense = 0; let thisMonthMilkLiters = 0;
-  let lastMonthIncome = 0; let lastMonthExpense = 0; let lastMonthMilkLiters = 0;
-  let monthlyMilkTotal = 0; let monthlySaleTotal = 0; let monthlyOtherIncome = 0;
+    const monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
 
-  let cowProductionTotals = {}; // Tracks which cow produced how much for leaderboard
-  let daily30DayMilk = {}; // Tracks milk over last 30 days
-  let trend3Months = {};
+    let todayMilkLiters = 0;
 
-  // Setup past 3 months trend map frames
-  for (let i = 2; i >= 0; i--) {
-    const d = new Date(); d.setMonth(today.getMonth() - i);
-    trend3Months[d.toISOString().slice(0, 7)] = { income: 0, expense: 0, name: monthNames[d.getMonth()] };
-  }
+    let thisMonthIncome = 0;
+    let thisMonthExpense = 0;
+    let thisMonthMilkLiters = 0;
 
-  // Setup last 30 days keys for the production graph chart lines
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(); d.setDate(today.getDate() - i);
-    daily30DayMilk[d.toISOString().split('T')[0]] = 0;
-  }
+    let lastMonthIncome = 0;
+    let lastMonthExpense = 0;
 
-  // A. Process Milk logs
-  milkLogs.forEach(log => {
-    const mKey = log.record_date.slice(0, 7);
-    const rate = log.milkPriceAtLogging || milkPriceSetting;
-    const revenue = log.total_daily_milk * rate;
+    let monthlyMilkTotal = 0;
+    let monthlySaleTotal = 0;
+    let monthlyOtherIncome = 0;
 
-    // Accumulate Leaderboard values
-    if (log.total_daily_milk > 0) {
-      cowProductionTotals[log.cowName] = (cowProductionTotals[log.cowName] || 0) + log.total_daily_milk;
+    const cowProductionTotals = {};
+
+    /*
+     * Build the last 30 calendar days.
+     */
+    const daily30DayMilk = {};
+
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - i);
+
+      daily30DayMilk[localDateString(date)] = 0;
     }
 
-    // Accumulate 30 Day Graph lines
-    if (daily30DayMilk[log.record_date] !== undefined) {
-      daily30DayMilk[log.record_date] += log.total_daily_milk;
+    /*
+     * Build the last 3 months.
+     */
+    const trend3Months = {};
+
+    for (let i = 2; i >= 0; i--) {
+      const date = new Date(today);
+      date.setMonth(today.getMonth() - i);
+
+      const key = monthKey(date);
+
+      trend3Months[key] = {
+        income: 0,
+        expense: 0,
+        name: monthNames[date.getMonth()],
+      };
     }
 
-    if (mKey === currentMonthKey) {
-      thisMonthIncome += revenue;
-      thisMonthMilkLiters += log.total_daily_milk;
-      monthlyMilkTotal += revenue;
+    /*
+     * ---------------------------------------------------------
+     * MILK
+     * ---------------------------------------------------------
+     */
+    milkLogs.forEach((log) => {
+      if (!log.record_date) return;
+
+      const liters = Number(log.total_daily_milk) || 0;
+      const rate =
+        Number(log.milkPriceAtLogging) || milkPriceSetting;
+
+      const revenue = liters * rate;
+      const logMonth = log.record_date.slice(0, 7);
+
+      if (log.record_date === todayStr) {
+        todayMilkLiters += liters;
+      }
+
+      if (liters > 0) {
+        const cowName = log.cowName || 'Unknown Cow';
+
+        cowProductionTotals[cowName] =
+          (cowProductionTotals[cowName] || 0) + liters;
+      }
+
+      if (daily30DayMilk[log.record_date] !== undefined) {
+        daily30DayMilk[log.record_date] += liters;
+      }
+
+      if (logMonth === currentMonthKey) {
+        thisMonthIncome += revenue;
+        thisMonthMilkLiters += liters;
+        monthlyMilkTotal += revenue;
+      }
+
+      if (logMonth === lastMonthKey) {
+        lastMonthIncome += revenue;
+      }
+
+      if (trend3Months[logMonth]) {
+        trend3Months[logMonth].income += revenue;
+      }
+    });
+
+    /*
+     * ---------------------------------------------------------
+     * HERD / LIVESTOCK SALES
+     * ---------------------------------------------------------
+     */
+    let calvesBornThisMonth = 0;
+    let cowsAcquiredThisMonth = 0;
+
+    herd.forEach((cow) => {
+      /*
+       * Keeping your existing data structure here.
+       * We do not invent a new acquiredDate field.
+       */
+      const regMonth = cow.dob ? cow.dob.slice(0, 7) : '';
+
+      if (regMonth === currentMonthKey) {
+        if (cow.status === 'Calf') {
+          calvesBornThisMonth++;
+        } else {
+          cowsAcquiredThisMonth++;
+        }
+      }
+
+      const status = String(cow.status || '');
+
+      if (status.startsWith('Archived (Sold)')) {
+        const notesText = cow.notes || '';
+
+        const matchKSh =
+          notesText.match(/KSh\s*([\d,]+)/i) ||
+          notesText.match(/KES\s*([\d,]+)/i) ||
+          notesText.match(/\$([\d,]+)/);
+
+        const saleValue = matchKSh
+          ? parseFloat(matchKSh[1].replace(/,/g, ''))
+          : 45000;
+
+        /*
+         * Preserve the existing dashboard behavior.
+         * Sale date is not currently stored consistently enough
+         * to safely redesign this calculation here.
+         */
+        thisMonthIncome += saleValue;
+        monthlySaleTotal += saleValue;
+
+        if (trend3Months[currentMonthKey]) {
+          trend3Months[currentMonthKey].income += saleValue;
+        }
+      }
+    });
+
+    /*
+     * ---------------------------------------------------------
+     * MANUAL INCOME
+     * ---------------------------------------------------------
+     */
+    manualIncomes.forEach((income) => {
+      if (!income.date) return;
+
+      const amount = Number(income.amount) || 0;
+      const incomeMonth = income.date.slice(0, 7);
+
+      if (incomeMonth === currentMonthKey) {
+        thisMonthIncome += amount;
+        monthlyOtherIncome += amount;
+      }
+
+      if (incomeMonth === lastMonthKey) {
+        lastMonthIncome += amount;
+      }
+
+      if (trend3Months[incomeMonth]) {
+        trend3Months[incomeMonth].income += amount;
+      }
+    });
+
+    /*
+     * ---------------------------------------------------------
+     * FEED
+     * ---------------------------------------------------------
+     */
+    feedLogs.forEach((feed) => {
+      if (!feed.purchaseDate) return;
+
+      const amount = Number(feed.cost) || 0;
+      const feedMonth = feed.purchaseDate.slice(0, 7);
+
+      if (feedMonth === currentMonthKey) {
+        thisMonthExpense += amount;
+      }
+
+      if (feedMonth === lastMonthKey) {
+        lastMonthExpense += amount;
+      }
+
+      if (trend3Months[feedMonth]) {
+        trend3Months[feedMonth].expense += amount;
+      }
+    });
+
+    /*
+     * ---------------------------------------------------------
+     * MEDICAL
+     * ---------------------------------------------------------
+     */
+    healthLogs.forEach((health) => {
+      if (!health.treatmentDate) return;
+
+      const amount = Number(health.cost) || 0;
+      const healthMonth = health.treatmentDate.slice(0, 7);
+
+      if (healthMonth === currentMonthKey) {
+        thisMonthExpense += amount;
+      }
+
+      if (healthMonth === lastMonthKey) {
+        lastMonthExpense += amount;
+      }
+
+      if (trend3Months[healthMonth]) {
+        trend3Months[healthMonth].expense += amount;
+      }
+    });
+
+    /*
+     * ---------------------------------------------------------
+     * BREEDING / AI COSTS
+     * ---------------------------------------------------------
+     */
+    breedingEvents.forEach((event) => {
+      if (
+        event.eventType !== 'Insemination' ||
+        Number(event.cost) <= 0 ||
+        !event.eventDate
+      ) {
+        return;
+      }
+
+      const amount = Number(event.cost) || 0;
+      const eventMonth = event.eventDate.slice(0, 7);
+
+      if (eventMonth === currentMonthKey) {
+        thisMonthExpense += amount;
+      }
+
+      if (eventMonth === lastMonthKey) {
+        lastMonthExpense += amount;
+      }
+
+      if (trend3Months[eventMonth]) {
+        trend3Months[eventMonth].expense += amount;
+      }
+    });
+
+    /*
+     * ---------------------------------------------------------
+     * MANUAL EXPENSES
+     * ---------------------------------------------------------
+     */
+    manualExpenses.forEach((expense) => {
+      if (!expense.date) return;
+
+      const amount = Number(expense.amount) || 0;
+      const expenseMonth = expense.date.slice(0, 7);
+
+      if (expenseMonth === currentMonthKey) {
+        thisMonthExpense += amount;
+      }
+
+      if (expenseMonth === lastMonthKey) {
+        lastMonthExpense += amount;
+      }
+
+      if (trend3Months[expenseMonth]) {
+        trend3Months[expenseMonth].expense += amount;
+      }
+    });
+
+    /*
+     * ---------------------------------------------------------
+     * FINANCIAL CALCULATIONS
+     * ---------------------------------------------------------
+     */
+    const thisMonthProfit =
+      thisMonthIncome - thisMonthExpense;
+
+    const lastMonthProfit =
+      lastMonthIncome - lastMonthExpense;
+
+    const profitMarginPct =
+      thisMonthIncome > 0
+        ? Math.round((thisMonthProfit / thisMonthIncome) * 100)
+        : 0;
+
+    const currentDayCount = today.getDate() || 1;
+
+    const avgMilkPerDay =
+      Math.round(
+        (thisMonthMilkLiters / currentDayCount) * 10
+      ) / 10;
+
+    const incVar =
+      lastMonthIncome > 0
+        ? Math.round(
+            ((thisMonthIncome - lastMonthIncome) /
+              lastMonthIncome) *
+              100
+          )
+        : 0;
+
+    const expVar =
+      lastMonthExpense > 0
+        ? Math.round(
+            ((thisMonthExpense - lastMonthExpense) /
+              lastMonthExpense) *
+              100
+          )
+        : 0;
+
+    const prfVar =
+      lastMonthProfit !== 0
+        ? Math.round(
+            ((thisMonthProfit - lastMonthProfit) /
+              Math.abs(lastMonthProfit)) *
+              100
+          )
+        : 0;
+
+    /*
+     * ---------------------------------------------------------
+     * PRODUCER LEADERBOARD
+     * ---------------------------------------------------------
+     */
+    let topProducerName = 'None';
+    let topProducerQty = 0;
+
+    let lowProducerName = 'None';
+    let lowProducerQty = Infinity;
+
+    Object.entries(cowProductionTotals).forEach(
+      ([name, quantity]) => {
+        if (quantity > topProducerQty) {
+          topProducerQty = quantity;
+          topProducerName = name;
+        }
+
+        if (quantity < lowProducerQty) {
+          lowProducerQty = quantity;
+          lowProducerName = name;
+        }
+      }
+    );
+
+    if (lowProducerQty === Infinity) {
+      lowProducerQty = 0;
     }
-    if (mKey === lastMonthKey) {
-      lastMonthIncome += revenue;
-      lastMonthMilkLiters += log.total_daily_milk;
-    }
-    if (trend3Months[mKey]) trend3Months[mKey].income += revenue;
-  });
 
-  // B. Process Cow sales
-  let calvesBornThisMonth = 0; let cowsAcquiredThisMonth = 0;
-  herd.forEach(cow => {
-    const regMonth = cow.dob ? cow.dob.slice(0, 7) : '';
-    if (regMonth === currentMonthKey) {
-      if (cow.status === 'Calf') calvesBornThisMonth++;
-      else cowsAcquiredThisMonth++;
-    }
+    /*
+     * ---------------------------------------------------------
+     * HERD COUNTS
+     * ---------------------------------------------------------
+     */
+    const activeMilkingCount = herd.filter(
+      (cow) => cow.status === 'Milking'
+    ).length;
 
-    if (cow.status.startsWith('Archived (Sold)')) {
-      const notesText = cow.notes || '';
-      const matchKSh = notesText.match(/KSh\s*(\d+)/) || notesText.match(/\$(\d+)/);
-      const saleValue = matchKSh ? parseFloat(matchKSh[1]) : 45000;
+    const heifersCount = herd.filter(
+      (cow) => cow.status === 'Heifer'
+    ).length;
 
-      thisMonthIncome += saleValue;
-      monthlySaleTotal += saleValue;
-      if (trend3Months[currentMonthKey]) trend3Months[currentMonthKey].income += saleValue;
-    }
-  });
+    const calvesCount = herd.filter(
+      (cow) => cow.status === 'Calf'
+    ).length;
 
-  // C. Process Manual Incomes (Other Income)
-  manualIncomes.forEach(inc => {
-    const mKey = inc.date.slice(0, 7);
-    if (mKey === currentMonthKey) {
-      thisMonthIncome += inc.amount;
-      monthlyOtherIncome += inc.amount;
-    }
-    if (mKey === lastMonthKey) lastMonthIncome += inc.amount;
-    if (trend3Months[mKey]) trend3Months[mKey].income += inc.amount;
-  });
+    const totalHeadCount = herd.filter(
+      (cow) => !String(cow.status || '').startsWith('Archived')
+    ).length;
 
-  // D. Process Feed Costs
-  feedLogs.forEach(f => {
-    const mKey = f.purchaseDate.slice(0, 7);
-    if (mKey === currentMonthKey) thisMonthExpense += f.cost;
-    if (mKey === lastMonthKey) lastMonthExpense += f.cost;
-    if (trend3Months[mKey]) trend3Months[mKey].expense += f.cost;
-  });
+    /*
+     * ---------------------------------------------------------
+     * CALVING ALERTS
+     * ---------------------------------------------------------
+     */
+    const upcomingCalvingsList = pregnancies
+      .filter(
+        (pregnancy) =>
+          !pregnancy.isDry &&
+          pregnancy.expectedDueDate &&
+          pregnancy.expectedDueDate >= todayStr
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.expectedDueDate) -
+          new Date(b.expectedDueDate)
+      );
 
-  // E. Process Medical Costs
-  healthLogs.forEach(h => {
-    const mKey = h.treatmentDate.slice(0, 7);
-    if (mKey === currentMonthKey) thisMonthExpense += h.cost;
-    if (mKey === lastMonthKey) lastMonthExpense += h.cost;
-    if (trend3Months[mKey]) trend3Months[mKey].expense += h.cost;
-  });
+    /*
+     * ---------------------------------------------------------
+     * POST-CALVING HEAT
+     * ---------------------------------------------------------
+     */
+    const postCalvingHeatAlerts = herd.filter((cow) => {
+      if (
+        !cow.calvingAlertStartDate ||
+        !cow.calvingAlertEndDate
+      ) {
+        return false;
+      }
 
-  // F. Process Breeding Costs
-  breedingEvents.forEach(b => {
-    if (b.eventType === 'Insemination' && b.cost > 0) {
-      const mKey = b.eventDate.slice(0, 7);
-      if (mKey === currentMonthKey) thisMonthExpense += b.cost;
-      if (mKey === lastMonthKey) lastMonthExpense += b.cost;
-      if (trend3Months[mKey]) trend3Months[mKey].expense += b.cost;
-    }
-  });
+      return (
+        todayStr >= cow.calvingAlertStartDate &&
+        todayStr <= cow.calvingAlertEndDate
+      );
+    });
 
-  // G. Process Manual Expenses
-  manualExpenses.forEach(e => {
-    const mKey = e.date.slice(0, 7);
-    if (mKey === currentMonthKey) thisMonthExpense += e.amount;
-    if (mKey === lastMonthKey) lastMonthExpense += e.amount;
-    if (trend3Months[mKey]) trend3Months[mKey].expense += e.amount;
-  });
+    /*
+     * ---------------------------------------------------------
+     * RETURN HEAT
+     * ---------------------------------------------------------
+     */
+    const returnHeatAlerts = breedingEvents
+      .filter(
+        (event) =>
+          event.eventType === 'Insemination' &&
+          event.result === 'Pending' &&
+          event.returnWindowStart &&
+          event.returnWindowStart <= todayStr
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.returnWindowStart) -
+          new Date(b.returnWindowStart)
+      );
 
-  // Summary Math Cards Calculations
-  const thisMonthProfit = thisMonthIncome - thisMonthExpense;
-  const lastMonthProfit = lastMonthIncome - lastMonthExpense;
-  const profitMarginPct = thisMonthIncome > 0 ? Math.round((thisMonthProfit / thisMonthIncome) * 100) : 0;
-  
-  const currentDayCount = today.getDate() || 1;
-  const avgMilkPerDay = Math.round((thisMonthMilkLiters / currentDayCount) * 10) / 10;
+    /*
+     * ---------------------------------------------------------
+     * MEDICAL / WITHDRAWAL
+     * ---------------------------------------------------------
+     */
+    const oneWeekAgo = new Date(today);
+    oneWeekAgo.setDate(today.getDate() - 7);
 
-  // Percentage Variance Trackers for Top Banner
-  const incVar = lastMonthIncome > 0 ? Math.round(((thisMonthIncome - lastMonthIncome) / lastMonthIncome) * 100) : 12;
-  const expVar = lastMonthExpense > 0 ? Math.round(((thisMonthExpense - lastMonthExpense) / lastMonthExpense) * 100) : -4;
-  const prfVar = lastMonthProfit > 0 ? Math.round(((thisMonthProfit - lastMonthProfit) / lastMonthProfit) * 100) : 18;
+    const activeSickLogs = healthLogs.filter((log) => {
+      if (!log.treatmentDate) return false;
 
-  // --- ENGINE 3: LEADERBOARD COWS EVALUATOR ---
-  let topProducerName = "None"; let topProducerQty = 0;
-  let lowProducerName = "None"; let lowProducerQty = 99999;
+      const treatmentDate = new Date(log.treatmentDate);
 
-  Object.keys(cowProductionTotals).forEach(name => {
-    if (cowProductionTotals[name] > topProducerQty) {
-      topProducerQty = cowProductionTotals[name]; topProducerName = name;
-    }
-    if (cowProductionTotals[name] < lowProducerQty) {
-      lowProducerQty = cowProductionTotals[name]; lowProducerName = name;
-    }
-  });
-  if (lowProducerQty === 99999) lowProducerQty = 0;
+      const withdrawalDays =
+        Number(log.withdrawalDays) || 0;
 
-  // --- ENGINE 4: HERD COUNT SEPARATOR DECK ---
-  const activeMilkingCount = herd.filter(a => a.status === 'Milking').length;
-  const dryRestingCount = herd.filter(a => a.status === 'Dry').length;
-  const heifersCount = herd.filter(a => a.status === 'Heifer').length;
-  const calvesCount = herd.filter(a => a.status === 'Calf').length;
-  const totalHeadCount = herd.filter(a => !a.status.startsWith('Archived')).length;
+      const releaseDate = new Date(log.treatmentDate);
+      releaseDate.setDate(
+        releaseDate.getDate() + withdrawalDays
+      );
 
-  // --- ENGINE 5: UPCOMING CALVING ALERTS MATRICES ---
-  // Filter out pregnancies whose expected due date has not passed yet, sorted by nearest date
-  const upcomingCalvingsList = pregnancies
-    .filter(p => !p.isDry && p.expectedDueDate && p.expectedDueDate >= todayStr)
-    .sort((a, b) => new Date(a.expectedDueDate) - new Date(b.expectedDueDate));
+      const isWithdrawalRunning =
+        withdrawalDays > 0 &&
+        releaseDate > today;
 
-  // --- ENGINE 6: HEALTH EXAMINATIONS WEEKLY DECK ---
-  const oneWeekAgo = new Date(); oneWeekAgo.setDate(today.getDate() - 7);
-  const activeSickLogs = healthLogs.filter(log => {
-    const treatDate = new Date(log.treatmentDate);
-    // Active if treated this week OR has an ongoing withdrawal period running
-    const isWithdrawalRunning = log.withdrawalDays > 0 && 
-      (new Date(log.treatmentDate).setDate(new Date(log.treatmentDate).getDate() + log.withdrawalDays) > today);
-    return (treatDate >= oneWeekAgo || log.treatmentStatus === 'Chronic' || isWithdrawalRunning);
+      return (
+        treatmentDate >= oneWeekAgo ||
+        log.treatmentStatus === 'Chronic' ||
+        isWithdrawalRunning
+      );
+    });
+
+    /*
+     * ---------------------------------------------------------
+     * TODAY'S MILKING / ATTENTION
+     * ---------------------------------------------------------
+     */
+    const activeAttentionCount =
+      activeSickLogs.length +
+      upcomingCalvingsList.filter((p) => {
+        const due = new Date(p.expectedDueDate);
+        const difference =
+          Math.ceil(
+            (due - new Date(todayStr)) /
+              (1000 * 60 * 60 * 24)
+          );
+
+        return difference <= 14;
+      }).length +
+      returnHeatAlerts.length +
+      postCalvingHeatAlerts.length;
+
+    return {
+      todayStr,
+      todayMilkLiters,
+
+      thisMonthIncome,
+      thisMonthExpense,
+      thisMonthMilkLiters,
+      thisMonthProfit,
+      profitMarginPct,
+      avgMilkPerDay,
+
+      incVar,
+      expVar,
+      prfVar,
+
+      monthlyMilkTotal,
+      monthlySaleTotal,
+      monthlyOtherIncome,
+
+      topProducerName,
+      topProducerQty,
+      lowProducerName,
+      lowProducerQty,
+
+      activeMilkingCount,
+      heifersCount,
+      calvesCount,
+      totalHeadCount,
+
+      calvesBornThisMonth,
+      cowsAcquiredThisMonth,
+
+      daily30DayMilk,
+      trend3Months,
+
+      upcomingCalvingsList,
+      postCalvingHeatAlerts,
+      returnHeatAlerts,
+      activeSickLogs,
+
+      activeAttentionCount,
+    };
+  }, [
+    currentTime,
+    herd,
+    milkLogs,
+    feedLogs,
+    healthLogs,
+    breedingEvents,
+    pregnancies,
+    manualIncomes,
+    manualExpenses,
+    milkPriceSetting,
+  ]);
+
+  const {
+    todayStr,
+    todayMilkLiters,
+    thisMonthIncome,
+    thisMonthExpense,
+    thisMonthMilkLiters,
+    thisMonthProfit,
+    profitMarginPct,
+    avgMilkPerDay,
+    incVar,
+    expVar,
+    prfVar,
+    monthlyMilkTotal,
+    monthlySaleTotal,
+    monthlyOtherIncome,
+    topProducerName,
+    topProducerQty,
+    lowProducerName,
+    lowProducerQty,
+    activeMilkingCount,
+    heifersCount,
+    calvesCount,
+    totalHeadCount,
+    calvesBornThisMonth,
+    cowsAcquiredThisMonth,
+    daily30DayMilk,
+    trend3Months,
+    upcomingCalvingsList,
+    postCalvingHeatAlerts,
+    returnHeatAlerts,
+    activeSickLogs,
+    activeAttentionCount,
+  } = dashboardData;
+
+  /*
+   * ---------------------------------------------------------
+   * DYNAMIC CHART SCALES
+   * ---------------------------------------------------------
+   */
+  const milkChartValues = Object.values(daily30DayMilk);
+
+  const milkChartMaxRaw = Math.max(
+    ...milkChartValues,
+    0
+  );
+
+  const milkChartMax =
+    Math.max(
+      Math.ceil(milkChartMaxRaw / 10) * 10,
+      10
+    );
+
+  const profitChartValues = Object.values(
+    trend3Months
+  ).map((item) => item.income - item.expense);
+
+  const profitChartMaxRaw = Math.max(
+    ...profitChartValues,
+    0
+  );
+
+  const profitChartMax =
+    Math.max(
+      Math.ceil(profitChartMaxRaw / 10000) * 10000,
+      10000
+    );
+
+  const attentionText =
+    activeAttentionCount === 0
+      ? 'Farm looks clear'
+      : `${activeAttentionCount} item${
+          activeAttentionCount === 1 ? '' : 's'
+        } need attention`;
+
+  const formattedToday = new Date(
+    Number(todayStr.slice(0, 4)),
+    Number(todayStr.slice(5, 7)) - 1,
+    Number(todayStr.slice(8, 10))
+  ).toLocaleDateString(undefined, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
   });
 
   return (
     <div className="dashboard-viewport-wrapper">
-      
-      {/* 🚀 TOP BANNER: HERO STATS MARQUEE BOARDS */}
-      <div className="dashboard-marquee-banner-container">
-        <div className="marquee-badge badge-gold">
-          <strong>Top Producer:</strong> {topProducerName} ({topProducerQty}L)
-        </div>
-        <div className="marquee-badge badge-blue">
-          <strong>Lowest Producer:</strong> {lowProducerName} ({lowProducerQty}L)
-        </div>
-        <div className="marquee-badge badge-purple">
-          <strong>New Additions:</strong> +{calvesBornThisMonth} Calves Born • +{cowsAcquiredThisMonth} Cows Acquired
-        </div>
-        <div className="marquee-badge badge-green">
-          <strong>Finance:</strong> Income {incVar >= 0 ? '↑' : '↓'} {Math.abs(incVar)}% • Expenses {expVar >= 0 ? '↑' : '↓'} {Math.abs(expVar)}% • Profit {prfVar >= 0 ? '↑' : '↓'} {Math.abs(prfVar)}%
-        </div>
-      </div>
-      {/* 📅 CARD 1: DENSE MONTHLY SUMMARY MATRICES CHANNELS */}
-      <div className="dashboard-card-box">
-        <div className="dashboard-section-header">Summary: This Month</div>
-        <div className="dense-summary-flexbox-row">
-          <div className="dense-node">
-            <span>Milk</span>
-            <p>{thisMonthMilkLiters} L</p>
-          </div>
-          <div className="dense-node">
-            <span>Profit</span>
-            <p>{profitMarginPct}%</p>
-          </div>
-        </div> 
-        <div className="dense-summary-flexbox-row"> 
-          <div className="dense-node">
-            <span>Avg Daily Milk</span>
-            <p>{avgMilkPerDay} L/Day</p>
-          </div>
-          <div className="dense-node highlighted-node">
-            <span>Net Profit</span>
-            <p>KES {thisMonthProfit.toLocaleString()}</p>
-          </div>
-        </div>
-      </div>
 
-      {/* 📊 CARD 2: RE-ENGINEERED SMOOTH BEZIER SPLINE CARDS */}
-      <div className="dashboard-card-box">
-        <h2>Milk Yield Trend</h2>
+      {/* =====================================================
+          FARM TODAY HERO
+      ====================================================== */}
+      <section className="dashboard-today-hero">
+
+        <div className="dashboard-hero-copy">
+          <span className="dashboard-eyebrow">
+            FARM DASHBOARD
+          </span>
+
+          <h1>Today on the farm.</h1>
+
+          <p>{formattedToday}</p>
+        </div>
+
+        <div
+          className={`dashboard-attention-pill ${
+            activeAttentionCount > 0
+              ? 'attention-active'
+              : 'attention-clear'
+          }`}
+        >
+          <span className="attention-dot" />
+          {attentionText}
+        </div>
+
+      </section>
+
+
+      {/* =====================================================
+          TODAY'S QUICK NUMBERS
+      ====================================================== */}
+      <section className="dashboard-today-grid">
+
+        <div className="today-stat-card milk-stat-card">
+          <div className="today-stat-icon e">🥛</div>
+
+          <div>
+            <span>Today's Milk</span>
+            <strong>{todayMilkLiters} L</strong>
+          </div>
+
+          <small>
+            Current day's production
+          </small>
+        </div>
+
+
+        <div className="today-stat-card herd-stat-card">
+          <div className="today-stat-icon e">🐄</div>
+
+          <div>
+            <span>Active Herd</span>
+            <strong>{totalHeadCount}</strong>
+          </div>
+
+          <small>
+            {activeMilkingCount} currently milking
+          </small>
+        </div>
+
+
+        <div className="today-stat-card profit-stat-card">
+          <div className="today-stat-icon e">💰</div>
+
+          <div>
+            <span>Monthly Net</span>
+            <strong>
+              KSh {thisMonthProfit.toLocaleString()}
+            </strong>
+          </div>
+
+          <small>
+            {profitMarginPct}% profit margin
+          </small>
+        </div>
+
+
+        <div className="today-stat-card attention-stat-card">
+          <div className="today-stat-icon e">🔔</div>
+
+          <div>
+            <span>Attention</span>
+            <strong>{activeAttentionCount}</strong>
+          </div>
+
+          <small>
+            Active dashboard alerts
+          </small>
+        </div>
+
+      </section>
+
+
+      {/* =====================================================
+          PERFORMANCE SUMMARY
+      ====================================================== */}
+      <section className="dashboard-card-box">
+
+        <div className="section-heading-row">
+          <div>
+            <span className="section-kicker">
+              PERFORMANCE
+            </span>
+
+            <h2>This Month</h2>
+          </div>
+
+          <span className="section-date-label">
+            Compared with last month
+          </span>
+        </div>
+
+
+        <div className="performance-grid">
+
+          <div className="performance-item">
+            <span>Milk Production</span>
+            <strong>
+              {thisMonthMilkLiters.toLocaleString()} L
+            </strong>
+
+            <small>
+              {avgMilkPerDay} L/day average
+            </small>
+          </div>
+
+
+          <div className="performance-item">
+            <span>Income</span>
+            <strong>
+              KSh {thisMonthIncome.toLocaleString()}
+            </strong>
+
+            <small
+              className={
+                incVar >= 0
+                  ? 'trend-positive'
+                  : 'trend-negative'
+              }
+            >
+              {incVar >= 0 ? '↑' : '↓'} {Math.abs(incVar)}%
+            </small>
+          </div>
+
+
+          <div className="performance-item">
+            <span>Expenses</span>
+            <strong>
+              KSh {thisMonthExpense.toLocaleString()}
+            </strong>
+
+            <small
+              className={
+                expVar <= 0
+                  ? 'trend-positive'
+                  : 'trend-negative'
+              }
+            >
+              {expVar >= 0 ? '↑' : '↓'} {Math.abs(expVar)}%
+            </small>
+          </div>
+
+
+          <div className="performance-item performance-highlight">
+            <span>Net Profit</span>
+            <strong>
+              KSh {thisMonthProfit.toLocaleString()}
+            </strong>
+
+            <small
+              className={
+                prfVar >= 0
+                  ? 'trend-positive'
+                  : 'trend-negative'
+              }
+            >
+              {prfVar >= 0 ? '↑' : '↓'} {Math.abs(prfVar)}%
+            </small>
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* =====================================================
+          ATTENTION DESK
+      ====================================================== */}
+      <section className="dashboard-card-box attention-desk">
+
+        <div className="section-heading-row">
+          <div>
+            <span className="section-kicker">
+              TO WATCH
+            </span>
+
+            <h2>Things That Need Attention</h2>
+          </div>
+        </div>
+
+
+        <div className="attention-grid">
+
+          {/* Medical */}
+          <div className="attention-panel attention-medical">
+
+            <div className="attention-panel-header">
+              <span className="attention-panel-icon e">🩺</span>
+
+              <div>
+                <h3>Medical</h3>
+                <span>
+                  {activeSickLogs.length} active record
+                  {activeSickLogs.length === 1 ? '' : 's'}
+                </span>
+              </div>
+            </div>
+
+            {activeSickLogs.length === 0 ? (
+              <p className="attention-empty">
+                No active medical or withdrawal alerts.
+              </p>
+            ) : (
+              <div className="attention-mini-list">
+                {activeSickLogs.slice(0, 3).map((log) => {
+                  const treatmentDate = new Date(
+                    log.treatmentDate
+                  );
+
+                  const withdrawalDays =
+                    Number(log.withdrawalDays) || 0;
+
+                  const releaseDate = new Date(
+                    treatmentDate
+                  );
+
+                  releaseDate.setDate(
+                    releaseDate.getDate() +
+                      withdrawalDays
+                  );
+
+                  const todayNoHours = new Date();
+                  todayNoHours.setHours(0, 0, 0, 0);
+
+                  const remainingDays =
+                    withdrawalDays > 0
+                      ? Math.max(
+                          Math.ceil(
+                            (releaseDate -
+                              todayNoHours) /
+                              (1000 * 60 * 60 * 24)
+                          ),
+                          0
+                        )
+                      : 0;
+
+                  return (
+                    <div
+                      key={log.id}
+                      className="attention-mini-row"
+                    >
+                      <div>
+                        <strong>
+                          {log.cowName}
+                        </strong>
+
+                        <span>
+                          {log.diagnosis ||
+                            'Medical treatment'}
+                        </span>
+                      </div>
+
+                      {remainingDays > 0 && (
+                        <b className="danger-badge">
+                          DUMP {remainingDays}d
+                        </b>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+          </div>
+
+
+          {/* Calving */}
+          <div className="attention-panel attention-calving">
+
+            <div className="attention-panel-header">
+              <span className="attention-panel-icon e">🐮</span>
+
+              <div>
+                <h3>Upcoming Calving</h3>
+                <span>
+                  {upcomingCalvingsList.length} pregnancy
+                  {upcomingCalvingsList.length === 1
+                    ? ''
+                    : 'ies'}
+                </span>
+              </div>
+            </div>
+
+            {upcomingCalvingsList.length === 0 ? (
+              <p className="attention-empty">
+                No upcoming calving dates recorded.
+              </p>
+            ) : (
+              <div className="attention-mini-list">
+                {upcomingCalvingsList
+                  .slice(0, 3)
+                  .map((pregnancy) => (
+                    <div
+                      key={pregnancy.id}
+                      className="attention-mini-row"
+                    >
+                      <div>
+                        <strong>
+                          {pregnancy.cowName}
+                        </strong>
+
+                        <span>
+                          Due{' '}
+                          {formatDate(
+                            pregnancy.expectedDueDate
+                          )}
+                        </span>
+                      </div>
+
+                      <span className="soft-badge">
+                        {pregnancy.cowTag || '—'}
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            )}
+
+          </div>
+
+
+          {/* Return Heat */}
+          <div className="attention-panel attention-heat">
+
+            <div className="attention-panel-header">
+              <span className="attention-panel-icon e">🔄</span>
+
+              <div>
+                <h3>Return Heat</h3>
+                <span>
+                  {returnHeatAlerts.length} cow
+                  {returnHeatAlerts.length === 1 ? '' : 's'}
+                </span>
+              </div>
+            </div>
+
+            {returnHeatAlerts.length === 0 ? (
+              <p className="attention-empty">
+                No cows currently due for return-heat checks.
+              </p>
+            ) : (
+              <div className="attention-mini-list">
+                {returnHeatAlerts
+                  .slice(0, 3)
+                  .map((event) => (
+                    <div
+                      key={event.id}
+                      className="attention-mini-row"
+                    >
+                      <div>
+                        <strong>
+                          {event.cowName}
+                        </strong>
+
+                        <span>
+                          Check from{' '}
+                          {formatDate(
+                            event.returnWindowStart
+                          )}
+                        </span>
+                      </div>
+
+                      <span className="orange-badge">
+                        CHECK
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            )}
+
+          </div>
+
+
+          {/* Post-calving heat */}
+          <div className="attention-panel attention-post-calving">
+
+            <div className="attention-panel-header">
+              <span className="attention-panel-icon e">🔥</span>
+
+              <div>
+                <h3>Heat Detection</h3>
+                <span>
+                  {postCalvingHeatAlerts.length} cow
+                  {postCalvingHeatAlerts.length === 1
+                    ? ''
+                    : 's'}
+                </span>
+              </div>
+            </div>
+
+            {postCalvingHeatAlerts.length === 0 ? (
+              <p className="attention-empty">
+                No cows currently inside the post-calving
+                heat window.
+              </p>
+            ) : (
+              <div className="attention-mini-list">
+                {postCalvingHeatAlerts
+                  .slice(0, 3)
+                  .map((cow) => (
+                    <div
+                      key={cow.id}
+                      className="attention-mini-row"
+                    >
+                      <div>
+                        <strong>
+                          {cow.name}
+                        </strong>
+
+                        <span>
+                          Watch for heat signs
+                        </span>
+                      </div>
+
+                      <span className="orange-badge">
+                        45–60d
+                      </span>
+                    </div>
+                  ))}
+              </div>
+            )}
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* =====================================================
+          MILK CHART
+      ====================================================== */}
+      <section className="dashboard-card-box">
+
+        <div className="section-heading-row">
+          <div>
+            <span className="section-kicker">
+              PRODUCTION
+            </span>
+
+            <h2>Milk Yield — Last 30 Days</h2>
+          </div>
+
+          <span className="chart-summary">
+            Today: {todayMilkLiters} L
+          </span>
+        </div>
+
         <div className="chart-wrapper-frame">
+
           <div className="svg-chart-container-with-y-axis">
-            
-            <div className="y-axis-labels-gutter-column milk-only-axis">
-              <span>220L</span>
-              <span>165L</span>
-              <span>110L</span>
-              <span>55L</span>
+
+            <div className="y-axis-labels-gutter-column">
+              <span>{milkChartMax}L</span>
+              <span>
+                {Math.round(milkChartMax * 0.75)}L
+              </span>
+              <span>
+                {Math.round(milkChartMax * 0.5)}L
+              </span>
+              <span>
+                {Math.round(milkChartMax * 0.25)}L
+              </span>
               <span>0L</span>
             </div>
 
-            {/* Core Vector Chart Grid Frame Viewport window */}
+
             <div className="svg-canvas-viewport-window">
-              <svg viewBox="0 0 500 150" className="svg-chart-canvas" preserveAspectRatio="none">
+
+              <svg
+                viewBox="0 0 500 150"
+                className="svg-chart-canvas"
+                preserveAspectRatio="none"
+              >
+
                 <defs>
-                  <linearGradient id="milkAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#2ecc71" stopOpacity="0.28" />
-                    <stop offset="100%" stopColor="#2ecc71" stopOpacity="0.03" />
-                  </linearGradient>
-                  <linearGradient id="milkLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#34d399" />
-                    <stop offset="100%" stopColor="#2ecc71" />
+                  <linearGradient
+                    id="milkAreaGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor="#2ecc71"
+                      stopOpacity="0.25"
+                    />
+
+                    <stop
+                      offset="100%"
+                      stopColor="#2ecc71"
+                      stopOpacity="0.02"
+                    />
                   </linearGradient>
                 </defs>
-                {/* Horizontal reference grid sheets */}
-                <line x1="0" y1="10" x2="500" y2="10" className="grid-line" />
-                <line x1="0" y1="42.5" x2="500" y2="42.5" className="grid-line" />
-                <line x1="0" y1="75" x2="500" y2="75" className="grid-line" />
-                <line x1="0" y1="107.5" x2="500" y2="107.5" className="grid-line" />
-                <line x1="0" y1="140" x2="500" y2="140" className="grid-line baseline" />
-                
-                {(() => {
-                  const dataSlice = Object.keys(daily30DayMilk).slice(-6);
-                  const pointsCoordinatesList = dataSlice.map((dateKey, index) => {
-                    const liters = daily30DayMilk[dateKey];
-                    const x = (index * (500 / (dataSlice.length - 1 || 1)));
-                    const y = 140 - Math.min((liters * (130 / 220)), 130);
-                    return { x, y, liters, dateKey };
-                  });
 
-                  let bezierCurvePathString = "";
-                  if (pointsCoordinatesList.length > 0) {
-                    bezierCurvePathString = `M ${pointsCoordinatesList[0].x} ${pointsCoordinatesList[0].y}`;
-                    for (let i = 0; i < pointsCoordinatesList.length - 1; i++) {
-                      const currentPoint = pointsCoordinatesList[i];
-                      const nextPoint = pointsCoordinatesList[i + 1];
-                      const controlPointX1 = currentPoint.x + (nextPoint.x - currentPoint.x) / 2;
-                      const controlPointY1 = currentPoint.y;
-                      const controlPointX2 = currentPoint.x + (nextPoint.x - currentPoint.x) / 2;
-                      const controlPointY2 = nextPoint.y;
-                      bezierCurvePathString += ` C ${controlPointX1} ${controlPointY1}, ${controlPointX2} ${controlPointY2}, ${nextPoint.x} ${nextPoint.y}`;
+
+                <line
+                  x1="0"
+                  y1="10"
+                  x2="500"
+                  y2="10"
+                  className="grid-line"
+                />
+
+                <line
+                  x1="0"
+                  y1="42.5"
+                  x2="500"
+                  y2="42.5"
+                  className="grid-line"
+                />
+
+                <line
+                  x1="0"
+                  y1="75"
+                  x2="500"
+                  y2="75"
+                  className="grid-line"
+                />
+
+                <line
+                  x1="0"
+                  y1="107.5"
+                  x2="500"
+                  y2="107.5"
+                  className="grid-line"
+                />
+
+                <line
+                  x1="0"
+                  y1="140"
+                  x2="500"
+                  y2="140"
+                  className="grid-line baseline"
+                />
+
+
+                {(() => {
+                  const dataSlice =
+                    Object.keys(daily30DayMilk).slice(-7);
+
+                  const points = dataSlice.map(
+                    (dateKey, index) => {
+                      const liters =
+                        daily30DayMilk[dateKey];
+
+                      const x =
+                        index *
+                        (500 /
+                          (dataSlice.length - 1 || 1));
+
+                      const y =
+                        140 -
+                        Math.min(
+                          liters *
+                            (130 / milkChartMax),
+                          130
+                        );
+
+                      return {
+                        x,
+                        y,
+                        liters,
+                        dateKey,
+                      };
+                    }
+                  );
+
+                  let curve = '';
+
+                  if (points.length > 0) {
+                    curve = `M ${points[0].x} ${points[0].y}`;
+
+                    for (
+                      let i = 0;
+                      i < points.length - 1;
+                      i++
+                    ) {
+                      const current =
+                        points[i];
+
+                      const next =
+                        points[i + 1];
+
+                      const middleX =
+                        current.x +
+                        (next.x -
+                          current.x) /
+                          2;
+
+                      curve +=
+                        ` C ${middleX} ${current.y}, ` +
+                        `${middleX} ${next.y}, ` +
+                        `${next.x} ${next.y}`;
                     }
                   }
 
-                  const milkAreaPath = bezierCurvePathString && pointsCoordinatesList.length > 0
-                    ? `${bezierCurvePathString} L ${pointsCoordinatesList[pointsCoordinatesList.length - 1].x} 140 L ${pointsCoordinatesList[0].x} 140 Z`
-                    : "";
+                  const area =
+                    curve && points.length
+                      ? `${curve} L ${
+                          points[
+                            points.length - 1
+                          ].x
+                        } 140 L ${
+                          points[0].x
+                        } 140 Z`
+                      : '';
 
                   return (
                     <>
-                      {milkAreaPath && <path d={milkAreaPath} className="svg-area-fill" fill="url(#milkAreaGradient)" />}
-                      {bezierCurvePathString && (
-                        <path d={bezierCurvePathString} className="svg-smooth-curve-line milk-line" stroke="url(#milkLineGradient)" />
+                      {area && (
+                        <path
+                          d={area}
+                          className="svg-area-fill"
+                          fill="url(#milkAreaGradient)"
+                        />
                       )}
-                      {pointsCoordinatesList.map((pt) => (
-                        <g key={pt.dateKey} className="chart-marker-group">
-                          <circle cx={pt.x} cy={pt.y} r="4.5" className="marker-dot milk-dot" />
-                        </g>
+
+                      {curve && (
+                        <path
+                          d={curve}
+                          className="svg-smooth-curve-line milk-line"
+                        />
+                      )}
+
+                      {points.map((point) => (
+                        <circle
+                          key={point.dateKey}
+                          cx={point.x}
+                          cy={point.y}
+                          r="4.5"
+                          className="marker-dot milk-dot"
+                        />
                       ))}
                     </>
                   );
                 })()}
+
               </svg>
+
             </div>
+
           </div>
+
 
           <div className="x-axis-dates-row-scale-deck milk-simple-axis">
-            {Object.keys(daily30DayMilk).slice(-6).map(dateKey => (
-              <span key={dateKey}>{dateKey.slice(5)}</span>
-            ))}
+            {Object.keys(daily30DayMilk)
+              .slice(-7)
+              .map((dateKey) => (
+                <span key={dateKey}>
+                  {dateKey.slice(5)}
+                </span>
+              ))}
           </div>
-        </div>
-      </div>
 
-      <div className="dashboard-card-box">
-        <h2>3-Month Net Profit</h2>
+        </div>
+
+      </section>
+
+
+      {/* =====================================================
+          PROFIT CHART
+      ====================================================== */}
+      <section className="dashboard-card-box">
+
+        <div className="section-heading-row">
+          <div>
+            <span className="section-kicker">
+              FINANCE
+            </span>
+
+            <h2>Net Profit — Last 3 Months</h2>
+          </div>
+
+          <span className="chart-summary">
+            This month: KSh{' '}
+            {thisMonthProfit.toLocaleString()}
+          </span>
+        </div>
+
+
         <div className="chart-wrapper-frame">
+
           <div className="svg-chart-container-with-y-axis">
-            
+
             <div className="y-axis-labels-gutter-column">
-              <span>120k</span>
-              <span>90k</span>
-              <span>60k</span>
-              <span>30k</span>
-              <span>0k</span>
+              <span>
+                {Math.round(
+                  profitChartMax / 1000
+                )}k
+              </span>
+
+              <span>
+                {Math.round(
+                  (profitChartMax * 0.75) /
+                    1000
+                )}k
+              </span>
+
+              <span>
+                {Math.round(
+                  (profitChartMax * 0.5) /
+                    1000
+                )}k
+              </span>
+
+              <span>
+                {Math.round(
+                  (profitChartMax * 0.25) /
+                    1000
+                )}k
+              </span>
+
+              <span>0</span>
             </div>
 
+
             <div className="svg-canvas-viewport-window">
-              <svg viewBox="0 0 500 150" className="svg-chart-canvas" preserveAspectRatio="none">
+
+              <svg
+                viewBox="0 0 500 150"
+                className="svg-chart-canvas"
+                preserveAspectRatio="none"
+              >
+
                 <defs>
-                  <linearGradient id="profitAreaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#3498db" stopOpacity="0.24" />
-                    <stop offset="100%" stopColor="#3498db" stopOpacity="0.03" />
-                  </linearGradient>
-                  <linearGradient id="profitLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#5dade2" />
-                    <stop offset="100%" stopColor="#3498db" />
+                  <linearGradient
+                    id="profitAreaGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="0%"
+                    y2="100%"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor="#3498db"
+                      stopOpacity="0.22"
+                    />
+
+                    <stop
+                      offset="100%"
+                      stopColor="#3498db"
+                      stopOpacity="0.02"
+                    />
                   </linearGradient>
                 </defs>
-                <line x1="0" y1="10" x2="500" y2="10" className="grid-line" />
-                <line x1="0" y1="42.5" x2="500" y2="42.5" className="grid-line" />
-                <line x1="0" y1="75" x2="500" y2="75" className="grid-line" />
-                <line x1="0" y1="107.5" x2="500" y2="107.5" className="grid-line" />
-                <line x1="0" y1="140" x2="500" y2="140" className="grid-line baseline" />
+
+
+                <line
+                  x1="0"
+                  y1="10"
+                  x2="500"
+                  y2="10"
+                  className="grid-line"
+                />
+
+                <line
+                  x1="0"
+                  y1="42.5"
+                  x2="500"
+                  y2="42.5"
+                  className="grid-line"
+                />
+
+                <line
+                  x1="0"
+                  y1="75"
+                  x2="500"
+                  y2="75"
+                  className="grid-line"
+                />
+
+                <line
+                  x1="0"
+                  y1="107.5"
+                  x2="500"
+                  y2="107.5"
+                  className="grid-line"
+                />
+
+                <line
+                  x1="0"
+                  y1="140"
+                  x2="500"
+                  y2="140"
+                  className="grid-line baseline"
+                />
+
 
                 {(() => {
-                  const trendKeys = Object.keys(trend3Months);
-                  const points = trendKeys.map((key, index) => {
-                    const info = trend3Months[key];
-                    const profitValue = info.income - info.expense;
-                    const x = index * (500 / (trendKeys.length - 1 || 1));
-                    const y = 140 - Math.min((profitValue * (130 / 120000)), 130);
-                    return { x, y, profitValue, name: info.name };
-                  });
+                  const keys =
+                    Object.keys(trend3Months);
 
-                  let profitBezierPath = "";
+                  const points = keys.map(
+                    (key, index) => {
+                      const info =
+                        trend3Months[key];
+
+                      const profit =
+                        info.income -
+                        info.expense;
+
+                      const x =
+                        index *
+                        (500 /
+                          (keys.length - 1 || 1));
+
+                      const y =
+                        140 -
+                        Math.max(
+                          0,
+                          Math.min(
+                            profit *
+                              (130 /
+                                profitChartMax),
+                            130
+                          )
+                        );
+
+                      return {
+                        x,
+                        y,
+                        profit,
+                        name: info.name,
+                      };
+                    }
+                  );
+
+                  let curve = '';
+
                   if (points.length > 0) {
-                    profitBezierPath = `M ${points[0].x} ${points[0].y}`;
-                    for (let i = 0; i < points.length - 1; i++) {
-                      const cpX1 = points[i].x + (points[i+1].x - points[i].x) / 2;
-                      const cpX2 = points[i].x + (points[i+1].x - points[i].x) / 2;
-                      profitBezierPath += ` C ${cpX1} ${points[i].y}, ${cpX2} ${points[i+1].y}, ${points[i+1].x} ${points[i+1].y}`;
+                    curve = `M ${points[0].x} ${points[0].y}`;
+
+                    for (
+                      let i = 0;
+                      i < points.length - 1;
+                      i++
+                    ) {
+                      const current =
+                        points[i];
+
+                      const next =
+                        points[i + 1];
+
+                      const middleX =
+                        current.x +
+                        (next.x -
+                          current.x) /
+                          2;
+
+                      curve +=
+                        ` C ${middleX} ${current.y}, ` +
+                        `${middleX} ${next.y}, ` +
+                        `${next.x} ${next.y}`;
                     }
                   }
 
-                  const profitAreaPath = profitBezierPath && points.length > 0
-                    ? `${profitBezierPath} L ${points[points.length - 1].x} 140 L ${points[0].x} 140 Z`
-                    : "";
+                  const area =
+                    curve && points.length
+                      ? `${curve} L ${
+                          points[
+                            points.length - 1
+                          ].x
+                        } 140 L ${
+                          points[0].x
+                        } 140 Z`
+                      : '';
 
                   return (
                     <>
-                      {profitAreaPath && <path d={profitAreaPath} className="svg-area-fill" fill="url(#profitAreaGradient)" />}
-                      {profitBezierPath && (
-                        <path d={profitBezierPath} className="svg-smooth-curve-line profit-line" stroke="url(#profitLineGradient)" />
+                      {area && (
+                        <path
+                          d={area}
+                          className="svg-area-fill"
+                          fill="url(#profitAreaGradient)"
+                        />
                       )}
-                      {points.map((pt, i) => (
-                        <g key={i} className="chart-marker-group">
-                          {pt.profitValue > 0 && (
-                            <text x={pt.x} y={pt.y - 12} className="marker-label-text active-data-bubble bold">KSh {Math.round(pt.profitValue/1000)}k</text>
-                          )}
-                          <circle cx={pt.x} cy={pt.y} r="6" className="marker-dot profit-dot" />
-                        </g>
-                      ))}
+
+                      {curve && (
+                        <path
+                          d={curve}
+                          className="svg-smooth-curve-line profit-line"
+                        />
+                      )}
+
+                      {points.map(
+                        (point, index) => (
+                          <g key={index}>
+                            {point.profit > 0 && (
+                              <text
+                                x={point.x}
+                                y={
+                                  point.y - 12
+                                }
+                                className="marker-label-text active-data-bubble bold"
+                              >
+                                KSh{' '}
+                                {Math.round(
+                                  point.profit /
+                                    1000
+                                )}
+                                k
+                              </text>
+                            )}
+
+                            <circle
+                              cx={point.x}
+                              cy={point.y}
+                              r="5.5"
+                              className="marker-dot profit-dot"
+                            />
+                          </g>
+                        )
+                      )}
                     </>
                   );
                 })()}
+
               </svg>
+
+            </div>
+
+          </div>
+
+
+          <div className="x-axis-dates-row-scale-deck monthly">
+            {Object.keys(trend3Months).map(
+              (key) => (
+                <span key={key}>
+                  {trend3Months[key].name}
+                </span>
+              )
+            )}
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* =====================================================
+          HERD + FINANCIAL BREAKDOWN
+      ====================================================== */}
+      <section className="dashboard-card-box split-grid-card">
+
+        <div className="split-panel">
+
+          <div className="split-panel-heading">
+            <span className="e">🐄</span>
+
+            <div>
+              <span className="section-kicker">
+                HERD
+              </span>
+
+              <h2>
+                {totalHeadCount} Active Animals
+              </h2>
             </div>
           </div>
 
-          <div className="x-axis-dates-row-scale-deck monthly">
-            {Object.keys(trend3Months).map(key => (
-              <span key={key}>{trend3Months[key].name}</span>
-            ))}
-          </div>
-        </div>
-      </div>
 
-      {/* 📋 CARD 3: TOTAL HERD INVENTORY & MONTHLY FINANCIAL STATEMENT MATRIX */}
-      <div className="dashboard-card-box split-grid-card">
+          <ul className="inventory-list-stack">
+
+            <li>
+              <span>Active Milking</span>
+              <strong>
+                {activeMilkingCount}
+              </strong>
+            </li>
+
+            <li>
+              <span>Heifers</span>
+              <strong>
+                {heifersCount}
+              </strong>
+            </li>
+
+            <li>
+              <span>Calves</span>
+              <strong>
+                {calvesCount}
+              </strong>
+            </li>
+
+          </ul>
+
+        </div>
+
+
         <div className="split-panel">
-          <h2>Total Herd Inventory ({totalHeadCount} Cows)</h2>
-          <ul className="inventory-list-stack">
-            <li>Active Milking: <strong>{activeMilkingCount}</strong></li>
-            <li>Dry Cows: <strong>{dryRestingCount}</strong></li>
-            <li>Heifers: <strong>{heifersCount}</strong></li>
-            <li>Calves: <strong>{calvesCount}</strong></li>
-          </ul>
-        </div>
-        <div className="split-panel layout-border-left">
-          <h2>Monthly Financial Totals</h2>
-          <ul className="inventory-list-stack">
-            <li className="text-red">Total Expenses Cost: <strong>-KES {thisMonthExpense.toLocaleString()}</strong></li>
-            <li className="text-green">Milk Sales: <strong>+KES {monthlyMilkTotal.toLocaleString()}</strong></li>
-            <li className="text-green">Livestock Sales: <strong>+KES {monthlySaleTotal.toLocaleString()}</strong></li>
-            <li className="text-green">Other Income: <strong>+KES {monthlyOtherIncome.toLocaleString()}</strong></li>
-          </ul>
-        </div>
-      </div>
 
-      {/* 🤰 CARD 4: UPCOMING CALVING MILESTONES ALERT DESK */}
-      <div className="dashboard-card-box calving-desk-card">
-        <h2>Upcoming Calving Watch List</h2>
+          <div className="split-panel-heading">
+            <span className="e">💰</span>
+
+            <div>
+              <span className="section-kicker">
+                MONEY
+              </span>
+
+              <h2>
+                This Month
+              </h2>
+            </div>
+          </div>
+
+
+          <ul className="inventory-list-stack">
+
+            <li className="text-red">
+              <span>Total Expenses</span>
+
+              <strong>
+                -KSh{' '}
+                {thisMonthExpense.toLocaleString()}
+              </strong>
+            </li>
+
+            <li className="text-green">
+              <span>Milk Sales</span>
+
+              <strong>
+                +KSh{' '}
+                {monthlyMilkTotal.toLocaleString()}
+              </strong>
+            </li>
+
+            <li className="text-green">
+              <span>Livestock Sales</span>
+
+              <strong>
+                +KSh{' '}
+                {monthlySaleTotal.toLocaleString()}
+              </strong>
+            </li>
+
+            <li className="text-green">
+              <span>Other Income</span>
+
+              <strong>
+                +KSh{' '}
+                {monthlyOtherIncome.toLocaleString()}
+              </strong>
+            </li>
+
+          </ul>
+
+        </div>
+
+      </section>
+
+
+      {/* =====================================================
+          PRODUCTION LEADERBOARD
+      ====================================================== */}
+      <section className="dashboard-card-box">
+
+        <div className="section-heading-row">
+          <div>
+            <span className="section-kicker">
+              HERD PERFORMANCE
+            </span>
+
+            <h2>Production Snapshot</h2>
+          </div>
+        </div>
+
+
+        <div className="leaderboard-grid">
+
+          <div className="leaderboard-card top-producer-card">
+
+            <span className="leaderboard-icon e">
+              🏆
+            </span>
+
+            <div>
+              <span>Top Producer</span>
+
+              <strong>
+                {topProducerName}
+              </strong>
+
+              <small>
+                {topProducerQty.toFixed(1)} L
+                recorded
+              </small>
+            </div>
+
+          </div>
+
+
+          <div className="leaderboard-card low-producer-card">
+
+            <span className="leaderboard-icon e">
+              📊
+            </span>
+
+            <div>
+              <span>Lowest Recorded</span>
+
+              <strong>
+                {lowProducerName}
+              </strong>
+
+              <small>
+                {lowProducerQty.toFixed(1)} L
+                recorded
+              </small>
+            </div>
+
+          </div>
+
+
+          <div className="leaderboard-card additions-card">
+
+            <span className="leaderboard-icon e">
+              🐮
+            </span>
+
+            <div>
+              <span>New This Month</span>
+
+              <strong>
+                +{calvesBornThisMonth +
+                  cowsAcquiredThisMonth}
+              </strong>
+
+              <small>
+                {calvesBornThisMonth} calves •{' '}
+                {cowsAcquiredThisMonth} other
+              </small>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* =====================================================
+          COMPACT CALVING LIST
+      ====================================================== */}
+      {/* <section className="dashboard-card-box secondary-alert-card">
+
+        <div className="section-heading-row">
+          <div>
+            <span className="section-kicker">
+              BREEDING
+            </span>
+
+            <h2>Upcoming Calving Watch</h2>
+          </div>
+
+          <span className="section-count-badge">
+            {upcomingCalvingsList.length}
+          </span>
+        </div>
+
+
         {upcomingCalvingsList.length === 0 ? (
-          <p className="clean-empty-label-notice">✅ No active pregnancies due inside the current upcoming timeline windows.</p>
+          <p className="clean-empty-label-notice">
+            No upcoming calving dates recorded.
+          </p>
         ) : (
-          <div className="calving-alerts-stack">
-            {upcomingCalvingsList.slice(0, 3).map((p) => (
-              <div key={p.id} className="calving-alert-item-row-card">
-                <span>🔔</span>
-                <p><strong>{p.cowName}</strong> (Tag: {p.cowTag}) is due to calve on <strong>{new Date(p.expectedDueDate).toLocaleDateString()}</strong> (Sire: {p.semenTag})</p>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+          <div className="compact-list">
 
-      {/* 🩺 CARD 5: WEEKLY MEDICAL & WITHDRAWAL SAFETY DESK */}
-      <div className="dashboard-card-box health-desk-card">
-        <h2>Weekly Medical Records</h2>
-        {activeSickLogs.length === 0 ? (
-          <p className="clean-empty-label-notice-green">Excellent: No cows under medical treatment or active milk withdrawal restrictions this week.</p>
-        ) : (
-          <div className="health-alerts-stack-deck">
-            <div className="critical-headline-warn">{activeSickLogs.length} Cow/s records to monitor this week:</div>
-            {activeSickLogs.slice(0, 4).map((log) => {
-              const treatDate = new Date(log.treatmentDate);
-              const todayNoHours = new Date(); todayNoHours.setHours(0,0,0,0);
-              const releaseDate = new Date(treatDate); releaseDate.setDate(releaseDate.getDate() + log.withdrawalDays);
-              const remainingDays = Math.max(Math.ceil((releaseDate - todayNoHours) / (1000 * 60 * 60 * 24)), 0);
+            {upcomingCalvingsList
+              .slice(0, 5)
+              .map((pregnancy) => (
+                <div
+                  key={pregnancy.id}
+                  className="compact-list-row"
+                >
+                  <span className="compact-list-icon">
+                    🔔
+                  </span>
 
-              return (
-                <div key={log.id} className="medical-alert-row-card-item">
-                  <span className="med-bullet-dot">💊</span>
-                  <div className="med-alert-text-block">
-                    <h5>{log.cowName} <small>(Tag: {log.cowTag})</small></h5>
-                    <p>Condition: <strong>{log.diagnosis}</strong> • Status: <em>{log.treatmentStatus}</em></p>
-                    {log.withdrawalDays > 0 && remainingDays > 0 ? (
-                      <span className="critical-dump-badge-pill">DUMP MILK: {remainingDays} Days Left</span>
-                    ) : log.withdrawalDays > 0 ? (
-                      <span className="safe-release-badge-pill">Released to Tank Lines</span>
-                    ) : null}
+                  <div>
+                    <strong>
+                      {pregnancy.cowName}
+                    </strong>
+
+                    <span>
+                      Due{' '}
+                      {formatDate(
+                        pregnancy.expectedDueDate
+                      )}
+
+                      {pregnancy.cowTag
+                        ? ` • Tag ${pregnancy.cowTag}`
+                        : ''}
+                    </span>
                   </div>
+
+                  {pregnancy.semenTag && (
+                    <small>
+                      Sire: {pregnancy.semenTag}
+                    </small>
+                  )}
                 </div>
-              );
-            })}
+              ))}
+
           </div>
         )}
+
+      </section> */}
+
+
+      {/* =====================================================
+          DASHBOARD FOOTER
+      ====================================================== */}
+      <div className="dashboard-footer-note">
+        <span>
+          Dairy Management by Kuitech Solutions
+        </span>
+
+        <span>
+          Data is stored locally.
+        </span>
       </div>
 
     </div>

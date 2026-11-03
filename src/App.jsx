@@ -105,7 +105,7 @@ function App() {
 
   const handleVerifyLicenseAndBrand = (e) => {
     e.preventDefault();
-    if (licenseKeyInput.trim() === 'KUI-Q2W3E-2026') {
+    if (licenseKeyInput.trim() === '1Q2W3E4R5T6Y') {
       const definedBrandingText = farmNameInput.trim() || 'My Dairy Farm';
       localStorage.setItem('dairy_app_license_verified', 'true');
        // Permanent farm identity

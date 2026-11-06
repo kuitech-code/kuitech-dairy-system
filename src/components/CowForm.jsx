@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { getCowAgeInMonths } from '../utils/cowAge';
 import './CowForm.css';
-
-const getAgeInMonths = (dob) => {
-  if (!dob) return 0;
-
-  const birthDate = new Date(dob);
-  if (Number.isNaN(birthDate.getTime())) return 0;
-
-  const today = new Date();
-  return (today.getFullYear() - birthDate.getFullYear()) * 12 + (today.getMonth() - birthDate.getMonth());
-};
 
 const getAutoStatus = (gender, dob, currentStatus = 'Calf') => {
   if (!dob) return currentStatus || 'Calf';
 
-  const ageInMonths = getAgeInMonths(dob);
+  const ageInMonths = getCowAgeInMonths(dob);
 
   if (gender === 'Male') {
     return ageInMonths < 6 ? 'Calf' : 'Bull';
@@ -31,7 +22,7 @@ const getAutoStatus = (gender, dob, currentStatus = 'Calf') => {
 const getAllowedStatusOptions = (gender, dob) => {
   if (gender === 'Male') return ['Calf', 'Bull'];
 
-  const ageInMonths = getAgeInMonths(dob);
+  const ageInMonths = getCowAgeInMonths(dob);
   if (ageInMonths < 6) return ['Calf'];
   if (ageInMonths < 13) return ['Calf', 'Heifer'];
   return ['Calf', 'Heifer', 'Pregnant', 'Milking'];
@@ -58,14 +49,52 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
   const [errorMessage, setErrorMessage] = useState('');
   const parentageLocked = Boolean(initialData?.parentageLocked || (initialData?.damTag && initialData.damTag !== 'Unknown'));
 
-  // Handle local picture uploads
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setImagePreview(reader.result);
-      reader.readAsDataURL(file);
+    e.target.value = '';
+    if (!file) return;
+
+    setErrorMessage('');
+    if (!file.type.startsWith('image/')) {
+      setErrorMessage('Choose an image file to upload.');
+      return;
     }
+    if (file.size > 12 * 1024 * 1024) {
+      setErrorMessage('Choose an image smaller than 12 MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onerror = () => setErrorMessage('The selected photo could not be read. Try another image.');
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => setErrorMessage('The selected photo could not be opened. Try a JPEG or PNG image.');
+      image.onload = () => {
+        try {
+          const maxDimension = 900;
+          const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.max(1, Math.round(image.width * scale));
+          canvas.height = Math.max(1, Math.round(image.height * scale));
+
+          const context = canvas.getContext('2d');
+          if (!context) throw new Error('Canvas rendering is unavailable.');
+
+          context.drawImage(image, 0, 0, canvas.width, canvas.height);
+          const compressedImage = canvas.toDataURL('image/jpeg', 0.72);
+          if (!compressedImage || compressedImage === 'data:,') {
+            throw new Error('The photo could not be compressed.');
+          }
+
+          setImagePreview(compressedImage);
+        } catch (error) {
+          console.error('Could not prepare uploaded cow photo:', error);
+          setErrorMessage('The photo could not be prepared for storage. Try another image.');
+        }
+      };
+      image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
   };
 
   useEffect(() => {
@@ -82,8 +111,16 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
     setErrorMessage('');
 
     // 🔒 GUARD 1: Prevent Duplicate Tag IDs (Skip check if we are in Edit Mode)
-    const savedHerd = localStorage.getItem('dairy_herd') || '[]';
-    const currentHerd = JSON.parse(savedHerd);
+    let currentHerd;
+    try {
+      const savedHerd = localStorage.getItem('dairy_herd') || '[]';
+      currentHerd = JSON.parse(savedHerd);
+      if (!Array.isArray(currentHerd)) throw new Error('Stored herd data is not a list.');
+    } catch (error) {
+      console.error('Could not read stored herd before saving:', error);
+      setErrorMessage('Saved herd data could not be read. Restore a recent backup before making changes.');
+      return;
+    }
     
     if (!initialData) {
       const tagExists = currentHerd.some(animal => animal.tagNumber.trim().toUpperCase() === tagNumber.trim().toUpperCase());
@@ -131,7 +168,7 @@ function CowForm({ initialData = null, onSave, onCancel = null }) {
       image: imagePreview
     };
 
-    onSave(finalAnimalData);
+    if (onSave(finalAnimalData) === false) return;
 
     // 🔒 GUARD 3: Complete form wipe out on successful new save
     if (!initialData) {

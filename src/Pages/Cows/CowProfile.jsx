@@ -1,21 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import CowForm from '../../components/CowForm';
+import { formatCowAge, getCowAgeInMonths } from '../../utils/cowAge';
+import { useToday } from '../../utils/useToday';
 import './CowProfile.css';
 
-const getAgeInMonths = (dob) => {
-  if (!dob) return 0;
+const normalizeLifecycleStatus = (animal, today) => {
+  if (!animal) return animal;
+  if (!animal.dob) return { ...animal, status: animal.status || 'Calf' };
 
-  const birthDate = new Date(dob);
-  if (Number.isNaN(birthDate.getTime())) return 0;
-
-  const today = new Date();
-  return (today.getFullYear() - birthDate.getFullYear()) * 12 + (today.getMonth() - birthDate.getMonth());
-};
-
-const normalizeLifecycleStatus = (animal) => {
-  if (!animal || !animal.dob) return animal;
-
-  const ageInMonths = getAgeInMonths(animal.dob);
+  const ageInMonths = getCowAgeInMonths(animal.dob, today);
   const currentStatus = animal.status || 'Calf';
 
   if (currentStatus.startsWith('Archived')) return animal;
@@ -37,10 +30,15 @@ const normalizeLifecycleStatus = (animal) => {
 };
 
 function CowProfile({ cowId, onBackToList }) {
+  const today = useToday();
   // Core States
   const [cow, setCow] = useState(null);
   const [activeTab, setActiveTab] = useState('Overview');
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
+  const [saveError, setSaveError] = useState('');
+  const [isPhotoOpen, setIsPhotoOpen] = useState(false);
+  const [photoUnavailable, setPhotoUnavailable] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
 
   // --- HUMAN PROOFING EDIT STATES ---
@@ -69,26 +67,40 @@ function CowProfile({ cowId, onBackToList }) {
 
   // Load Cow Data from local storage
   useEffect(() => {
-    const savedHerd = localStorage.getItem('dairy_herd');
-    if (savedHerd) {
-      const herdArray = JSON.parse(savedHerd);
-      const normalizedHerd = herdArray.map(normalizeLifecycleStatus);
-      const foundCow = normalizedHerd.find((animal) => animal.id === cowId);
-      if (foundCow) {
-        localStorage.setItem('dairy_herd', JSON.stringify(normalizedHerd));
-        setCow(foundCow);
-        // Pre-fill edit fields just in case they click edit
-        setEditName(foundCow.name);
-        setEditStatus(foundCow.status);
-        setEditSireTag(foundCow.sireTag === 'Unknown' ? '' : foundCow.sireTag);
-        setEditDamTag(foundCow.damTag === 'Unknown' ? '' : foundCow.damTag);
-        setEditNotes(foundCow.notes);
-        setEditCastrationDate(foundCow.castrationDate || '');
-        setEditHeartGirth(foundCow.heartGirth || '');
-        setEditBodyWidth(foundCow.bodyWidth || '');
+    try {
+      const savedHerd = localStorage.getItem('dairy_herd');
+      if (savedHerd) {
+        const herdArray = JSON.parse(savedHerd);
+        if (!Array.isArray(herdArray)) throw new Error('Stored herd data is not a list.');
+        const normalizedHerd = herdArray.map((animal) => normalizeLifecycleStatus(animal, new Date()));
+        const statusChanged = normalizedHerd.some((animal, index) => animal.status !== herdArray[index]?.status);
+        if (statusChanged) {
+          try {
+            localStorage.setItem('dairy_herd', JSON.stringify(normalizedHerd));
+          } catch (error) {
+            console.error('Could not save refreshed cow statuses:', error);
+            setSaveError('Animal ages and statuses were refreshed on screen, but could not be saved to browser storage. Export a backup and free some storage.');
+          }
+        }
+        const foundCow = normalizedHerd.find((animal) => animal.id === cowId);
+        if (foundCow) {
+          setCow(foundCow);
+          setEditName(foundCow.name || '');
+          setEditStatus(foundCow.status || 'Calf');
+          setEditSireTag(foundCow.sireTag === 'Unknown' ? '' : foundCow.sireTag || '');
+          setEditDamTag(foundCow.damTag === 'Unknown' ? '' : foundCow.damTag || '');
+          setEditNotes(foundCow.notes || '');
+          setEditCastrationDate(foundCow.castrationDate || '');
+          setEditHeartGirth(foundCow.heartGirth || '');
+          setEditBodyWidth(foundCow.bodyWidth || '');
+        }
       }
+    } catch (error) {
+      console.error('Could not load cow profile:', error);
+      setLoadError('Saved herd data could not be loaded. Restore a recent backup or contact support.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [cowId]);
 
   // MILK LOOKUP ENGINE
@@ -145,7 +157,7 @@ function CowProfile({ cowId, onBackToList }) {
         const allReceiptsArray = JSON.parse(savedFeedReceipts);
         const matchingDietLogs = allReceiptsArray.filter((receipt) => {
           const isWholeHerd = receipt.allocationType === 'Group' && receipt.targetGroup === 'All Herd';
-          const isHerGroup = receipt.allocationType === 'Group' && receipt.targetGroup === cow.status;
+          const isHerGroup = receipt.allocationType === 'Group' && receipt.targetGroup === currentStatus;
           const isHerIdChecked = receipt.allocationType === 'Multi-Cow' && receipt.targetCowIds.includes(cow.id);
           return isWholeHerd || isHerGroup || isHerIdChecked;
         });
@@ -257,8 +269,10 @@ function CowProfile({ cowId, onBackToList }) {
   };
 
   if (loading) return <div className="ledger-loading">Querying database rows...</div>;
+  if (loadError) return <div className="profile-error-screen" role="alert">{loadError}</div>;
   if (!cow) return <div className="profile-error-screen">Profile not found.</div>;
 
+  const currentStatus = normalizeLifecycleStatus(cow, today).status || 'Calf';
   const totalMilkPages = Math.ceil(milkHistory.length / itemsPerPage) || 1;
   const currentMilkRecordsSlice = milkHistory.slice((milkCurrentPage - 1) * itemsPerPage, milkCurrentPage * itemsPerPage);
 
@@ -269,24 +283,48 @@ function CowProfile({ cowId, onBackToList }) {
       <button type="button" className="back-link-btn" onClick={onBackToList}>
         ◀ Back to Herd's List
       </button>
+      {saveError && <div className="profile-error-screen" role="alert">{saveError}</div>}
 
       {/* HEADER CARD */}
-      <div className={`profile-header-card ${cow.status.startsWith('Archived') ? 'ghost-profile-mode' : ''}`}>
-        <div className="profile-avatar">{cow.image ? <img src={cow.image} alt={cow.name} /> : <span className="e">🐄</span>}</div>
+      <div className={`profile-header-card ${currentStatus.startsWith('Archived') ? 'ghost-profile-mode' : ''}`}>
+        <div className="profile-avatar">
+          {cow.image && !photoUnavailable ? (
+            <button type="button" className="profile-photo-button" onClick={() => setIsPhotoOpen(true)} aria-label={`Open ${cow.name}'s photo`}>
+              <img src={cow.image} alt={cow.name} onError={() => setPhotoUnavailable(true)} />
+            </button>
+          ) : <span className="e">🐄</span>}
+        </div>
         <div className="profile-main-info">
           <h2>{cow.name}</h2>
-          <span className={`status-badge tag-${cow.status.toLowerCase().replace(/[^a-z]/g, '')}`}>{cow.status}</span>
-          <p className="tag-number">Tag Number: {cow.tagNumber}</p>
-          <p className="sub-details">
-            {cow.breed} • {cow.gender}
-          </p>
+          <span className={`status-badge tag-${currentStatus.toLowerCase().replace(/[^a-z]/g, '')}`}>{currentStatus}</span>
+          <div className="profile-details-row">
+            <p className="tag-number"><span>Tag number</span><strong>{cow.tagNumber}</strong></p>
+            <p className="sub-details">
+              <span className="profile-age-detail"><span>Age</span><strong>{formatCowAge(cow.dob, today)}</strong></span>
+              <span className="profile-breed-detail">{cow.breed} · {cow.gender}</span>
+            </p>
+          </div>
         </div>
 
-        {cow.status.startsWith('Archived') && (
+        {isPhotoOpen && cow.image && !photoUnavailable && (
+          <div className="photo-viewer-overlay" onClick={(event) => {
+            if (event.target === event.currentTarget) setIsPhotoOpen(false);
+          }}>
+            <div className="photo-viewer-dialog" role="dialog" aria-modal="true" aria-label={`${cow.name}'s photo`}>
+              <button type="button" className="photo-viewer-close" onClick={() => setIsPhotoOpen(false)} aria-label="Close photo">×</button>
+              <img src={cow.image} alt={cow.name} onError={() => {
+                setPhotoUnavailable(true);
+                setIsPhotoOpen(false);
+              }} />
+            </div>
+          </div>
+        )}
+
+        {currentStatus.startsWith('Archived') && (
           <div className="archived-banner">Locked Profile (Archived Asset)</div>
         )}
 
-        {!cow.status.startsWith('Archived') && (
+        {!currentStatus.startsWith('Archived') && (
           <button type="button" className="edit-trigger-btn" onClick={() => setIsEditing(!isEditing)}>
             {isEditing ? 'Cancel' : 'Edit'}
           </button>
@@ -301,17 +339,27 @@ function CowProfile({ cowId, onBackToList }) {
             initialData={cow}
             onCancel={() => setIsEditing(false)}
             onSave={(updatedData) => {
-              const savedHerd = localStorage.getItem('dairy_herd');
-              if (savedHerd) {
+              try {
+                const savedHerd = localStorage.getItem('dairy_herd');
+                if (!savedHerd) throw new Error('Stored herd data is missing.');
+                const herdArray = JSON.parse(savedHerd);
+                if (!Array.isArray(herdArray)) throw new Error('Stored herd data is not a list.');
                 const normalizedData = normalizeLifecycleStatus({ ...cow, ...updatedData });
-                const updatedHerd = JSON.parse(savedHerd).map((animal) => {
+                const updatedHerd = herdArray.map((animal) => {
                   if (animal.id === cowId) return { ...animal, ...normalizedData };
                   return animal;
                 });
                 localStorage.setItem('dairy_herd', JSON.stringify(updatedHerd));
                 setCow(normalizedData);
+                setPhotoUnavailable(false);
                 setIsEditing(false);
+                setSaveError('');
                 alert('Changes saved successfully!');
+                return true;
+              } catch (error) {
+                console.error('Could not save cow profile:', error);
+                setSaveError('Could not save these changes. Browser storage may be full or the saved herd data may be damaged.');
+                return false;
               }
             }}
           />
@@ -382,6 +430,9 @@ function CowProfile({ cowId, onBackToList }) {
             <p>
               <strong>Date of Birth:</strong> {new Date(cow.dob).toLocaleDateString()}
             </p>
+            <p>
+              <strong>Age:</strong> {formatCowAge(cow.dob, today)}
+            </p>
             {cow.gender === 'Male' && cow.castrationDate && (
               <p>
                 <strong>Castration Date:</strong> {new Date(cow.castrationDate).toLocaleDateString()}
@@ -405,7 +456,7 @@ function CowProfile({ cowId, onBackToList }) {
               <strong>Dam (Mother):</strong>{' '}
               <strong className={cow.damTag === 'Unknown' ? 'dim-text' : ''}>{cow.damTag}</strong>
             </p>
-            {cow.status === 'Pregnant' && cow.calvingDate && (
+            {currentStatus === 'Pregnant' && cow.calvingDate && (
               <p>
                 <strong>Expected Calving:</strong> {new Date(cow.calvingDate).toLocaleDateString()}
               </p>
@@ -605,7 +656,7 @@ function CowProfile({ cowId, onBackToList }) {
           <div className="health-tab-pane">
             <div className="profile-reproductive-status" style={{ marginBottom: '16px' }}>
               <strong>Current Asset Status: </strong>
-              <span className="status-value">{cow.status}</span>
+              <span className="status-value">{currentStatus}</span>
             </div>
 
             {healthLogs.length === 0 ? (
@@ -667,7 +718,7 @@ function CowProfile({ cowId, onBackToList }) {
 
                   <div className="profile-reproductive-status" style={{ marginBottom: '16px' }}>
                     <strong>Reproductive Status: </strong>
-                    <span className="status-value">{cow.status}</span>
+                    <span className="status-value">{currentStatus}</span>
                   </div>
 
                   {reproductionLogs.length === 0 ? (
@@ -710,7 +761,7 @@ function CowProfile({ cowId, onBackToList }) {
                           <div className="calf-card" key={calf.id}>
                             <strong>Tag: {calf.tagNumber}</strong>
                             <p>
-                              {calf.name} · {calf.gender} · {new Date(calf.dob).toLocaleDateString()}
+                              {calf.name} · {calf.gender} · Age: {formatCowAge(calf.dob, today)} · {new Date(calf.dob).toLocaleDateString()}
                             </p>
                           </div>
                         ))}

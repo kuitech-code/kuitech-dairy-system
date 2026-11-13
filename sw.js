@@ -1,7 +1,7 @@
 const CACHE_NAME = 'kuitech-dairy-v3';
 
 // 1. Skip waiting to activate the updated worker instantly
-self.addEventListener('install', event => {
+self.addEventListener('install', () => {
   self.skipWaiting();
 });
 
@@ -24,9 +24,17 @@ self.addEventListener('fetch', event => {
         }
         return response;
       })
-      .catch(() => {
+      .catch(async () => {
         //  OFFLINE RESCUE SHIELD: If internet/network is down, instantly serve from cache memory!
-        return caches.match(event.request);
+        const cachedResponse = await caches.match(event.request);
+        if (cachedResponse) return cachedResponse;
+
+        if (event.request.mode === 'navigate') {
+          const appShell = await caches.match(new URL('./', self.location.href));
+          if (appShell) return appShell;
+        }
+
+        return Response.error();
       })
   );
 });

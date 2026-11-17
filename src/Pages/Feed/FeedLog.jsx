@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './FeedLog.css';
+import { showAppDialog } from '../../utils/appDialog';
 
 function FeedLog() {
   // --- STATE 1: MASTER CATALOG STATES (The Shopping List) ---
@@ -71,7 +72,7 @@ function FeedLog() {
     if (!newCatalogItem.trim()) return;
 
     if (catalogItems.includes(newCatalogItem.trim())) {
-      alert('This feed type already exists in your inventory selection dropdown list!');
+      showAppDialog({ title: 'Feed type already exists', message: 'This feed type is already in your inventory list.' });
       return;
     }
 
@@ -169,9 +170,9 @@ function FeedLog() {
     setEditCost(receipt.cost);
   };
 
-  const handleSaveInlineReceiptEdit = (receiptId) => {
+  const handleSaveInlineReceiptEdit = async (receiptId) => {
     if (!editQty || parseFloat(editQty) <= 0 || !editCost || parseFloat(editCost) <= 0) {
-      alert('Please enter valid quantity and financial expense adjustments!');
+      await showAppDialog({ title: 'Check receipt details', message: 'Enter a valid quantity and expense amount.' });
       return;
     }
 
@@ -189,15 +190,15 @@ function FeedLog() {
     setFeedReceipts(updatedMasterList);
     localStorage.setItem('dairy_feed_receipts', JSON.stringify(updatedMasterList));
     setEditingReceiptId(null); // Close the adjustment panel
-    alert('Feed purchase receipt modified successfully!');
+    showAppDialog({ title: 'Receipt updated', message: 'Feed purchase receipt modified successfully.' });
   };
 
-  const handleDeleteReceipt = (receiptId) => {
-    if (window.confirm('Are you sure you want to completely erase this feed expense receipt from history?')) {
+  const handleDeleteReceipt = async (receiptId) => {
+    if (await showAppDialog({ title: 'Delete feed receipt?', type: 'danger', confirmText: 'Delete receipt', message: 'This will permanently erase this feed expense receipt from history.' })) {
       const updatedMasterList = feedReceipts.filter(receipt => receipt.id !== receiptId);
       setFeedReceipts(updatedMasterList);
       localStorage.setItem('dairy_feed_receipts', JSON.stringify(updatedMasterList));
-      alert('Receipt item purged safely.');
+      showAppDialog({ title: 'Receipt deleted', message: 'The feed receipt was removed from history.' });
     }
   };
 

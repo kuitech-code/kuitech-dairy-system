@@ -1,6 +1,30 @@
 .settings-page-container { padding: 4px; font-family: system-ui, sans-serif; }
 .settings-card-box { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); margin-bottom: 16px; }
 
+.settings-update-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #b9e3c8;
+  border-left: 5px solid #27ae60;
+  border-radius: 12px;
+  background: #f1faf4;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.settings-update-card strong { color: #216e3a; font-size: 15px; }
+.settings-update-card p { margin: 5px 0 0; color: #526b5a; font-size: 12px; line-height: 1.5; }
+.settings-action-btn.update-btn { width: auto; min-width: 120px; padding: 10px 14px; background: #27ae60; color: white; }
+.settings-action-btn.update-btn:disabled { opacity: 0.7; cursor: wait; }
+
+@media (max-width: 520px) {
+  .settings-update-card { align-items: stretch; flex-direction: column; gap: 12px; }
+  .settings-action-btn.update-btn { width: 100%; }
+}
+
 .settings-icon-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #f2f4f4; }
 .settings-icon-header span { font-size: 20px; }
 .settings-icon-header h2 { font-size: 14px; color: #2c3e50; margin: 0; }

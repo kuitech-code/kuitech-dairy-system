@@ -757,8 +757,7 @@
   font-weight: normal !important;
 }
 
-/* Specific Alert Block styling if cow is marked Pregnant */
-.overview-tab-pane p:has(strong:contains("Expected Calving")),
+/* Specific alert block styling if cow is marked pregnant */
 .overview-tab-pane p.special-alert-row {
   background-color: #f4ecf7;
   border-bottom: 1px solid #d2b4de;

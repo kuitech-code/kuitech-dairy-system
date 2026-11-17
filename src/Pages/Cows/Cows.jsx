@@ -36,6 +36,7 @@ function Cows({ onSelectCow }) {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isRegistrationOpen, setIsRegistrationOpen] = useState(false);
   const itemsPerPage = 5;
 
   useEffect(() => {
@@ -93,11 +94,26 @@ function Cows({ onSelectCow }) {
   return (
     <div className="cows-container">
       <div className="form-card">
-        <h2>Register New Animal</h2>
-        {errorMessage && <div className="error-banner" role="alert">{errorMessage}</div>}
-        {successMessage && <div className="success-banner">{successMessage}</div>}
-        {/* Call the reusable form module */}
-        <CowForm onSave={handleAddNewCow} />
+        <button
+          type="button"
+          className="registration-toggle"
+          aria-expanded={isRegistrationOpen}
+          aria-controls="register-animal-form"
+          onClick={() => setIsRegistrationOpen((open) => !open)}
+        >
+          <span>
+            <strong>Register New Animal</strong>
+            <small>{isRegistrationOpen ? 'Close the registration form' : 'Open to add a cow'}</small>
+          </span>
+          <span className="registration-toggle-icon" aria-hidden="true">{isRegistrationOpen ? '−' : '+'}</span>
+        </button>
+        {isRegistrationOpen && (
+          <div id="register-animal-form" className="registration-form-content">
+            {errorMessage && <div className="error-banner" role="alert">{errorMessage}</div>}
+            {successMessage && <div className="success-banner" role="status">{successMessage}</div>}
+            <CowForm onSave={handleAddNewCow} />
+          </div>
+        )}
       </div>
 
       <div className="directory-card">

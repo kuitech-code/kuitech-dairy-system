@@ -13,7 +13,12 @@ createRoot(document.getElementById('root')).render(
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('PWA Successfully Registered! App installation enabled.', reg.scope))
+      .then(reg => {
+        console.log('PWA Successfully Registered! App installation enabled.', reg.scope);
+        const checkForUpdate = () => reg.update().catch(() => {});
+        window.addEventListener('focus', checkForUpdate);
+        window.setInterval(checkForUpdate, 60 * 60 * 1000);
+      })
       .catch(err => console.log('PWA Registration failed: ', err));
   });
 }

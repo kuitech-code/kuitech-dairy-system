@@ -214,6 +214,231 @@
   border: 1px solid #a9cce3;
 }
 
+.milk-card-controls {
+  align-items: end;
+}
+
+.milk-card-instructions {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid #cfe5f2;
+  border-left: 4px solid #3498db;
+  border-radius: 8px;
+  background: #f2f8fc;
+  color: #405766;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.milk-card-instructions-icon {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  border-radius: 50%;
+  background: #dceef8;
+  color: #2471a3;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.milk-history-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0 12px;
+  margin-top: 12px;
+}
+
+.milk-history-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 0 8px;
+  border: 0;
+  border-bottom: 2px solid #f2f4f4;
+  background: transparent;
+  color: #2c3e50;
+  text-align: left;
+  cursor: pointer;
+}
+
+.milk-history-toggle strong,
+.milk-history-toggle small {
+  display: block;
+}
+
+.milk-history-toggle strong {
+  font-size: 16px;
+}
+
+.milk-history-toggle small {
+  margin-top: 4px;
+  color: #7f8c8d;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.milk-history-toggle-icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f6ef;
+  color: #219653;
+  font-size: 22px;
+}
+
+.milk-history-content {
+  padding-top: 12px;
+}
+
+.milk-history-instructions {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding: 11px 14px;
+  border: 1px solid #d9e9df;
+  border-left: 4px solid #27ae60;
+  border-radius: 8px;
+  background: #f3f9f5;
+  color: #466052;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.milk-history-instructions-icon {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  border-radius: 50%;
+  background: #dff1e5;
+  color: #218c4d;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.milk-history-filter-action {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 12px;
+}
+
+.clear-milk-filters-btn {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid #3498db;
+  border-radius: 6px;
+  background: #fff;
+  color: #2471a3;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.milk-history-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 12px;
+}
+
+.milk-history-pagination button {
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 6px;
+  background: #27ae60;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.milk-history-pagination button:disabled {
+  background: #d5dbdb;
+  color: #7f8c8d;
+  cursor: not-allowed;
+}
+
+.milk-history-pagination span {
+  color: #52616b;
+  font-size: 13px;
+}
+
+.milk-history-table {
+  min-width: 540px;
+}
+
+.milk-edit-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  margin: 0 0 12px;
+  color: #34495e;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.milk-edit-toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: #3498db;
+}
+
+.milk-card-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background: #f4f8fa;
+  color: #52616b;
+  font-size: 12px;
+}
+
+.milk-card-summary strong {
+  color: #2471a3;
+}
+
+.milk-card-table {
+  min-width: 600px;
+}
+
+.milk-card-input {
+  width: 92px;
+  box-sizing: border-box;
+  padding: 8px 6px;
+  border: 1px solid #ccd1d1;
+  border-radius: 6px;
+  background: #fafbfc;
+  font: inherit;
+}
+
+.milk-card-input:disabled {
+  opacity: 0.8;
+}
+
+.milk-card-table td:last-child {
+  white-space: nowrap;
+  color: #7f8c8d;
+  font-size: 11px;
+}
+
 /* Gray subtext warning label for partial logs */
 .lock-notice-text {
   font-size: 10px;

@@ -1,5 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './SystemSettings.css';
+import { showAppDialog } from '../../utils/appDialog';
 
 import {
   downloadFarmBackup,
@@ -10,7 +11,53 @@ import {
 function SystemSettings() {
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [waitingWorker, setWaitingWorker] = useState(null);
+  const [isApplyingUpdate, setIsApplyingUpdate] = useState(false);
   const fileInputRef = useRef(null);
+  const isApplyingUpdateRef = useRef(false);
+
+  useEffect(() => {
+    if (!('serviceWorker' in navigator)) return undefined;
+    let registration;
+    let isMounted = true;
+    const showWaitingWorker = () => {
+      if (isMounted && registration?.waiting) setWaitingWorker(registration.waiting);
+    };
+    const handleControllerChange = () => {
+      if (isApplyingUpdateRef.current) window.location.reload();
+    };
+    const handleUpdateFound = () => {
+      const installingWorker = registration?.installing;
+      if (!installingWorker) return;
+      const handleStateChange = () => {
+        if (installingWorker.state === 'installed') showWaitingWorker();
+      };
+      installingWorker.addEventListener('statechange', handleStateChange);
+    };
+
+    navigator.serviceWorker.getRegistration().then((currentRegistration) => {
+      if (!isMounted || !currentRegistration) return;
+      registration = currentRegistration;
+      showWaitingWorker();
+      registration.addEventListener('updatefound', handleUpdateFound);
+      if (registration.installing) handleUpdateFound();
+      registration.update().catch(() => {});
+    }).catch(() => {});
+    navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+
+    return () => {
+      isMounted = false;
+      registration?.removeEventListener('updatefound', handleUpdateFound);
+      navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+    };
+  }, [isApplyingUpdate]);
+
+  const handleApplyUpdate = () => {
+    if (!waitingWorker) return;
+    isApplyingUpdateRef.current = true;
+    setIsApplyingUpdate(true);
+    waitingWorker.postMessage('SKIP_WAITING');
+  };
 
   // ============================================================
   // DOWNLOAD BACKUP
@@ -62,12 +109,12 @@ function SystemSettings() {
         const decryptedBackup =
           await decryptBackupFile(parsedPackage);
 
-        const confirmed = window.confirm(
+        const confirmed = await showAppDialog({ title: 'Restore farm backup?', type: 'danger', confirmText: 'Restore backup', message:
           `This backup belongs to "${decryptedBackup.farmName}".\n\n` +
           'Restoring it will replace the current farm records on this device.\n\n' +
           'Your device license will NOT be changed.\n\n' +
           'Do you want to continue?'
-        );
+        });
 
         if (!confirmed) {
           return;
@@ -111,20 +158,18 @@ function SystemSettings() {
   // EMERGENCY WIPE
   // ============================================================
 
-  const handleEmergencySystemWipe = () => {
-    const firstConfirm = window.confirm(
+  const handleEmergencySystemWipe = async () => {
+    const firstConfirm = await showAppDialog({ title: 'Emergency reset', type: 'danger', confirmText: 'Continue to confirmation', message:
       'EMERGENCY RESET:\n\n' +
       'Are you absolutely sure you want to completely erase ALL farm records on this device?\n\n' +
       'This cannot be undone.'
-    );
+    });
 
     if (!firstConfirm) {
       return;
     }
 
-    const secondaryConfirm = window.prompt(
-      'Type RESET to confirm permanent erasure:'
-    );
+    const secondaryConfirm = await showAppDialog({ title: 'Confirm permanent erasure', type: 'prompt', confirmText: 'Erase farm data', placeholder: 'Type RESET', message: 'This permanently erases farm records on this device. Type RESET to continue.' });
 
     if (secondaryConfirm === 'RESET') {
 
@@ -146,21 +191,29 @@ function SystemSettings() {
         localStorage.removeItem(key);
       });
 
-      alert(
-        'Farm records have been wiped. Your device license remains active.'
-      );
+      await showAppDialog({ title: 'Farm data erased', message: 'Farm records have been wiped. Your device license remains active.' });
 
       window.location.reload();
 
     } else {
-      alert(
-        'Wipe cancelled. Confirmation text did not match.'
-      );
+      await showAppDialog({ title: 'Reset cancelled', message: 'Confirmation text did not match. No records were erased.' });
     }
   };
 
   return (
     <div className="settings-page-container">
+
+      {waitingWorker && (
+        <div className="settings-update-card" role="status">
+          <div>
+            <strong>A new app update is ready</strong>
+            <p>Update now to use the latest version. Your saved farm records will stay on this device.</p>
+          </div>
+          <button type="button" className="settings-action-btn update-btn" onClick={handleApplyUpdate} disabled={isApplyingUpdate}>
+            {isApplyingUpdate ? 'Updating…' : 'Update app'}
+          </button>
+        </div>
+      )}
 
       {/* SUCCESS MESSAGE */}
 

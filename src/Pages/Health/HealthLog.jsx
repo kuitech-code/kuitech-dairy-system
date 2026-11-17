@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './HealthLog.css';
+import { showAppDialog } from '../../utils/appDialog';
 
 function getLocalDateString(date = new Date()) {
   const year = date.getFullYear();
@@ -691,7 +692,7 @@ function HealthLog() {
     setEditStatus(log.treatmentStatus);
   };
 
-  const handleSaveInlineAdjustment = (
+  const handleSaveInlineAdjustment = async (
     logId,
     isCowCapableOfMilk
   ) => {
@@ -706,9 +707,7 @@ function HealthLog() {
       daysValue < 0 ||
       !editDiagnosis.trim()
     ) {
-      alert(
-        'Entry Violation: Adjustment inputs cannot be negative or blank.'
-      );
+      await showAppDialog({ title: 'Check health record', message: 'Adjustment values cannot be negative, and diagnosis cannot be blank.' });
       return;
     }
 
@@ -735,18 +734,16 @@ function HealthLog() {
 
     setEditingLogId(null);
 
-    alert('Health ledger record adjusted safely.');
+    showAppDialog({ title: 'Health record updated', message: 'Health ledger record adjusted successfully.' });
   };
 
   // =========================================================
   // DELETE
   // =========================================================
 
-  const handleDeleteRecord = logId => {
+  const handleDeleteRecord = async logId => {
     if (
-      window.confirm(
-        'Purge Action: Are you sure you want to permanently delete this health card from device memory?'
-      )
+      await showAppDialog({ title: 'Delete health record?', type: 'danger', confirmText: 'Delete record', message: 'Permanently delete this health card from this device?' })
     ) {
       const updatedLogs = healthLedger.filter(
         log => log.id !== logId
@@ -759,7 +756,7 @@ function HealthLog() {
         JSON.stringify(updatedLogs)
       );
 
-      alert('Record purged safely.');
+      showAppDialog({ title: 'Health record deleted', message: 'The record was removed from this device.' });
     }
   };
 

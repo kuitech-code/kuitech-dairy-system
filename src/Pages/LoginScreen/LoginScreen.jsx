@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import bcrypt from 'bcryptjs';
 import './LoginScreen.css';
+import { showAppDialog } from '../../utils/appDialog';
 
 const USER_STORAGE_KEY = 'dairy_user_account_data';
 
@@ -352,9 +353,7 @@ function LoginScreen({ onLoginSuccess }) {
       setRecoveryConfirm('');
       setRecoveryError('');
 
-      alert(
-        'Password changed successfully. Please sign in with your new password.'
-      );
+      await showAppDialog({ title: 'Password changed', message: 'Password changed successfully. Please sign in with your new password.' });
 
       setScreenMode('login');
 

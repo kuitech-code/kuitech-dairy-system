@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import './BreedingLog.css';
+import { showAppDialog } from '../../utils/appDialog';
 
 /*
   Breeding & AI module
@@ -1944,10 +1945,8 @@ function BreedingLog() {
                             <button
                               type="button"
                               className="table-action-button"
-                              onClick={() => {
-                                const correctionReason = window.prompt(
-                                  'Why is this pregnancy assessment being corrected?'
-                                );
+                              onClick={async () => {
+                                const correctionReason = await showAppDialog({ title: 'Correct pregnancy assessment', type: 'prompt', confirmText: 'Continue', placeholder: 'Enter correction reason', message: 'Why is this pregnancy assessment being corrected?' });
 
                                 if (!correctionReason) return;
 

@@ -10,6 +10,7 @@ import FinancialLedger from './Pages/Finance/FinancialLedger';
 import SystemSettings from './Pages/Settings/SystemSettings';
 import LoginScreen from './Pages/LoginScreen/LoginScreen';
 import './App.css';
+import { showAppDialog } from './utils/appDialog';
 
 function App() {
   // App Visibility View States
@@ -76,7 +77,7 @@ function App() {
         localStorage.removeItem('dairy_session_start_time');
         setIsLoggedIn(false);
         setSessionWarningVisible(false);
-        alert('Your session has expired due to inactivity. Please log in again.');
+        showAppDialog({ title: 'Session expired', message: 'Your session has expired due to inactivity. Please log in again.' });
       }, SESSION_TIMEOUT);
 
       // Update session start time
@@ -116,7 +117,7 @@ function App() {
       setFarmBrandingLogo(definedBrandingText);
       setIsLicensed(true);
     } else {
-      alert('Invalid Activation Key! Please contact Kuitech.');
+      showAppDialog({ title: 'Activation key not recognized', message: 'Check the key and try again. Contact support if you need help.' });
     }
   };
 
@@ -130,7 +131,7 @@ function App() {
     setIsLoggedIn(false);
     setIsMenuOpen(false);
     setCurrentScreen('Dashboard');
-    alert('Terminal session locked safely. Operator signed out.');
+    showAppDialog({ title: 'Signed out', message: 'The operator session has been locked.' });
   };
 
   // --- INTERRUPT LAYER 1: DEVICE HARDWARE ACCREDITATION ---

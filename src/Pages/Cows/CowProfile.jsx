@@ -3,6 +3,7 @@ import CowForm from '../../components/CowForm';
 import { formatCowAge, getCowAgeInMonths } from '../../utils/cowAge';
 import { useToday } from '../../utils/useToday';
 import './CowProfile.css';
+import { showAppDialog } from '../../utils/appDialog';
 
 const normalizeLifecycleStatus = (animal, today) => {
   if (!animal) return animal;
@@ -170,10 +171,10 @@ function CowProfile({ cowId, onBackToList }) {
   }, [activeTab, cow, cowId]);
 
   // Handle saving edits
-  const handleSaveChanges = (e) => {
+  const handleSaveChanges = async (e) => {
     e.preventDefault();
     if (!editName.trim()) {
-      alert('Cow name cannot be left blank.');
+      await showAppDialog({ title: 'Name required', message: 'Cow name cannot be left blank.' });
       return;
     }
 
@@ -216,18 +217,16 @@ function CowProfile({ cowId, onBackToList }) {
     }
   };
 
-  const handleArchiveAnimal = (actionType) => {
+  const handleArchiveAnimal = async (actionType) => {
     let salePrice = 0;
 
     if (actionType === 'Sold') {
-      const inputPrice = window.prompt(`Enter the total sale price for ${cow.name} (KSH):`, '50000');
+      const inputPrice = await showAppDialog({ title: `Sale price for ${cow.name}`, type: 'prompt', confirmText: 'Continue', placeholder: 'Enter amount in KSH', defaultValue: '50000', message: 'Enter the total sale price. This will be added to the financial ledger.' });
       if (inputPrice === null) return;
       salePrice = parseFloat(inputPrice) || 0;
-      if (salePrice < 0) return alert('Financial Error: Sale price cannot be negative.');
+      if (salePrice < 0) { await showAppDialog({ title: 'Invalid sale price', message: 'Sale price cannot be negative.' }); return; }
     } else {
-      const confirmDeath = window.confirm(
-        `Confirm Death: Are you sure you want to log ${cow.name} as deceased? Income will be recorded as KSH 0.00.`
-      );
+      const confirmDeath = await showAppDialog({ title: `Record ${cow.name} as deceased?`, type: 'danger', confirmText: 'Record death', message: `Are you sure you want to log ${cow.name} as deceased? Income will be recorded as KSH 0.00.` });
       if (!confirmDeath) return;
     }
 
@@ -264,7 +263,7 @@ function CowProfile({ cowId, onBackToList }) {
     const filteredPregnancies = JSON.parse(savedPregnancies).filter((p) => p.cowId !== cowId);
     localStorage.setItem('dairy_pregnancies', JSON.stringify(filteredPregnancies));
 
-    alert(`${cow.name} has been archived successfully. Ledger updated with KSH ${salePrice.toFixed(2)} income.`);
+    await showAppDialog({ title: 'Animal archived', message: `${cow.name} has been archived successfully. Ledger updated with KSH ${salePrice.toFixed(2)} income.` });
     onBackToList();
   };
 
@@ -354,7 +353,7 @@ function CowProfile({ cowId, onBackToList }) {
                 setPhotoUnavailable(false);
                 setIsEditing(false);
                 setSaveError('');
-                alert('Changes saved successfully!');
+                showAppDialog({ title: 'Changes saved', message: 'Animal details were updated successfully.' });
                 return true;
               } catch (error) {
                 console.error('Could not save cow profile:', error);
@@ -457,7 +456,7 @@ function CowProfile({ cowId, onBackToList }) {
               <strong className={cow.damTag === 'Unknown' ? 'dim-text' : ''}>{cow.damTag}</strong>
             </p>
             {currentStatus === 'Pregnant' && cow.calvingDate && (
-              <p>
+              <p className="special-alert-row">
                 <strong>Expected Calving:</strong> {new Date(cow.calvingDate).toLocaleDateString()}
               </p>
             )}

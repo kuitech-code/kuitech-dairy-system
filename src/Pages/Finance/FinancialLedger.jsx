@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './FinancialLedger.css';
+import { showAppDialog } from '../../utils/appDialog';
 
 function FinancialLedger() {
   // --- STATE 1: CORE DATA STORAGE ARRAYS ---
@@ -53,7 +54,7 @@ function FinancialLedger() {
   const handleSaveMilkPriceSetting = (e) => {
     e.preventDefault();
     const parsedRate = parseFloat(tempPriceInput) || 0;
-    if (parsedRate <= 0) return alert('Error: Price must be greater than 0.');
+    if (parsedRate <= 0) { showAppDialog({ title: 'Invalid milk price', message: 'Price must be greater than zero.' }); return; }
     
     localStorage.setItem('dairy_global_milk_price', parsedRate.toString());
     setMilkPrice(parsedRate);
@@ -65,7 +66,7 @@ function FinancialLedger() {
     e.preventDefault();
     const parsedAmount = parseFloat(txAmount) || 0;
     if (parsedAmount <= 0 || !txDescription.trim()) {
-      alert('Validation Error: Complete required fields.');
+      showAppDialog({ title: 'Details required', message: 'Complete the required fields before saving.' });
       return;
     }
 
@@ -95,8 +96,8 @@ function FinancialLedger() {
     setTimeout(() => setSuccessMessage(''), 2500);
   };
 
-  const handleDeleteManualItem = (recordId, typeKey) => {
-    if (window.confirm('Reset item statement?')) {
+  const handleDeleteManualItem = async (recordId, typeKey) => {
+    if (await showAppDialog({ title: 'Delete ledger item?', type: 'danger', confirmText: 'Delete item', message: 'Remove this item from the ledger? This cannot be undone.' })) {
       if (typeKey === 'Income') {
         const filtered = manualIncomes.filter(item => item.id !== recordId);
         setManualIncomes(filtered);

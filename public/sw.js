@@ -1,8 +1,8 @@
 const CACHE_NAME = 'kuitech-dairy-v3';
 
-// 1. Skip waiting to activate the updated worker instantly
-self.addEventListener('install', () => {
-  self.skipWaiting();
+// Keep a new app version waiting until the user chooses to update in Settings.
+self.addEventListener('message', event => {
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
 
 // 2. Claim clients right away so the app session locks into the service worker scope
